@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint './src/**/*.{ts,tsx,js,jsx}'",
-		"lint:fix": "eslint --fix './src/**/*.{ts,tsx,js,jsx}'",
+    "lint:fix": "eslint --fix './src/**/*.{ts,tsx,js,jsx}'",
     "postinstall": "husky"
   },
   "lint-staged": {
@@ -16,9 +16,16 @@
     ]
   },
   "dependencies": {
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.378.0",
     "next": "14.2.3",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-player": "^2.16.0",
+    "tailwind-merge": "^2.3.0",
+    "tailwindcss-animate": "^1.0.7",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@types/node": "^20",
