@@ -12,6 +12,7 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:import/errors",
     "plugin:import/warnings",
+    "plugin:tailwindcss/recommended",
     "prettier"
   ],
   "rules": {
