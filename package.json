@@ -12,9 +12,9 @@
     "postinstall": "husky"
   },
   "lint-staged": {
-    "*.{ts,tsx}": [
-      "lint:fix",
-      "prettier:write"
+    "./src/**/*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
     ]
   },
   "dependencies": {
