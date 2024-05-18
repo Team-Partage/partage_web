@@ -29,6 +29,11 @@
         ],
         "pathGroups": [
           {
+            "pattern": "react",
+            "group": "external",
+            "position": "before"
+          },
+          {
             "pattern": "@/*",
             "group": "internal",
             "position": "after"
