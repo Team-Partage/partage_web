@@ -1,3 +1,5 @@
+import { fonts } from './tailwind.plugin';
+
 import type { Config } from 'tailwindcss';
 
 const config = {
@@ -20,7 +22,12 @@ const config = {
     extend: {
       colors: {
         background: '#191919',
-        foreground: 'hsl(0, 0%, 87%)',
+        foreground: {
+          high: 'hsl(0, 0%, 87%)',
+          medium: 'hsl(0, 0%, 60%)',
+          muted: 'hsl(0, 0%, 38%)',
+        },
+        primary: '#25E09A',
         gray: {
           100: '#B4B4B4',
           200: '#6E6E6E',
@@ -38,7 +45,7 @@ const config = {
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [fonts],
 } satisfies Config;
 
 export default config;
