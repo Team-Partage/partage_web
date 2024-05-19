@@ -6,6 +6,9 @@ import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
 
+const inputStyle =
+  'border-none bg-gray-500 text-foreground-high placeholder:text-foreground-medium';
+
 const LoginPage = () => {
   const form = useForm();
 
@@ -14,25 +17,26 @@ const LoginPage = () => {
   };
 
   return (
-    <Card className="w-[480px] bg-gray-700 text-foreground">
+    <Card className="w-[480px] bg-gray-700 text-foreground-high">
       <CardHeader>
-        <CardTitle>Partage</CardTitle>
-        <CardContent>
-          <Form {...form}>
-            <form
-              className="space-y-4"
-              onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                e.preventDefault();
-                handleSubmit();
-              }}
-            >
+        <CardTitle className="m-auto">Partage</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form
+            onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+              e.preventDefault();
+              handleSubmit();
+            }}
+          >
+            <div className="space-y-4">
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input placeholder="email" {...field} />
+                      <Input className={inputStyle} placeholder="email" {...field} />
                     </FormControl>
                   </FormItem>
                 )}
@@ -43,18 +47,21 @@ const LoginPage = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input placeholder="password" {...field} />
+                      <Input className={inputStyle} placeholder="password" {...field} />
                     </FormControl>
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="">
-                로그인
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-      </CardHeader>
+            </div>
+            <Button
+              type="submit"
+              className="mt-6 w-full bg-primary-default text-gray-900 body-large-1 hover:bg-primary-hover"
+            >
+              로그인
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
     </Card>
   );
 };
