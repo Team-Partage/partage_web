@@ -24,7 +24,7 @@ export default function RootLayout({
             <input
               type="text"
               placeholder="검색"
-              className="w-[260px] border-b-4 border-white bg-transparent py-2 outline-none placeholder:text-white placeholder:body-large-3"
+              className="w-[260px] border-b-4 border-foreground-high bg-transparent py-2 outline-none placeholder:text-foreground-high placeholder:body-large-3"
             />
           </div>
           <Avatar>
@@ -34,14 +34,14 @@ export default function RootLayout({
         </header>
         <main className="h-[1110px] w-full">{children}</main>
         <footer className="h-[210px]">
-          <div className="flex flex-col gap-[23px] pt-[98px] text-[#B8B8B8]">
+          <div className="flex flex-col gap-[23px] pt-[98px] text-gray-100">
             <div className="flex items-center justify-between">
               <p className="sub-heading-2 ">
                 Harmonise Your <span className="text-[#4484FF]"> Playlist</span>: Your,
                 <span className="text-[#4484FF]"> Soundtrack</span>, Your
                 <span className="text-[#4484FF]"> Way</span>!
               </p>
-              <div className="flex items-center justify-center  gap-[23px] text-white">
+              <div className="flex items-center justify-center gap-[23px] text-foreground-high">
                 <Instagram />
                 <Twitter />
                 <Facebook />
