@@ -27,7 +27,11 @@ const config = {
           medium: 'hsl(0, 0%, 60%)',
           muted: 'hsl(0, 0%, 38%)',
         },
-        primary: '#25E09A',
+        primary: {
+          default: '#25E09A',
+          hover: '#20C087',
+          active: '#1A9C71',
+        },
         gray: {
           100: '#B4B4B4',
           200: '#6E6E6E',
