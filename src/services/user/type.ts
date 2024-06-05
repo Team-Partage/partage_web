@@ -11,3 +11,8 @@ export type User = {
 export type GetUserResponse = {
   user: User;
 };
+
+// 일반 회원 가입
+export type SignUpRequest = {
+  password: string;
+} & Pick<User, 'email' | 'username' | 'nickname'>;
