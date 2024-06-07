@@ -1,15 +1,11 @@
+import { merge } from 'lodash';
+
 type FetcherRequestInit = Omit<RequestInit, 'method'>;
 
 type Config = {
   baseURL?: string;
   defaultRequestInit?: FetcherRequestInit;
 };
-
-// type DeepPartial<T> = {
-//   [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
-// };
-
-// const deepMerge = <T extends object>(origin: T, source: DeepPartial<T>): T => {};
 
 class Fetcher {
   private baseURL: string | URL | undefined;
@@ -37,18 +33,22 @@ class Fetcher {
 
       return data;
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error(error);
-      }
-      return Promise.reject(error);
+      return this.handleError(error);
     }
   }
-  async post<T>(endpoint: string, params: object): Promise<T> {
+
+  async post<T>(endpoint: string, params: object, options?: FetcherRequestInit): Promise<T> {
     try {
       const url = new URL(endpoint, this.baseURL);
 
+      let requestInit = this.defaultRequestInit;
+
+      if (options) {
+        requestInit = merge(this.defaultRequestInit, options);
+      }
+
       const res = await fetch(url, {
-        ...this.defaultRequestInit,
+        ...requestInit,
         method: 'POST',
         body: JSON.stringify(params),
       });
@@ -61,18 +61,21 @@ class Fetcher {
 
       return data;
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error(error);
-      }
-      return Promise.reject(error);
+      return this.handleError(error);
     }
   }
-  async put<T>(endpoint: string, params: object): Promise<T> {
+  async put<T>(endpoint: string, params: object, options: FetcherRequestInit): Promise<T> {
     try {
       const url = new URL(endpoint, this.baseURL);
 
+      let requestInit = this.defaultRequestInit;
+
+      if (options) {
+        requestInit = merge(this.defaultRequestInit, options);
+      }
+
       const res = await fetch(url, {
-        ...this.defaultRequestInit,
+        ...requestInit,
         method: 'PUT',
         body: JSON.stringify(params),
       });
@@ -85,18 +88,21 @@ class Fetcher {
 
       return data;
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error(error);
-      }
-      return Promise.reject(error);
+      return this.handleError(error);
     }
   }
-  async patch<T>(endpoint: string, params: object): Promise<T> {
+  async patch<T>(endpoint: string, params: object, options: FetcherRequestInit): Promise<T> {
     try {
       const url = new URL(endpoint, this.baseURL);
 
+      let requestInit = this.defaultRequestInit;
+
+      if (options) {
+        requestInit = merge(this.defaultRequestInit, options);
+      }
+
       const res = await fetch(url, {
-        ...this.defaultRequestInit,
+        ...requestInit,
         method: 'PATCH',
         body: JSON.stringify(params),
       });
@@ -109,10 +115,7 @@ class Fetcher {
 
       return data;
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error(error);
-      }
-      return Promise.reject(error);
+      return this.handleError(error);
     }
   }
   async delete<T>(endpoint: string): Promise<T> {
@@ -132,11 +135,15 @@ class Fetcher {
 
       return data;
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error(error);
-      }
-      return Promise.reject(error);
+      return this.handleError(error);
     }
+  }
+
+  protected handleError(error: unknown) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error(error);
+    }
+    return Promise.reject(error);
   }
 }
 
