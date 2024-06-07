@@ -32,6 +32,20 @@ const config = {
           hover: '#20C087',
           active: '#1A9C71',
         },
+        main: {
+          skyblue: '#00FFFF',
+        },
+        sub: {
+          violet: '#9C78FF',
+          pink: '#FD68B3',
+          lightGreen: '#57F3A8',
+          green: '#32BF99',
+          yellow: '#FFE100',
+          orange: '#FFA030',
+          peach: '#FF7D84',
+          red: '#F94B60',
+          blue: '#43B0FF',
+        },
         gray: {
           100: '#B4B4B4',
           200: '#6E6E6E',
@@ -42,6 +56,14 @@ const config = {
           700: '#2A2A2A',
           800: '#222222',
           900: '#191919',
+        },
+        neutral: {
+          100: '#FFFFFF',
+          200: '#9FA6B2',
+          300: '#6E6E82',
+          400: '#353542',
+          500: '#23282E',
+          600: '#131418',
         },
       },
       fontFamily: {
