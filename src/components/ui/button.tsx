@@ -10,7 +10,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-slate-50 text-slate-900 hover:bg-slate-50/90 ',
+        default: '',
         active: 'bg-main-skyblue text-neutral-600 medium-bold',
         inactive: 'bg-neutral-300 text-neutral-200',
         withDraw: 'border border-solid border-sub-red bg-neutral-600 text-sub-red',
@@ -28,7 +28,7 @@ const buttonVariants = cva(
       },
     },
     defaultVariants: {
-      variant: 'active',
+      variant: 'default',
       size: 'default',
       font: 'base',
     },
