@@ -1,17 +1,24 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { EyeOff } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
+import FormModal from '../_components/Modal';
+
 const LoginPage = () => {
+  const router = useRouter();
   const form = useForm();
 
   const handleSubmit = () => {
     console.log('first');
+  };
+
+  const handleModal = () => {
+    router.push('/');
   };
 
   return (
@@ -64,9 +71,11 @@ const LoginPage = () => {
                   )}
                 />
               </div>
-              <Button type="submit" variant="active" size="lg" className="mt-[56px] w-full">
-                로그인
-              </Button>
+              <FormModal
+                title="로그인"
+                content="로그인이 완료되었어요!"
+                handleModal={handleModal}
+              />
             </form>
           </Form>
         </CardContent>
