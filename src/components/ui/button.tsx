@@ -6,13 +6,12 @@ import { cn } from '@/lib/utils';
 import { Slot } from '@radix-ui/react-slot';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap rounded-lg transition-colors disabled:pointer-events-none disabled:bg-neutral-300',
+  'inline-flex items-center justify-center whitespace-nowrap rounded-lg transition-colors disabled:pointer-events-none disabled:bg-neutral-300 disabled:text-neutral-200',
   {
     variants: {
       variant: {
         default: '',
         active: 'bg-main-skyblue text-neutral-600 medium-bold',
-        inactive: 'bg-neutral-300 text-neutral-200',
         withDraw: 'border border-solid border-sub-red bg-neutral-600 text-sub-red',
       },
       size: {
