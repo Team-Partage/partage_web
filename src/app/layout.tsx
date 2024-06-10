@@ -32,7 +32,7 @@ export default function RootLayout({
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
         </header>
-        <main className="h-[1110px] w-full">{children}</main>
+        <main className="h-screen w-full">{children}</main>
         <footer className="h-[210px]">
           <div className="flex flex-col gap-[23px] pt-[98px] text-gray-100">
             <div className="flex items-center justify-between">
