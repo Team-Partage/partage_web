@@ -7,7 +7,7 @@ export type Channel = {
   channel_id: string;
   name: string;
   type: ChannelType;
-  hashtag: string;
+  hashtag: string | null;
   channel_url: string;
   channel_color: string | null;
   created_at: string;
@@ -50,6 +50,12 @@ export type DeleteChannelResponse = {
   code: string;
   message: string;
   status: boolean;
+};
+
+// 채널 목록 조회
+export type GetChannelListResponse = {
+  page: { cursor: number; per_page: number; total_page: number; total_count: number };
+  channels: Channel[];
 };
 
 // 채널 상세 조회
