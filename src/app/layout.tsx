@@ -1,8 +1,18 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { pretendard } from '@/utils/fonts';
-import { Facebook, Instagram, Twitter } from 'lucide-react';
+import { Plus } from 'lucide-react';
+import Link from 'next/link';
 
 import type { Metadata } from 'next';
+
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -16,21 +26,36 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${pretendard.variable}`}>
-      <body className={`${pretendard.className} mx-auto`}>
-        <header className="flex h-[81px] w-full items-center justify-between">
-          <div className="heading-1">Partage</div>
-          <div>
-            <input
-              type="text"
-              placeholder="검색"
-              className="w-[260px] border-b-4 border-foreground-high bg-transparent py-2 outline-none placeholder:text-foreground-high placeholder:body-large-3"
-            />
+    <html lang="kr" className={`${pretendard.variable} h-full`}>
+      <body className={`${pretendard.className} h-full`}>
+        <header className="flex h-[100px] w-full items-center justify-between border-b-2 border-neutral-400 p-10">
+          <h1 className="text-main-skyblue max-bold">Partage</h1>
+          <div className="flex items-center gap-12">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="active" className="px-4 base-bold">
+                  <Plus width={20} height={20} strokeWidth={2} />
+                  채널 생성
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>채널 생성</DialogTitle>
+                </DialogHeader>
+                <Input placeholder="채널명을 입력해 주세요." />
+                <Input placeholder="태그를 입력해 주세요." />
+                <div className="flex justify-center">
+                  <Button variant="active">생성</Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+            <Link className="base-regular" href="">
+              로그인
+            </Link>
+            <Link className="base-regular" href="">
+              회원가입
+            </Link>
           </div>
-          <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
         </header>
         <main className="h-screen w-full">{children}</main>
         <footer className="h-[210px]">
