@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { SignUp } from '@/services/user';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -17,7 +18,7 @@ import FormModal from '../_components/FormModal';
 
 const RegisterSchema = z.object({
   email: z.string().email('이메일 형식에 맞게 작성해주세요.'),
-  name: z.string().min(1, '이름을 입력해주세요.'),
+  username: z.string().min(1, '이름을 입력해주세요.'),
   nickname: z.string().min(1, '닉네임을 입력해주세요.'),
   password: z
     .string()
@@ -38,7 +39,7 @@ const RegisterPage = () => {
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
       email: '',
-      name: '',
+      username: '',
       nickname: '',
       password: '',
     },
@@ -49,11 +50,12 @@ const RegisterPage = () => {
     setShowPassword(!showPassword);
   };
 
-  const onSubmit = (data: z.infer<typeof RegisterSchema>) => {
-    console.log('data', data);
-    if (data) {
+  const onSubmit = async (data: z.infer<typeof RegisterSchema>) => {
+    try {
+      await SignUp(data);
       setOpen(true);
-      console.log('bool', open);
+    } catch (err) {
+      throw new Error(`${err}`);
     }
   };
 
@@ -88,7 +90,7 @@ const RegisterPage = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="name"
+                  name="username"
                   render={({ field, fieldState: { error } }) => (
                     <FormItem>
                       <FormLabel>이름</FormLabel>

@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { SignIn } from '@/services/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -42,9 +43,13 @@ const LoginPage = () => {
     setShowPassword(!showPassword);
   };
 
-  const onSubmit = (data: z.infer<typeof LoginSchema>) => {
-    console.log('data', data);
-    router.push('/');
+  const onSubmit = async (data: z.infer<typeof LoginSchema>) => {
+    try {
+      await SignIn(data);
+      router.push('/');
+    } catch (err) {
+      throw new Error(`${err}`);
+    }
   };
 
   return (
