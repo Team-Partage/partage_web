@@ -57,7 +57,24 @@ export default function RootLayout({
             </Link>
           </div>
         </header>
-        <main className="">{children}</main>
+        <main className="h-screen w-full">{children}</main>
+        <footer className="h-[210px]">
+          <div className="flex flex-col gap-[23px] pt-[98px] text-gray-100">
+            <div className="flex items-center justify-between">
+              <p className="sub-heading-2 ">
+                Harmonise Your <span className="text-[#4484FF]"> Playlist</span>: Your,
+                <span className="text-[#4484FF]"> Soundtrack</span>, Your
+                <span className="text-[#4484FF]"> Way</span>!
+              </p>
+              <div className="flex items-center justify-center gap-[23px] text-foreground-high">
+                <Instagram />
+                <Twitter />
+                <Facebook />
+              </div>
+            </div>
+            <div className="body-normal-3">Copyright 2023. All Rights Reserved</div>
+          </div>
+        </footer>
       </body>
     </html>
   );
