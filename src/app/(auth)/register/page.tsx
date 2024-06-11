@@ -14,7 +14,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
-import FormModal from '../_components/FormModal';
+import FormModal from '../../../components/FormModal';
 
 const RegisterSchema = z.object({
   email: z.string().email('이메일 형식에 맞게 작성해주세요.'),
