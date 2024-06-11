@@ -31,6 +31,7 @@
     "lodash": "^4.17.21",
     "lucide-react": "^0.378.0",
     "next": "14.2.3",
+    "qs": "^6.12.1",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.51.4",
@@ -45,6 +46,7 @@
   "devDependencies": {
     "@types/lodash": "^4",
     "@types/node": "^20",
+    "@types/qs": "^6",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/sockjs-client": "^1",
