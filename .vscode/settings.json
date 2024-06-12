@@ -5,7 +5,5 @@
   },
   "eslint.nodePath": ".yarn/sdks",
   "typescript.tsdk": ".yarn/sdks/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
-  "typescript.preferences.autoImportFileExcludePatterns": ["@radix-ui"],
-  "prettier.prettierPath": ".yarn/sdks/prettier/index.cjs"
+  "typescript.enablePromptUseWorkspaceTsdk": true
 }
