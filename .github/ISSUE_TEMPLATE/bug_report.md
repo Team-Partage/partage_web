@@ -4,35 +4,37 @@ about: Create a report to help us improve
 title: ''
 labels: bug
 assignees: ''
-
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+## 개요
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+<!-- 이슈에 대한 간단한 설명을 작성해 주세요. -->
+<br/>
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+## 재현 방법
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+1. ...
+2. ...
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+<!-- 버그인 경우, 문제를 재현하는 단계들을 작성해 주세요. -->
+<br/>
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+## 예상 동작
 
-**Additional context**
-Add any other context about the problem here.
+<!-- 기대하는 동작을 간단하게 설명해 주세요. -->
+<br/>
+
+## 실제 동작
+
+<!-- 실제로 발생한 동작을 간단하게 설명해 주세요. -->
+<br/>
+
+## 스크린샷
+
+<!-- 가능하다면, 문제를 설명하는 데 도움이 되는 스크린샷을 추가해 주세요. -->
+<br/>
+
+## 추가 정보
+
+<!-- 그 외 추가 정보가 있다면 작성해 주세요. -->
+<br/>
