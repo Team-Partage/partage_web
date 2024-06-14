@@ -79,7 +79,7 @@ const Mypage = () => {
                     />
                   </div>
                 </div>
-                <ColorChips size={60} count={9}>
+                <ColorChips size={'h-[60px] w-[60px]'} selectedSize={'h-[70px] w-[70px]'} count={9}>
                   닉네임 컬러
                 </ColorChips>
                 <Button
@@ -96,7 +96,7 @@ const Mypage = () => {
           </CardContent>
         </Card>
         <PasswordCheck />
-        <WithDraw/>
+        <WithDraw />
       </div>
     </div>
   );

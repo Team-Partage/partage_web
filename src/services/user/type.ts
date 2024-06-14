@@ -16,3 +16,7 @@ export type GetUserResponse = {
 export type SignUpRequest = {
   password: string;
 } & Pick<User, 'email' | 'username' | 'nickname'>;
+
+export type EditProfileColorRequest = {
+  profile_color?: string;
+};
