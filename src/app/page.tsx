@@ -1,28 +1,23 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import ChannelCreatorBox from '@/components/ChannelCreatorBox';
 import SearchBar from '@/components/SearchBar';
-import { getChannelList } from '@/services/channel';
+import { useChannelStore } from '@/stores/useChannelStore';
 
 const MainPage = () => {
-  const [channels, setChannels] = useState<any>(null);
-
-  const noChannel = channels.page.total_count === 0;
-
-  const handleSearch = (searchQuery: string) => {
-    console.log(searchQuery);
-  };
+  const { channels, fetchChannels } = useChannelStore();
 
   useEffect(() => {
-    const fetchChannels = async () => {
-      const channelData = await getChannelList();
-      setChannels(channelData);
-    };
-
     fetchChannels();
-  }, []);
+  }, [fetchChannels]);
+
+  const handleSearch = (searchQuery: string) => {
+    fetchChannels({ cursor: 1, perPage: 12, keyword: searchQuery });
+  };
+
+  const noChannel = channels?.page.total_count === 0;
 
   return (
     <div className="flex flex-col items-center gap-[40px] p-[40px]">

@@ -10,7 +10,7 @@ interface ChannelCreatorBoxProps {
 
 const ChannelCreatorBox = ({ children }: ChannelCreatorBoxProps) => {
   return (
-    <div className="flex h-[400px] min-h-[350px] w-full min-w-[280px] max-w-[800px] flex-col items-center justify-center rounded-lg border border-dashed border-[#43B0FF] mobile:max-w-[280px] tablet:h-[350px] tablet:max-w-[532px]">
+    <div className="flex h-[400px] min-h-[350px] w-full min-w-[280px] max-w-[800px] flex-col items-center justify-center rounded-lg border border-dashed border-[#43B0FF] base-medium mobile:max-w-[280px] mobile:small-medium tablet:h-[350px] tablet:max-w-[532px]">
       <div className="flex flex-col items-center gap-12 text-center">
         {children}
         <Button variant="active" className="w-full px-4 base-bold">

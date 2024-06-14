@@ -8,13 +8,26 @@
     padding: 0;
     box-sizing: border-box;
   }
+
   ul,
   ol,
   li {
     list-style: none;
   }
+
   body {
     background-color: theme('colors.background');
     color: theme('colors.foreground.high');
+  }
+
+  input {
+    outline: none;
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #333236;
+    -webkit-box-shadow: 0 0 0px 1000px #fff inset;
   }
 }
