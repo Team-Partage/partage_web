@@ -3608,7 +3608,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lucide-react@npm:0.378.0":
+"lucide-react@npm:^0.378.0":
   version: 0.378.0
   resolution: "lucide-react@npm:0.378.0"
   peerDependencies:
@@ -4191,7 +4191,7 @@ __metadata:
     husky: "npm:^9.0.11"
     lint-staged: "npm:^15.2.2"
     lodash: "npm:^4.17.21"
-    lucide-react: "npm:0.378.0"
+    lucide-react: "npm:^0.378.0"
     next: "npm:14.2.3"
     pinst: "npm:^3.0.0"
     postcss: "npm:^8"
