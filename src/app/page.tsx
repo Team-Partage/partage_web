@@ -1,32 +1,42 @@
-import { Button } from '@/components/ui/button';
-import { getChannelList } from '@/services/channel';
-import { Plus } from 'lucide-react';
+'use client';
 
-const Home = async () => {
-  const channels = await getChannelList();
+import { useEffect } from 'react';
 
-  if (channels.page.total_count === 0) {
-    return (
-      <div className="border border-dashed">
-        <p>생성된 채널이 없어서 조용하네요!</p>
-        <Button variant="active" className="px-4 base-bold">
-          <Plus width={20} height={20} strokeWidth={2} />
-          채널 생성
-        </Button>
-      </div>
-    );
-  }
+import ChannelCreatorBox from '@/components/ChannelCreatorBox';
+import SearchBar from '@/components/SearchBar';
+import { useChannelStore } from '@/stores/useChannelStore';
+
+const MainPage = () => {
+  const { channels, fetchChannels } = useChannelStore();
+
+  useEffect(() => {
+    fetchChannels();
+  }, [fetchChannels]);
+
+  const handleSearch = (searchQuery: string) => {
+    fetchChannels({ cursor: 1, perPage: 12, keyword: searchQuery });
+  };
+
+  const noChannel = channels?.page.total_count === 0;
+
   return (
-    <div className="flex h-[400px] min-h-[350px] min-w-[280px] max-w-[800px] flex-col items-center justify-center rounded-lg border border-dashed border-[#43B0FF] mobile:max-w-[280px] tablet:h-[350px] tablet:max-w-[532px]">
-      <div className="flex flex-col items-center gap-12">
-        <p>생성된 채널이 없어서 조용하네요!</p>
-        <Button variant="active" className="w-full px-4 base-bold">
-          <Plus width={20} height={20} strokeWidth={2} />
-          채널 생성
-        </Button>
-      </div>
+    <div className="flex flex-col items-center gap-[40px] p-[40px]">
+      {noChannel ? (
+        <ChannelCreatorBox>
+          생성된 채널이 없어서 조용하네요!
+          <br />
+          폭탄뉴진세님의 채널을 기다릴지도!
+        </ChannelCreatorBox>
+      ) : (
+        <>
+          <SearchBar handleSearch={handleSearch} />
+          <section className="flex flex-col gap-24">
+            <h2>당신을 기다리는 채널</h2>
+          </section>
+        </>
+      )}
     </div>
   );
 };
 
-export default Home;
+export default MainPage;
