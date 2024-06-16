@@ -15,10 +15,11 @@ type Props = {
   size: Size;
   selectedSize: Size;
   count: number;
+  onColorSelect: (color: string) => void;
   children: ReactNode;
 };
 
-const ColorChips = ({ size, selectedSize, count, children }: Props) => {
+const ColorChips = ({ size, selectedSize, count, onColorSelect, children }: Props) => {
   const myColor = '#00FFFF';
 
   const [selectedColor, setSelectedColor] = useState<string>(colors[0]);
@@ -40,7 +41,7 @@ const ColorChips = ({ size, selectedSize, count, children }: Props) => {
 
   const handleClick = (color: string) => {
     setSelectedColor(color);
-    console.log('헥스코드', customColors.main[color] || customColors.sub[color]);
+    onColorSelect(customColors.main[color] || customColors.sub[color]);
   };
 
   return (

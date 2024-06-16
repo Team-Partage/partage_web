@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 import { z } from 'zod';
 
 import ColorChips from '@/components/ColorChips';
@@ -8,6 +10,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { CheckNickname, EditProfile } from '@/services/user';
+import { EditProfileColorRequest, NicknameRequest } from '@/services/user/type';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
@@ -15,22 +19,40 @@ import PasswordCheck from './_components/PasswordCheck';
 import WithDraw from './_components/WithDraw';
 
 const MypageSchema = z.object({
-  email: z.string().email('이메일 형식에 맞게 작성해주세요.'),
+  email: z.string().email(),
   nickname: z.string().min(1, '닉네임을 입력해주세요.'),
 });
 
+
 const Mypage = () => {
+  const [selectedColor, setSelectedColor] = useState<string>('');
+
   const form = useForm<z.infer<typeof MypageSchema>>({
     resolver: zodResolver(MypageSchema),
     defaultValues: {
-      email: '',
-      nickname: '',
+      //  TODO zustand의 유저정보 가져오기
+      email: 't2@gmail.com',
+      nickname: '테스트',
     },
     mode: 'onChange',
   });
 
   const onSubmit = async (data: z.infer<typeof MypageSchema>) => {
-    console.log(data);
+    const isNicknameAvailable = await CheckNickname({ nickname: data.nickname });
+    if (!isNicknameAvailable) {
+      form.setError('nickname', {
+        type: 'manual',
+        message: '이미 사용 중인 닉네임이에요.',
+      });
+      return;
+    } else {
+      await EditProfile<NicknameRequest>('nickname', { nickname: data.nickname });
+    }
+    2;
+
+    if (selectedColor) {
+      await EditProfile<EditProfileColorRequest>('profile-color', { profile_color: selectedColor });
+    }
   };
 
   return (
@@ -79,7 +101,12 @@ const Mypage = () => {
                     />
                   </div>
                 </div>
-                <ColorChips size={'h-[60px] w-[60px]'} selectedSize={'h-[70px] w-[70px]'} count={9}>
+                <ColorChips
+                  size={'h-[60px] w-[60px]'}
+                  selectedSize={'h-[70px] w-[70px]'}
+                  count={9}
+                  onColorSelect={(color) => setSelectedColor(color)}
+                >
                   닉네임 컬러
                 </ColorChips>
                 <Button
