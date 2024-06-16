@@ -3,7 +3,7 @@ interface Props {
 }
 
 const layout = ({ children }: Props) => {
-  return <div>{children}</div>;
+  return <main className="size-full px-10">{children}</main>;
 };
 
 export default layout;
