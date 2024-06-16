@@ -72,6 +72,11 @@ export const fonts = plugin(({ addUtilities }) => {
       lineHeight: '21px',
       fontWeight: '400',
     },
+    '.tiny-regular': {
+      fontSize: '13px',
+      lineHeight: '19.5px',
+      fontWeight: '400',
+    },
     '.micro-medium': {
       fontSize: '12px',
       lineHeight: '18px',
