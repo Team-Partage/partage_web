@@ -7,6 +7,7 @@ const nextConfig = {
         hostname: '**',
       },
     ],
+    domains: ['i.ytimg.com'],
   },
 };
 

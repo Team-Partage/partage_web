@@ -8,6 +8,12 @@ export const getChannelList = async (params: {
   perPage?: number;
   keyword?: string;
 }) => {
-  const data = await fetcher.get<GetChannelListResponse>('/api/v1/channel/search', params || {});
+  const { cursor = 1, perPage = 12, keyword } = params;
+
+  const data = await fetcher.get<GetChannelListResponse>('/api/v1/channel/search', {
+    cursor,
+    perPage,
+    keyword,
+  });
   return data;
 };

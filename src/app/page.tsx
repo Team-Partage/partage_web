@@ -1,23 +1,13 @@
-'use client';
-
-import { useEffect } from 'react';
-
 import ChannelCreatorBox from '@/components/ChannelCreatorBox';
 import SearchBar from '@/components/SearchBar';
-import { useChannelStore } from '@/stores/useChannelStore';
+import { getChannelList } from '@/services/channel';
 
-const MainPage = () => {
-  const { channels, fetchChannels } = useChannelStore();
+import ChannelList from './(main)/_components/ChannelList';
 
-  useEffect(() => {
-    fetchChannels();
-  }, [fetchChannels]);
+const MainPage = async () => {
+  const channelsData = await getChannelList({});
 
-  const handleSearch = (searchQuery: string) => {
-    fetchChannels({ cursor: 1, perPage: 12, keyword: searchQuery });
-  };
-
-  const noChannel = channels?.page.total_count === 0;
+  const noChannel = channelsData?.page.total_count === 0;
 
   return (
     <div className="flex flex-col items-center gap-[40px] p-[40px]">
@@ -29,10 +19,8 @@ const MainPage = () => {
         </ChannelCreatorBox>
       ) : (
         <>
-          <SearchBar handleSearch={handleSearch} />
-          <section className="flex flex-col gap-24">
-            <h2>당신을 기다리는 채널</h2>
-          </section>
+          <SearchBar />
+          <ChannelList channelsData={channelsData} />
         </>
       )}
     </div>
