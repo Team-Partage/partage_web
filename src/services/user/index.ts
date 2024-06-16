@@ -24,3 +24,8 @@ export const EditProfile = async <T extends EditProfileParams>(endpoint: string,
   const data = await fetcher.patch(`${baseUrl}/me/${endpoint}`, params);
   return data;
 };
+
+export const EditProfileImage = async (params: FormData) => {
+  const data = await fetcher.post(`${baseUrl}/me/profile-image`, params);
+  return data;
+};

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { z } from 'zod';
 
@@ -11,9 +11,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { CheckNickname, EditProfile } from '@/services/user';
+import { CheckNickname, EditProfile, EditProfileImage } from '@/services/user';
 import { EditProfileColorRequest, NicknameRequest } from '@/services/user/type';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { ImageUp } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 
 const MypageSchema = z.object({
@@ -24,6 +25,10 @@ const MypageSchema = z.object({
 const EditMyInfo = () => {
   const [open, setOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState<string>('');
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [imagePreview, setImagePreview] = useState('');
+  const [fileData, setFileData] = useState<File>();
+
   const form = useForm<z.infer<typeof MypageSchema>>({
     resolver: zodResolver(MypageSchema),
     defaultValues: {
@@ -33,6 +38,27 @@ const EditMyInfo = () => {
     },
     mode: 'onChange',
   });
+
+  const addPreviewImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files !== null) {
+      const file = e.target.files[0];
+      if (file) {
+        setFileData(file);
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        await new Promise((resolve) => {
+          reader.onload = () => {
+            setImagePreview(reader.result as string);
+            resolve(null);
+          };
+        });
+      }
+    }
+  };
+
+  const handleImageClick = () => {
+    fileRef?.current?.click();
+  };
 
   const onSubmit = async (data: z.infer<typeof MypageSchema>) => {
     const isNicknameAvailable = await CheckNickname({ nickname: data.nickname });
@@ -49,6 +75,13 @@ const EditMyInfo = () => {
     if (selectedColor) {
       await EditProfile<EditProfileColorRequest>('profile-color', { profile_color: selectedColor });
     }
+
+    if (fileData) {
+      const formData = new FormData();
+      formData.append('file', fileData);
+      await EditProfileImage(formData);
+    }
+
     setOpen(true);
   };
 
@@ -64,9 +97,24 @@ const EditMyInfo = () => {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className="flex h-[240px] gap-[28px]">
-                <Avatar className="size-[240px]">
-                  <AvatarImage src="https://github.com/shadcn.png" />
+                <Avatar className="group size-[240px]">
+                  <AvatarImage src={imagePreview || 'https://github.com/shadcn.png'} />
                   <AvatarFallback>profile-image</AvatarFallback>
+                  <label
+                    htmlFor="image"
+                    className="absolute inset-0 flex cursor-pointer items-center justify-center rounded-full bg-transparent transition-all group-hover:bg-gray-200/30"
+                    onClick={handleImageClick}
+                  >
+                    <ImageUp className="z-10 hidden size-[40px] text-main-skyblue transition-opacity duration-300 group-hover:block" />
+                  </label>
+                  <input
+                    style={{ display: 'none' }}
+                    id="image"
+                    name="image"
+                    type="file"
+                    accept=".png, .jpeg, .jpg"
+                    onChange={(e) => addPreviewImage(e)}
+                  />
                 </Avatar>
                 <div className="w-full space-y-8">
                   <FormField
