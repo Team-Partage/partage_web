@@ -15,7 +15,7 @@ import { CheckNickname, EditProfile, EditProfileImage } from '@/services/user';
 import { EditProfileColorRequest, NicknameRequest } from '@/services/user/type';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ImageUp } from 'lucide-react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 
 const MypageSchema = z.object({
   email: z.string().email(),
@@ -29,15 +29,19 @@ const EditMyInfo = () => {
   const [imagePreview, setImagePreview] = useState('');
   const [fileData, setFileData] = useState<File>();
 
+  const mynickname = '테스트';
+
   const form = useForm<z.infer<typeof MypageSchema>>({
     resolver: zodResolver(MypageSchema),
     defaultValues: {
       //  TODO zustand의 유저정보 가져오기
       email: 't2@gmail.com',
-      nickname: '테스트',
+      nickname: mynickname,
     },
     mode: 'onChange',
   });
+
+  const watchedNickname = useWatch({ control: form.control, name: 'nickname' });
 
   const addPreviewImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files !== null) {
@@ -159,7 +163,7 @@ const EditMyInfo = () => {
               </ColorChips>
               <Button
                 type="submit"
-                disabled={!form.formState.isValid}
+                disabled={!form.formState.isValid || watchedNickname === mynickname}
                 variant="active"
                 size="lg"
                 className="mt-[56px] w-full"
