@@ -96,7 +96,7 @@ class Fetcher {
       return this.handleError(error);
     }
   }
-  async patch<T>(endpoint: string, params: object, options: FetcherRequestInit): Promise<T> {
+  async patch<T>(endpoint: string, params: object, options?: FetcherRequestInit): Promise<T> {
     try {
       const url = new URL(endpoint, this.baseURL);
 

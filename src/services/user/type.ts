@@ -18,5 +18,16 @@ export type SignUpRequest = {
 } & Pick<User, 'email' | 'username' | 'nickname'>;
 
 export type EditProfileColorRequest = {
-  profile_color?: string;
+  profile_color: string;
 };
+
+export type NicknameRequest = {
+  nickname: string;
+};
+
+export type EditPassword = {
+  current_password: 'string';
+  new_password: 'string';
+};
+
+export type EditProfileParams = EditProfileColorRequest | NicknameRequest | EditPassword;
