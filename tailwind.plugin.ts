@@ -62,6 +62,11 @@ export const fonts = plugin(({ addUtilities }) => {
       lineHeight: '21px',
       fontWeight: '700',
     },
+    '.small-semiBold': {
+      fontSize: '14px',
+      lineHeight: '21px',
+      fontWeight: '600',
+    },
     '.small-medium': {
       fontSize: '14px',
       lineHeight: '21px',
@@ -76,6 +81,11 @@ export const fonts = plugin(({ addUtilities }) => {
       fontSize: '13px',
       lineHeight: '19.5px',
       fontWeight: '400',
+    },
+    '.micro-semiBold': {
+      fontSize: '12px',
+      lineHeight: '18px',
+      fontWeight: '600',
     },
     '.micro-medium': {
       fontSize: '12px',
