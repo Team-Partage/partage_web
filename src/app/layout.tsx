@@ -57,7 +57,7 @@ export default function RootLayout({
             </Link>
           </div>
         </header>
-        <main className="">{children}</main>
+        {children}
       </body>
     </html>
   );
