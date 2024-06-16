@@ -90,7 +90,7 @@ const EditMyInfo = () => {
   };
 
   const handleModal = () => {
-    // router.push('/');
+    setOpen(false);
   };
 
   return (

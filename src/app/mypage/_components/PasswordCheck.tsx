@@ -83,11 +83,11 @@ const PasswordCheck = () => {
         }
       }
     }
-    form.reset();
   };
 
   const handleModal = () => {
-    // router.push('/');
+    setOpen(false);
+    form.reset();
   };
 
   return (
