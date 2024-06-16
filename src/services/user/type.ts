@@ -25,9 +25,9 @@ export type NicknameRequest = {
   nickname: string;
 };
 
-export type EditPassword = {
-  current_password: 'string';
-  new_password: 'string';
+export type EditPasswordRequest = {
+  current_password: string;
+  new_password: string;
 };
 
-export type EditProfileParams = EditProfileColorRequest | NicknameRequest | EditPassword;
+export type EditProfileParams = EditProfileColorRequest | NicknameRequest | EditPasswordRequest;

@@ -8,6 +8,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { CustomError } from '@/lib/customError';
+import { EditProfile } from '@/services/user';
+import { EditPasswordRequest } from '@/services/user/type';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -21,17 +24,27 @@ const passwordValidation = z
     '비밀번호는 영문, 숫자, 특수문자가 포함된 8~16자여야 합니다.',
   );
 
-const PasswordSchema = z.object({
-  password: passwordValidation,
-  newPassword: passwordValidation,
-  newPasswordCheck: passwordValidation,
-});
+const PasswordSchema = z
+  .object({
+    password: passwordValidation,
+    newPassword: passwordValidation,
+    newPasswordCheck: passwordValidation,
+  })
+  .superRefine(({ newPassword, newPasswordCheck }, ctx) => {
+    if (newPassword !== newPasswordCheck) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: '새 비밀번호가 일치하지 않아요.',
+        path: ['newPasswordCheck'],
+      });
+    }
+  });
 
 const PasswordCheck = () => {
   const [showPassword, setShowPassword] = useState({
-    password: false,
-    newPassword: false,
-    newPasswordCheck: false,
+    passwordShow: false,
+    newPasswordShow: false,
+    newPasswordCheckShow: false,
   });
 
   const form = useForm<z.infer<typeof PasswordSchema>>({
@@ -50,9 +63,24 @@ const PasswordCheck = () => {
       [field]: !prevState[field],
     }));
   };
-  
-  const onSubmitPassword = (data) => {
-    console.log(data);
+
+  const onSubmit = async (data: z.infer<typeof PasswordSchema>) => {
+    try {
+      const dto = { current_password: data.password, new_password: data.newPassword };
+      await EditProfile<EditPasswordRequest>('password', dto);
+    } catch (err) {
+      if (err instanceof CustomError) {
+        if (err.response && err.response.code === 400) {
+          form.setError('password', {
+            type: 'manual',
+            message: '현재 비밀번호가 일치하지 않아요.',
+          });
+        } else {
+          throw new Error(`${err}`);
+        }
+      }
+    }
+    form.reset();
   };
 
   return (
@@ -61,7 +89,7 @@ const PasswordCheck = () => {
       <CardContent>
         <div className="w-full">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmitPassword)}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className="space-y-4">
                 <FormField
                   control={form.control}
@@ -71,13 +99,13 @@ const PasswordCheck = () => {
                       <FormLabel>현재 비밀번호</FormLabel>
                       <FormControl>
                         <Input
-                          type={showPassword.password ? 'text' : 'password'}
+                          type={showPassword.passwordShow ? 'text' : 'password'}
                           placeholder="현재 비밀번호를 입력해주세요."
                           isError={!!error}
                           errorText={error?.message}
                           endAdornment={
-                            <button type="button" onClick={() => togglePassword('password')}>
-                              {showPassword.password ? (
+                            <button type="button" onClick={() => togglePassword('passwordShow')}>
+                              {showPassword.passwordShow ? (
                                 <Eye className="mr-2 h-[20px] text-neutral-200 " />
                               ) : (
                                 <EyeOff className="mr-2 h-[20px] text-neutral-200 " />
@@ -98,13 +126,13 @@ const PasswordCheck = () => {
                       <FormLabel>새 비밀번호</FormLabel>
                       <FormControl>
                         <Input
-                          type={showPassword.newPassword ? 'text' : 'password'}
+                          type={showPassword.newPasswordShow ? 'text' : 'password'}
                           placeholder="새 비밀번호를 입력해주세요."
                           isError={!!error}
                           errorText={error?.message}
                           endAdornment={
-                            <button type="button" onClick={() => togglePassword('newPassword')}>
-                              {showPassword.newPassword ? (
+                            <button type="button" onClick={() => togglePassword('newPasswordShow')}>
+                              {showPassword.newPasswordShow ? (
                                 <Eye className="mr-2 h-[20px] text-neutral-200 " />
                               ) : (
                                 <EyeOff className="mr-2 h-[20px] text-neutral-200 " />
@@ -125,16 +153,16 @@ const PasswordCheck = () => {
                       <FormLabel>새 비밀번호 확인</FormLabel>
                       <FormControl>
                         <Input
-                          type={showPassword.newPasswordCheck ? 'text' : 'password'}
+                          type={showPassword.newPasswordCheckShow ? 'text' : 'password'}
                           placeholder="새 비밀번호를 입력해주세요."
                           isError={!!error}
                           errorText={error?.message}
                           endAdornment={
                             <button
                               type="button"
-                              onClick={() => togglePassword('newPasswordCheck')}
+                              onClick={() => togglePassword('newPasswordCheckShow')}
                             >
-                              {showPassword.newPasswordCheck ? (
+                              {showPassword.newPasswordCheckShow ? (
                                 <Eye className="mr-2 h-[20px] text-neutral-200 " />
                               ) : (
                                 <EyeOff className="mr-2 h-[20px] text-neutral-200 " />
