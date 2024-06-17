@@ -28,6 +28,7 @@ class Fetcher {
       const res = await fetch(url, {
         ...this.defaultRequestInit,
         method: 'GET',
+        cache: 'no-store',
       });
 
       if (!res.ok) {

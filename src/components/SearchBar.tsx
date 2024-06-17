@@ -2,16 +2,18 @@
 
 import { useState } from 'react';
 
+import { PAGE_ROUTE } from '@/utils/route';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 interface SearchBarProps {
+  initialQuery?: string;
   handleSearch?: (searchQuery: string) => void;
   placeholder?: string;
 }
 
-const SearchBar = ({ handleSearch, placeholder }: SearchBarProps) => {
-  const [searchQuery, setSearchQuery] = useState<string>('');
+const SearchBar = ({ initialQuery = '', handleSearch, placeholder }: SearchBarProps) => {
+  const [searchQuery, setSearchQuery] = useState<string>(initialQuery);
 
   const router = useRouter();
 
@@ -21,14 +23,21 @@ const SearchBar = ({ handleSearch, placeholder }: SearchBarProps) => {
 
   const handleDelete = () => {
     setSearchQuery('');
+    router.replace(PAGE_ROUTE.HOME);
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement | HTMLButtonElement>) => {
     event.preventDefault();
+
+    if (!searchQuery) {
+      router.push(PAGE_ROUTE.HOME);
+      return;
+    }
+
     if (handleSearch) {
       handleSearch(searchQuery);
     } else {
-      router.push('/search');
+      router.replace(PAGE_ROUTE.SEARCH(searchQuery));
     }
   };
 

@@ -10,7 +10,7 @@ const MainPage = async () => {
   const noChannel = channelsData?.page.total_count === 0;
 
   return (
-    <div className="flex flex-col items-center gap-[40px] p-[40px]">
+    <main className="flex flex-col items-center gap-[40px] p-[40px]">
       {noChannel ? (
         <ChannelCreatorBox>
           생성된 채널이 없어서 조용하네요!
@@ -23,7 +23,7 @@ const MainPage = async () => {
           <ChannelList channelsData={channelsData} />
         </>
       )}
-    </div>
+    </main>
   );
 };
 
