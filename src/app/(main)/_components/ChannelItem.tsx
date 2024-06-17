@@ -12,7 +12,7 @@ interface ChannelItemProps {
 
 const ChannelItem = ({ channelData }: ChannelItemProps) => {
   const { channel, playlist = null, owner, user_count } = channelData;
-  const thumbnail = playlist ? playlist.thumbnail : '/screen-adjustment.svg';
+  const thumbnail = playlist ? playlist.thumbnail : '/default-thumbnail.png';
   const ownerProfile = owner?.profile_image ? owner.profile_image : '/default-profile-image.png'; // TODO 채널장 프로필 이미지 서버 해결되면 다시 실행
 
   const noHashtags = channel.hashtag === null;

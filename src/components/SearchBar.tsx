@@ -2,16 +2,18 @@
 
 import { useState } from 'react';
 
+import { PAGE_ROUTE } from '@/utils/route';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 interface SearchBarProps {
+  initialQuery?: string;
   handleSearch?: (searchQuery: string) => void;
   placeholder?: string;
 }
 
-const SearchBar = ({ handleSearch, placeholder }: SearchBarProps) => {
-  const [searchQuery, setSearchQuery] = useState<string>('');
+const SearchBar = ({ initialQuery = '', handleSearch, placeholder }: SearchBarProps) => {
+  const [searchQuery, setSearchQuery] = useState<string>(initialQuery);
 
   const router = useRouter();
 
@@ -21,14 +23,21 @@ const SearchBar = ({ handleSearch, placeholder }: SearchBarProps) => {
 
   const handleDelete = () => {
     setSearchQuery('');
+    router.replace(PAGE_ROUTE.HOME);
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement | HTMLButtonElement>) => {
     event.preventDefault();
+
+    if (!searchQuery) {
+      router.push(PAGE_ROUTE.HOME);
+      return;
+    }
+
     if (handleSearch) {
       handleSearch(searchQuery);
     } else {
-      router.push('/search');
+      router.replace(PAGE_ROUTE.SEARCH(searchQuery));
     }
   };
 
@@ -51,7 +60,7 @@ const SearchBar = ({ handleSearch, placeholder }: SearchBarProps) => {
       {searchQuery && (
         <button
           onClick={handleDelete}
-          className="absolute right-[64px] top-[18px] size-[20px] mobile:right-[58px] mobile:top-[15px] mobile:size-[18px] tablet:right-[62px] tablet:top-[16px]"
+          className="absolute right-[58px] top-[15px] size-[18px] tablet:right-[62px] tablet:top-[16px] desktop:right-[64px] desktop:top-[18px] desktop:size-[20px]"
         >
           <Image fill src="/Close.svg" alt="입력된 검색어 삭제하는 버튼" />
         </button>

@@ -9,10 +9,11 @@ import { useInView } from 'react-intersection-observer';
 import ChannelItem from './ChannelItem';
 
 interface ChannelListProps {
+  query?: string | null;
   channelsData: GetChannelListResponse;
 }
 
-const ChannelList = ({ channelsData }: ChannelListProps) => {
+const ChannelList = ({ query, channelsData }: ChannelListProps) => {
   const { channels, addChannels, updateChannels, cursor, incrementCursor } = ChannelStore();
   const [loading, setLoading] = useState(false);
 
@@ -25,12 +26,15 @@ const ChannelList = ({ channelsData }: ChannelListProps) => {
 
     setLoading(true);
 
-    const nextChannelsData = await getChannelList({ cursor: cursor + 1 });
+    const nextChannelsData = await getChannelList({
+      cursor: cursor + 1,
+      keyword: `${query ? query : ''}`,
+    });
     addChannels(nextChannelsData.channels);
     incrementCursor();
 
     setLoading(false);
-  }, [cursor, addChannels, incrementCursor, loading]);
+  }, [cursor, addChannels, incrementCursor, loading, query]);
 
   useEffect(() => {
     if (channelsData && channelsData.channels) {
