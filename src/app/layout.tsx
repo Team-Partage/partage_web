@@ -14,6 +14,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 
 import './globals.css';
+import Header from '@/components/Header';
 
 export const metadata: Metadata = {
   title: 'Partage',
@@ -28,7 +29,8 @@ export default function RootLayout({
   return (
     <html lang="kr" className={`${pretendard.variable} h-full`}>
       <body className={`${pretendard.className} h-full`}>
-        <header className="flex h-[100px] w-full items-center justify-between border-b-2 border-neutral-400 p-10">
+        <Header />
+        {/* <header className="flex h-[100px] w-full items-center justify-between border-b-2 border-neutral-400 p-10">
           <h1 className="text-main-skyblue max-bold">Partage</h1>
           <div className="flex items-center gap-12">
             <Dialog>
@@ -56,7 +58,7 @@ export default function RootLayout({
               회원가입
             </Link>
           </div>
-        </header>
+        </header> */}
         {children}
       </body>
     </html>
