@@ -1,81 +1,68 @@
-// import { Client } from '@stomp/stompjs';
-// import SockJS from 'sockjs-client';
+import { useEffect } from 'react';
 
-// import { useSocketStore } from '@/store/useSocketStore';
+import { Client } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
 
-// import type { IFrame, IMessage, IStompSocket } from '@stomp/stompjs';
+import type { IFrame, IMessage, IStompSocket } from '@stomp/stompjs';
 
-// const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_WEBSOCKET_SERVER_URL;
 
-// const TOKEN = '';
+type Message = {
+  channel_id: string;
+  sender: string;
+  content: string;
+  type: string;
+};
 
-// type Message = {
-//   channel_id: string;
-//   sender: string;
-//   content: string;
-//   type: string;
-// };
+const stomp = new Client({
+  reconnectDelay: 5000,
+  heartbeatIncoming: 10000,
+  heartbeatOutgoing: 10000,
+});
 
-// const useSocket = (id: string) => {
-//   const { stomp, setStomp } = useSocketStore();
-//   const url = new URL(`/ws?channel=${id}`, BASE_URL).toString();
+interface Params {
+  channelId: string;
+  onMessage: (message: IMessage) => void;
+}
 
-//   const create = () => {
-//     const client = new Client({
-//       brokerURL: url,
-//     });
+const useSocket = ({ channelId, onMessage }: Params) => {
+  const url = new URL(`/ws?channel=${channelId}`, BASE_URL).toString();
+  stomp.webSocketFactory = () => new SockJS(url) as IStompSocket;
 
-//     // WebSocket Fallback
-//     if (typeof WebSocket !== 'function') {
-//       client.webSocketFactory = () => new SockJS(url) as IStompSocket;
-//     }
+  useEffect(() => {
+    const connect = () => {
+      stomp.onConnect = () => {
+        console.log('WS: onConnect');
+        stomp.subscribe(`/channel/${channelId}`, onMessage);
+      };
 
-//     setStomp(client);
-//   };
+      stomp.onStompError = (frame: IFrame) => {
+        console.error('Broker reported error: ' + frame.headers['message']);
+        console.error('Additional details: ' + frame.body);
+      };
 
-//   const connect = () => {
-//     if (!stomp) {
-//       console.error('stomp ' + stomp);
-//       return;
-//     }
+      stomp.activate();
+    };
 
-//     stomp.onConnect = () => {
-//       console.log('WS: onConnect');
-//       // stomp.subscribe(`/channel/${id}`, (message: IMessage) => {
-//       //   console.log(JSON.parse(message.body));
-//       // });
-//     };
+    connect();
 
-//     stomp.onStompError = (frame: IFrame) => {
-//       console.log('Broker reported error: ' + frame.headers['message']);
-//       console.log('Additional details: ' + frame.body);
-//     };
+    return () => {
+      const disconnect = () => {
+        stomp.deactivate();
+      };
 
-//     stomp.activate();
-//   };
+      disconnect();
+    };
+  }, [channelId, onMessage]);
 
-//   const disconnect = () => {
-//     if (!stomp) {
-//       console.error('stomp ' + stomp);
-//       return;
-//     }
+  const send = (message: Message) => {
+    stomp.publish({
+      destination: `/channel/${channelId}`,
+      body: JSON.stringify(message),
+    });
+  };
 
-//     stomp.deactivate();
-//   };
+  return { send };
+};
 
-//   const send = (message: Message) => {
-//     if (!stomp) {
-//       console.error('stomp ' + stomp);
-//       return;
-//     }
-
-//     stomp.publish({
-//       destination: `/channel/${id}`,
-//       body: JSON.stringify(message),
-//     });
-//   };
-
-//   return { create, connect, disconnect, send };
-// };
-
-// export default useSocket;
+export default useSocket;
