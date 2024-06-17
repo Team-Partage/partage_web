@@ -6,11 +6,27 @@ export type ChannelType = 'PUBLIC' | 'PRIVATE';
 export type Channel = {
   channel_id: string;
   name: string;
-  type: ChannelType;
-  hashtag: string | null;
+  type: string;
+  hashtag: string;
   channel_url: string;
   channel_color: string | null;
-  created_at: string;
+  create_at: string;
+};
+
+export type Owner = {
+  user_id: string;
+  email: string;
+  username: string;
+  nickname: string;
+  profile_color: string | null;
+  profile_image: string | null;
+};
+
+export type ChannelWithPlaylist = {
+  channel: Channel;
+  playlist: Playlist | null;
+  owner: Owner;
+  user_count: number;
 };
 
 export type ChannelUser = {
@@ -52,10 +68,10 @@ export type DeleteChannelResponse = {
   status: boolean;
 };
 
-// 채널 목록 조회
+// 채널 목록 조회 응답
 export type GetChannelListResponse = {
   page: { cursor: number; per_page: number; total_page: number; total_count: number };
-  channels: Channel[];
+  channels: ChannelWithPlaylist[];
 };
 
 // 채널 상세 조회

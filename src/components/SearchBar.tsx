@@ -3,14 +3,17 @@
 import { useState } from 'react';
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 interface SearchBarProps {
-  handleSearch: (searchQuery: string) => void;
+  handleSearch?: (searchQuery: string) => void;
   placeholder?: string;
 }
 
 const SearchBar = ({ handleSearch, placeholder }: SearchBarProps) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const router = useRouter();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
@@ -22,7 +25,11 @@ const SearchBar = ({ handleSearch, placeholder }: SearchBarProps) => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement | HTMLButtonElement>) => {
     event.preventDefault();
-    handleSearch(searchQuery);
+    if (handleSearch) {
+      handleSearch(searchQuery);
+    } else {
+      router.push('/search');
+    }
   };
 
   return (
@@ -33,7 +40,7 @@ const SearchBar = ({ handleSearch, placeholder }: SearchBarProps) => {
         value={searchQuery}
         onChange={handleChange}
         placeholder={placeholder ? placeholder : '검색어를 입력해 주세요.'}
-        className="h-[48px] w-full min-w-[335px] rounded-full border border-DEFAULT border-main-skyblue bg-neutral-500 px-[24px] text-neutral-100 small-regular placeholder:text-neutral-200 tablet:h-[52px] tablet:w-[420px] desktop:h-[56px] desktop:w-[640px] desktop:base-regular"
+        className="h-[48px] w-full min-w-[335px] rounded-full border border-DEFAULT border-main-skyblue bg-neutral-500 px-[24px] text-neutral-100 small-regular placeholder:text-neutral-200 tablet:h-[52px] tablet:w-[420px] tablet:base-regular desktop:h-[56px] desktop:w-[640px]"
       />
       <button
         onClick={handleSubmit}
