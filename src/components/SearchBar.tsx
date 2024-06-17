@@ -60,7 +60,7 @@ const SearchBar = ({ initialQuery = '', handleSearch, placeholder }: SearchBarPr
       {searchQuery && (
         <button
           onClick={handleDelete}
-          className="absolute right-[64px] top-[18px] size-[20px] mobile:right-[58px] mobile:top-[15px] mobile:size-[18px] tablet:right-[62px] tablet:top-[16px]"
+          className="absolute right-[58px] top-[15px] size-[18px] tablet:right-[62px] tablet:top-[16px] desktop:right-[64px] desktop:top-[18px] desktop:size-[20px]"
         >
           <Image fill src="/Close.svg" alt="입력된 검색어 삭제하는 버튼" />
         </button>
