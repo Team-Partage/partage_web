@@ -1,6 +1,7 @@
 import ChannelCreatorBox from '@/components/ChannelCreatorBox';
 import SearchBar from '@/components/SearchBar';
 import { getChannelList } from '@/services/channel';
+import { PLACEHOLDER } from '@/utils/constants';
 
 import ChannelList from './(main)/_components/ChannelList';
 
@@ -19,7 +20,7 @@ const MainPage = async () => {
         </ChannelCreatorBox>
       ) : (
         <>
-          <SearchBar />
+          <SearchBar placeholder={PLACEHOLDER.CHANNEL_SEARCHBAR} />
           <ChannelList channelsData={channelsData} />
         </>
       )}
