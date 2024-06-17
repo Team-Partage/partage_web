@@ -4,7 +4,7 @@
 <br/>
 <br/>
 
-## **기술스택**
+## **기술스택 / 담당자**
 
 #### **Back-End**
 
@@ -15,6 +15,8 @@
 <img src="https://img.shields.io/badge/MySQL-00b0bd?style=flat"/> 
 <img src="https://img.shields.io/badge/Redis-ff0000?style=flat"/> 
 <img src="https://img.shields.io/badge/Swagger-15b800?style=flat"/> 
+ ㅇ
+##### 예찬[@qwqw0414](https://github.com/qwqw0414), 민욱[@vvxxxxk](https://github.com/vvxxxxk)
 <br/>
 
 #### **Front-End**
@@ -25,6 +27,9 @@
 <img src="https://img.shields.io/badge/ESLint-7f5cff?style=flat"/>
 <img src="https://img.shields.io/badge/Prettier-ff745c?style=flat"/>
 <img src="https://img.shields.io/badge/Zustand-ffae00?style=flat"/>
+
+##### 시온[@Si-off](https://github.com/Si-off), 예은[@MaraisLee](https://github.com/MaraisLee), 숙희[@sooki88](https://github.com/sooki88)
+
 <br/>
 
 #### **Design**
@@ -62,9 +67,3 @@
 나를 드러낼 수 있는 나의 프로필 정보와 비밀번호를 변경할 수 있어요!
 
 ![mypage](https://github.com/Team-Partage/partage_web/assets/131663155/8d826348-ff1e-4bc9-94c2-0efca160e29e)
-
-<!--
-/ 예찬[@qwqw0414](https://github.com/qwqw0414), 민욱[@
-vvxxxxk](https://github.com/vvxxxxk)
-
-/ 시온[@Si-off](https://github.com/Si-off), 예은[@MaraisLee](https://github.com/MaraisLee), 숙희[@sooki88](https://github.com/sooki88) -->
