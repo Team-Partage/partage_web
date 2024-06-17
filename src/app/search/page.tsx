@@ -19,8 +19,8 @@ const SearchPage = async ({ searchParams }: SearchPageProps) => {
   return (
     <>
       {noChannel ? (
-        <ChannelCreatorBox>
-          &apos;검색어&apos;로 검색된 채널이 없어요.
+        <ChannelCreatorBox page="search">
+          &apos;{query}&apos;로 검색된 채널이 없어요.
           <br />
           폭탄뉴진세님이 먼저 만들어보는 건 어떠세요?
         </ChannelCreatorBox>
