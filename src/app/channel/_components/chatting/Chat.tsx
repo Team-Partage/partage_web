@@ -18,8 +18,8 @@ const Chat = ({ nickname, message }: Props) => {
         height={22}
         className="h-[1.375rem] rounded-full object-cover"
       />
-      <p className="ml-2 small-bold">{nickname}</p>
-      <p className="ml-2 small-regular">{message}</p>
+      <p className="ml-2 micro-semiBold">{nickname}</p>
+      <p className="ml-2 tiny-regular">{message}</p>
     </div>
   );
 };

@@ -2,7 +2,7 @@ import { Channel } from '@/services/channel/type';
 import { ListVideo, MessagesSquare } from 'lucide-react';
 
 import Chatting from '../_components/chatting';
-import Player from '../_components/player';
+// import Player from '../_components/player';
 import Playlist from '../_components/playlist';
 
 interface Props {
@@ -22,7 +22,7 @@ const page = ({ params }: Props) => {
         <Playlist />
       </section>
       <section className="mt-10 w-full">
-        <Player />
+        {/* <Player /> */}
         <div>
           <h2>{name}</h2>
           <div>{hashtag}</div>
