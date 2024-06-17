@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Partage
 
-## Getting Started
+**동시간 유튜브 시청 + 채팅 플랫폼**
+<br/>
+<br/>
 
-First, run the development server:
+## **기술스택**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+#### **Back-End**
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+<img src="https://img.shields.io/badge/Java-ff4000?style=flat"/> 
+<img src="https://img.shields.io/badge/Spring-18d100?style=flat"/> 
+<img src="https://img.shields.io/badge/Spring Boot-18d100?style=flat"/> 
+<img src="https://img.shields.io/badge/Spring Security-18d100?style=flat"/> 
+<img src="https://img.shields.io/badge/MySQL-00b0bd?style=flat"/> 
+<img src="https://img.shields.io/badge/Redis-ff0000?style=flat"/> 
+<img src="https://img.shields.io/badge/Swagger-15b800?style=flat"/> 
+<br/>
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+#### **Front-End**
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+<img src="https://img.shields.io/badge/Next.js-000000?style=flat"/> <img src="https://img.shields.io/badge/Typescript-005ADC?style=flat"/>
+<img src="https://img.shields.io/badge/Yarn berry-00ccf5?style=flat"/>
+<img src="https://img.shields.io/badge/Tailwind CSS-00a3f5?style=flat"/>
+<img src="https://img.shields.io/badge/ESLint-7f5cff?style=flat"/>
+<img src="https://img.shields.io/badge/Prettier-ff745c?style=flat"/>
+<img src="https://img.shields.io/badge/Zustand-ffae00?style=flat"/>
+<br/>
 
-## Learn More
+#### **Design**
 
-To learn more about Next.js, take a look at the following resources:
+<img src="https://img.shields.io/badge/Figma-ff007b?style=flat"/>
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+<br/><br/>
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## **메인페이지 /**
 
-## Deploy on Vercel
+다양한 유튜브 컨텐츠를 즐길 수 있는 채널들을 골라 입장하세요!
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+![main](https://github.com/Team-Partage/partage_web/assets/131663155/be9dec2d-cf20-4bc9-8ec2-f1f4c24d98fe)
+<br/>
+<br/>
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## **채널 페이지 /channel/:channelId**
+
+여러 지인들과 함께 유튜브를 시청하며 채팅도 하고, 다음 플레이리스트도 확인하세요!
+
+![channel](https://github.com/Team-Partage/partage_web/assets/131663155/2cd6cec2-ff55-4418-88f1-657c7aecac27)
+<br/>
+<br/>
+
+## **채널 설정**
+
+채팅장은 채널명, 태그, 공개여부에 이어 관리자 권한도 설정할 수 있어요!
+
+![채널설정](https://github.com/Team-Partage/partage_web/assets/131663155/6c7f5d1a-31da-4cc2-b20c-b03e3c938efd)
+<br/>
+<br/>
+
+## **마이페이지 /mypage**
+
+나를 드러낼 수 있는 나의 프로필 정보와 비밀번호를 변경할 수 있어요!
+
+![mypage](https://github.com/Team-Partage/partage_web/assets/131663155/8d826348-ff1e-4bc9-94c2-0efca160e29e)
+
+<!--
+/ 예찬[@qwqw0414](https://github.com/qwqw0414), 민욱[@
+vvxxxxk](https://github.com/vvxxxxk)
+
+/ 시온[@Si-off](https://github.com/Si-off), 예은[@MaraisLee](https://github.com/MaraisLee), 숙희[@sooki88](https://github.com/sooki88) -->
