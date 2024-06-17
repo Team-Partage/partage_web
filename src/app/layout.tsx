@@ -11,6 +11,8 @@ import { pretendard } from '@/utils/fonts';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
 
+import AuthSession from '../lib/AuthSession';
+
 import type { Metadata } from 'next';
 
 import './globals.css';
@@ -28,53 +30,38 @@ export default function RootLayout({
   return (
     <html lang="kr" className={`${pretendard.variable} h-full`}>
       <body className={`${pretendard.className} h-full`}>
-        <header className="flex h-[100px] w-full items-center justify-between border-b-2 border-neutral-400 p-10">
-          <h1 className="text-main-skyblue max-bold">Partage</h1>
-          <div className="flex items-center gap-12">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="active" className="px-4 base-bold">
-                  <Plus width={20} height={20} strokeWidth={2} />
-                  채널 생성
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>채널 생성</DialogTitle>
-                </DialogHeader>
-                <Input placeholder="채널명을 입력해 주세요." />
-                <Input placeholder="태그를 입력해 주세요." />
-                <div className="flex justify-center">
-                  <Button variant="active">생성</Button>
-                </div>
-              </DialogContent>
-            </Dialog>
-            <Link className="base-regular" href="">
-              로그인
-            </Link>
-            <Link className="base-regular" href="">
-              회원가입
-            </Link>
-          </div>
-        </header>
-        <main className="h-screen w-full">{children}</main>
-        <footer className="h-[210px]">
-          <div className="flex flex-col gap-[23px] pt-[98px] text-gray-100">
-            <div className="flex items-center justify-between">
-              <p className="sub-heading-2 ">
-                Harmonise Your <span className="text-[#4484FF]"> Playlist</span>: Your,
-                <span className="text-[#4484FF]"> Soundtrack</span>, Your
-                <span className="text-[#4484FF]"> Way</span>!
-              </p>
-              <div className="flex items-center justify-center gap-[23px] text-foreground-high">
-                <Instagram />
-                <Twitter />
-                <Facebook />
-              </div>
+        <AuthSession>
+          <header className="flex h-[100px] w-full items-center justify-between border-b-2 border-neutral-400 p-10">
+            <h1 className="text-main-skyblue max-bold">Partage</h1>
+            <div className="flex items-center gap-12">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="active" className="px-4 base-bold">
+                    <Plus width={20} height={20} strokeWidth={2} />
+                    채널 생성
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>채널 생성</DialogTitle>
+                  </DialogHeader>
+                  <Input placeholder="채널명을 입력해 주세요." />
+                  <Input placeholder="태그를 입력해 주세요." />
+                  <div className="flex justify-center">
+                    <Button variant="active">생성</Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+              <Link className="base-regular" href="">
+                로그인
+              </Link>
+              <Link className="base-regular" href="">
+                회원가입
+              </Link>
             </div>
-            <div className="body-normal-3">Copyright 2023. All Rights Reserved</div>
-          </div>
-        </footer>
+          </header>
+          <main className="h-screen w-full">{children}</main>
+        </AuthSession>
       </body>
     </html>
   );

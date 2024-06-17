@@ -16,12 +16,18 @@ class Fetcher {
     this.defaultRequestInit = config?.defaultRequestInit;
   }
 
-  async get<T>(endpoint: string): Promise<T> {
+  async get<T>(endpoint: string, options?: FetcherRequestInit): Promise<T> {
     try {
       const url = new URL(endpoint, this.baseURL);
 
+      let requestInit = this.defaultRequestInit;
+
+      if (options) {
+        requestInit = merge(this.defaultRequestInit, options);
+      }
+
       const res = await fetch(url, {
-        ...this.defaultRequestInit,
+        ...requestInit,
         method: 'GET',
       });
 
