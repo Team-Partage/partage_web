@@ -76,6 +76,7 @@ const config = {
       fontFamily: {
         pretendard: ['var(--font-pretendard)'],
       },
+      borderWidth: { '1': '1px' },
     },
   },
   plugins: [fonts],
