@@ -1,4 +1,5 @@
 import { merge } from 'lodash';
+import qs from 'qs';
 
 type FetcherRequestInit = Omit<RequestInit, 'method'>;
 
@@ -16,12 +17,16 @@ class Fetcher {
     this.defaultRequestInit = config?.defaultRequestInit;
   }
 
-  async get<T>(endpoint: string, options?: FetcherRequestInit): Promise<T> {
+  async get<T>(endpoint: string, params?: object, options?: FetcherRequestInit): Promise<T> {
     try {
       const url = new URL(endpoint, this.baseURL);
-
+       
       let requestInit = this.defaultRequestInit;
-
+       
+      if (params) {
+        url.search = qs.stringify(params);
+      }
+  
       if (options) {
         requestInit = merge(this.defaultRequestInit, options);
       }
