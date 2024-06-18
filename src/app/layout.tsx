@@ -1,6 +1,8 @@
 import Header from '@/components/Header';
 import { pretendard } from '@/utils/fonts';
 
+import AuthSession from '../lib/AuthSession';
+
 import type { Metadata } from 'next';
 
 import './globals.css';
@@ -18,8 +20,10 @@ export default function RootLayout({
   return (
     <html lang="kr" className={`${pretendard.variable} h-full`}>
       <body className={`${pretendard.className} h-full`}>
-        <Header />
-        {children}
+        <AuthSession>
+          <Header />
+          {children}
+        </AuthSession>
       </body>
     </html>
   );
