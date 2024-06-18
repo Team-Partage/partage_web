@@ -15,6 +15,8 @@ export const getChannelList = async (params: {
     perPage,
     keyword,
   });
+
+  return data;
 };
 
 /** 채널 상세 정보 조회 */
