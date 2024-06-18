@@ -28,14 +28,14 @@ const page = async ({ params }: Props) => {
         <Playlist playlists={playlists} />
       </section>
       <section className="mt-10 w-full">
-        <Player src={`${YOUTUBE_BASE_URL + playlists[0].url}`} />
+        <Player src={`${YOUTUBE_BASE_URL + playlists[0]?.url}`} />
         <div className="mt-4 flex justify-between">
           <div className="flex flex-col gap-2">
             <h2 className="text-neutral-100 large-bold">{channel.name}</h2>
             <div className="flex items-center">
               <Image
                 className="aspect-square rounded-full object-cover"
-                src={channel_users[0].profile_image!}
+                src={channel_users[0].profile_image || '/default-profile-image.png'}
                 width={36}
                 height={36}
                 alt="profile"

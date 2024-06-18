@@ -11,9 +11,9 @@ interface Props {
 const Playlist = ({ playlists }: Props) => {
   return (
     <ol className="flex flex-col gap-2">
-      {playlists.map((item) => {
+      {playlists?.map((item) => {
         return (
-          <li key={item.playlist_no}>
+          <li key={item?.playlist_no}>
             <PlaylistCard {...item} />
           </li>
         );
