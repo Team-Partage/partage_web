@@ -1,8 +1,8 @@
 import { fetcher } from '@/lib/fetcher';
 
-import { GetChannelListResponse } from './type';
+import { GetChannelDetailResponse, GetChannelListResponse } from './type';
 
-/** */
+/** 채널 검색 */
 export const getChannelList = async (params: {
   cursor?: number;
   perPage?: number;
@@ -15,5 +15,18 @@ export const getChannelList = async (params: {
     perPage,
     keyword,
   });
+
+  return data;
+};
+
+/** 채널 상세 정보 조회 */
+export const getChannelDetail = async (params: {
+  channelId: string;
+  page?: number;
+  pageSize?: number;
+}) => {
+  const { channelId, ...rest } = params;
+
+  const data = await fetcher.get<GetChannelDetailResponse>(`/api/v1/channel/${channelId}`, rest);
   return data;
 };
