@@ -32,7 +32,9 @@ const ChannelItem = ({ channelData }: ChannelItemProps) => {
           fill
           src={thumbnail}
           alt={`${channel.name} 채널의 썸네일`}
+          sizes="(min-width: 1199px) 33vw, (min-width: 743px) 50vw, (min-width: 375px) 100vw, 100vw"
           style={{ objectFit: 'cover' }}
+          priority
         />
       </div>
       <div className="flex gap-[12px]">
@@ -41,6 +43,7 @@ const ChannelItem = ({ channelData }: ChannelItemProps) => {
             fill
             src={ownerProfile}
             alt={`${channel.name} 채널을 만든 유저의 프로필 사진`}
+            sizes="36px"
             style={{ objectFit: 'cover' }}
           />
         </div>
