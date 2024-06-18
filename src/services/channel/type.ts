@@ -83,8 +83,7 @@ export type GetChannelListResponse = {
 /** 채널 상세 조회 Res */
 export type GetChannelDetailResponse = {
   channel: Channel;
-  user: ChannelUser;
   channel_users: ChannelUser[];
-  playlist: Playlist[];
+  playlists: Playlist[];
   channel_permissions: ChannelPermission;
 };

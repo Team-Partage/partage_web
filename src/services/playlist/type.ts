@@ -11,7 +11,7 @@ export type Playlist = {
 
 /** 플레이리스트 조회 */
 export type GetPlaylistResponse = {
-  playlist: Playlist[];
+  playlists: Playlist[];
   total_contents: number;
   page_size: number;
   page: number;
