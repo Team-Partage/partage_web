@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
-import { SignInResponse } from './services/auth/type';
+import { SignInResponse, UserResponse } from './services/auth/type';
 
 export const {
   handlers: { GET, POST },
@@ -33,38 +33,34 @@ export const {
           email: credentials.username,
           password: credentials.password,
         });
-        console.log('authResponse: ', authResponse);
 
         const setCookie = authResponse['access_token'];
         // 쿠키에 저장
         console.log('set-cookie', setCookie);
         if (setCookie) {
-          // 쿠키 객체로 만들기
+          // 브라우저에 쿠키를 심어주기
           cookies().set('access_token', setCookie, {
             httpOnly: true,
-          }); // 브라우저에 쿠키를 심어주는 것
+          });
         }
         if (!authResponse) {
           return null;
         }
 
-        const myInfo = await fetcher.get('/api/v1/user/me', {
+        const myInfo = await fetcher.get<UserResponse>('/api/v1/user/me', {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${setCookie}`,
           },
         });
-        console.log('myinfo', myInfo);
         const { user } = myInfo;
 
         return {
+          // next-auth에서는 아래의 세개 이름만 지원
           email: user.email,
           name: user.nickname,
           image: user.profile_image,
           ...user,
-          // id: user.user_id,
-          // name: user.username,
-          // profile_color: user.profile_color,
         };
       },
     }),
