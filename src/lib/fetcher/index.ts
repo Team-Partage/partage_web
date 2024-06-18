@@ -17,16 +17,22 @@ class Fetcher {
     this.defaultRequestInit = config?.defaultRequestInit;
   }
 
-  async get<T>(endpoint: string, params: object): Promise<T> {
+  async get<T>(endpoint: string, params?: object, options?: FetcherRequestInit): Promise<T> {
     try {
       const url = new URL(endpoint, this.baseURL);
-
+       
+      let requestInit = this.defaultRequestInit;
+       
       if (params) {
         url.search = qs.stringify(params);
       }
+  
+      if (options) {
+        requestInit = merge(this.defaultRequestInit, options);
+      }
 
       const res = await fetch(url, {
-        ...this.defaultRequestInit,
+        ...requestInit,
         method: 'GET',
       });
 
@@ -69,7 +75,7 @@ class Fetcher {
       return this.handleError(error);
     }
   }
-  async put<T>(endpoint: string, params: object, options: FetcherRequestInit): Promise<T> {
+  async put<T>(endpoint: string, params: object, options?: FetcherRequestInit): Promise<T> {
     try {
       const url = new URL(endpoint, this.baseURL);
 
@@ -123,12 +129,18 @@ class Fetcher {
       return this.handleError(error);
     }
   }
-  async delete<T>(endpoint: string): Promise<T> {
+  async delete<T>(endpoint: string, options?: FetcherRequestInit): Promise<T> {
     try {
       const url = new URL(endpoint, this.baseURL);
 
+      let requestInit = this.defaultRequestInit;
+
+      if (options) {
+        requestInit = merge(this.defaultRequestInit, options);
+      }
+
       const res = await fetch(url, {
-        ...this.defaultRequestInit,
+        ...requestInit,
         method: 'DELETE',
       });
 

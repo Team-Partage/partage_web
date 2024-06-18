@@ -8,10 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { SignIn } from '@/services/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 
 const LoginSchema = z.object({
@@ -45,8 +45,16 @@ const LoginPage = () => {
 
   const onSubmit = async (data: z.infer<typeof LoginSchema>) => {
     try {
-      await SignIn(data);
-      router.push('/');
+      const response = await signIn('credentials', {
+        username: data.email,
+        password: data.password,
+      });
+      if (!response.ok) {
+        console.log('로그인 실패');
+      } else {
+        console.log('로그인 성공');
+      }
+      router.replace('/');
     } catch (err) {
       throw new Error(`${err}`);
     }
