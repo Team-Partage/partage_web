@@ -1,11 +1,22 @@
 'use client';
+import { useLayoutEffect, useState } from 'react';
 
 import ReactPlayer from 'react-player';
 
-const Player = () => {
+interface Props {
+  src?: string;
+}
+
+const Player = ({ src }: Props) => {
+  const [flag, setFlag] = useState(false);
+
+  useLayoutEffect(() => {
+    setFlag(true);
+  }, []);
+
   return (
-    <div className="overflow-hidden rounded-lg">
-      <ReactPlayer url="https://www.youtube.com/watch?v=2pvzR9iDwoE" config={{ youtube: {} }} />
+    <div className="aspect-video overflow-hidden rounded-lg bg-neutral-500">
+      {flag && <ReactPlayer width="100%" height="100%" url={src} config={{ youtube: {} }} />}
     </div>
   );
 };

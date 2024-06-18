@@ -16,7 +16,7 @@ const Chat = ({ nickname, message }: Props) => {
         alt="profile"
         width={22}
         height={22}
-        className="h-[1.375rem] rounded-full object-cover"
+        className="aspect-square rounded-full object-cover"
       />
       <p className="ml-2 micro-semiBold">{nickname}</p>
       <p className="ml-2 tiny-regular">{message}</p>

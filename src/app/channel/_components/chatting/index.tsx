@@ -1,48 +1,24 @@
 'use client';
 
-import { useLayoutEffect, useRef, useEffect } from 'react';
-
-import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
-
 import { Button } from '@/components/ui/button';
-import { getChannelList } from '@/services/channel';
+import { Textarea } from '@/components/ui/textarea';
+import { Send } from 'lucide-react';
 
 import Chat from './Chat';
 
 const Chatting = () => {
-  const client = useRef<Client | null>(null);
-
-  getChannelList().then((res) => {
-    console.log(res);
-  });
-
-  useLayoutEffect(() => {
-    const socket = new SockJS('http://localhost:9090/ws?channel=C-d0253549b5cb40449d683b6072f33f');
-    client.current = new Client({
-      webSocketFactory: () => socket,
-      reconnectDelay: 5000,
-      heartbeatIncoming: 4000,
-      heartbeatOutgoing: 4000,
-    });
-
-    client.current.onConnect = () => {
-      console.log('WS: onConnect');
-    };
-  }, []);
-
-  useEffect(() => {
-    client.current?.activate();
-
-    return () => {
-      client.current?.deactivate();
-    };
-  }, []);
-
   return (
     <section className="h-full">
-      <Chat nickname="Lorem" message="hello world" color="asd" />
-      <Button variant="active">Connect</Button>
+      <div className="">
+        <Chat nickname="Lorem" message="hello world" color="asd" />
+      </div>
+
+      <div className="flex items-center gap-3">
+        <Textarea variant="chat" />
+        <Button variant="active" size="icon">
+          <Send />
+        </Button>
+      </div>
     </section>
   );
 };

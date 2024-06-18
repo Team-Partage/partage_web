@@ -1,20 +1,24 @@
 'use client';
 
+import { Playlist } from '@/services/playlist/type';
+
 import PlaylistCard from './PlaylistCard';
 
-const Playlist = () => {
+interface Props {
+  playlists: Playlist[];
+}
+
+const Playlist = ({ playlists }: Props) => {
   return (
-    <section className="h-full px-8">
-      <header className=""></header>
-      <ol className="flex flex-col gap-2">
-        <li>
-          <PlaylistCard />
-        </li>
-        <li>
-          <PlaylistCard />
-        </li>
-      </ol>
-    </section>
+    <ol className="flex flex-col gap-2">
+      {playlists.map((item) => {
+        return (
+          <li key={item.playlist_no}>
+            <PlaylistCard {...item} />
+          </li>
+        );
+      })}
+    </ol>
   );
 };
 
