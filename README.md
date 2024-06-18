@@ -42,7 +42,7 @@
 
 다양한 유튜브 컨텐츠를 즐길 수 있는 채널들을 골라 입장하세요!
 
-![main](https://github.com/Team-Partage/partage_web/assets/131663155/be9dec2d-cf20-4bc9-8ec2-f1f4c24d98fe)
+![main](https://github.com/Team-Partage/partage_web/assets/131663155/e5d0f5b0-e332-4168-9d9b-12b753e6e553)
 <br/>
 <br/>
 
@@ -66,4 +66,4 @@
 
 나를 드러낼 수 있는 나의 프로필 정보와 비밀번호를 변경할 수 있어요!
 
-![mypage](https://github.com/Team-Partage/partage_web/assets/131663155/8d826348-ff1e-4bc9-94c2-0efca160e29e)
+![mypage](https://github.com/Team-Partage/partage_web/assets/131663155/45175770-0917-487e-8ec9-37ff7da5b3d6)
