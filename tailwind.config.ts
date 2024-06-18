@@ -13,10 +13,11 @@ const config = {
   prefix: '',
   theme: {
     screens: {
-      mobile: { max: '375px' },
-      tablet: { max: '744px' },
-      desktop: { max: '1200px' },
-      largeDesktop: { max: '1400px' },
+      mobile: '375px',
+      tablet: '744px',
+      largeTablet: '1088px',
+      desktop: '1200px',
+      largeDesktop: '1400px',
     },
     container: {
       center: true,
