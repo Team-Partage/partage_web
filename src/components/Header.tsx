@@ -9,7 +9,7 @@ function Header() {
     <header className="flex h-[68px] w-full items-center justify-between border-b-1 border-neutral-400 px-[20px] tablet:h-[76px] tablet:px-[40px] desktop:h-[84px]">
       <Link
         href={PAGE_ROUTE.HOME}
-        className="relative h-[28px] w-[92px] tablet:h-[32px] tablet:w-[105px] desktop:h-[38px] desktop:w-[126px]"
+        className="relative h-[28px] w-[92px] tablet:h-[32px] tablet:w-[105px] desktop:h-[36px] desktop:w-[120px]"
       >
         <Image src="/logo.svg" alt="partage 로고" fill style={{ objectFit: 'cover' }} />
       </Link>
