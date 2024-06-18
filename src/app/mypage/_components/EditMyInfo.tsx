@@ -28,7 +28,7 @@ const EditMyInfo = () => {
   const fileRef = useRef<HTMLInputElement>(null);
   const [imagePreview, setImagePreview] = useState('');
   const [fileData, setFileData] = useState<File>();
-
+  // TODO zustand 유저정보 가져오기
   const mynickname = '테스트';
 
   const form = useForm<z.infer<typeof MypageSchema>>({
@@ -102,7 +102,7 @@ const EditMyInfo = () => {
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className="flex h-[240px] gap-[28px]">
                 <Avatar className="group size-[240px]">
-                  <AvatarImage src={imagePreview || 'https://github.com/shadcn.png'} />
+                  <AvatarImage src={imagePreview || '/default-profile-image.png'} />
                   <AvatarFallback>profile-image</AvatarFallback>
                   <label
                     htmlFor="image"
@@ -154,8 +154,8 @@ const EditMyInfo = () => {
                 </div>
               </div>
               <ColorChips
-                size={'h-[60px] w-[60px]'}
-                selectedSize={'h-[70px] w-[70px]'}
+                size={'size-[60px]'}
+                selectedSize={'size-[70px]'}
                 count={9}
                 onColorSelect={(color) => setSelectedColor(color)}
               >

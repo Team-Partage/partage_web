@@ -5,10 +5,10 @@ import { colors, customColors } from '@/utils/colors';
 import { Check } from 'lucide-react';
 
 type Size =
-  | 'h-[60px] w-[60px]'
-  | 'h-[70px] w-[70px]'
-  | 'h-[80px] w-[80px]'
-  | 'h-[84px] w-[84px]'
+  | 'size-[60px]'
+  | 'size-[70px]'
+  | 'size-[80px]'
+  | 'size-[84px]'
   | string;
 
 type Props = {
@@ -20,6 +20,7 @@ type Props = {
 };
 
 const ColorChips = ({ size, selectedSize, count, onColorSelect, children }: Props) => {
+  // TODO zustand 유저정보
   const myColor = '#00FFFF';
 
   const [selectedColor, setSelectedColor] = useState<string>(colors[0]);
