@@ -19,8 +19,8 @@ export const {
       console.log('auth.ts jwt', token);
       return token;
     },
-    session({ session, newSession, user }) {
-      console.log('auth.ts session', session, newSession, user);
+    session({ session }) {
+      console.log('auth.ts session', session);
       return session;
     },
   },
@@ -35,8 +35,6 @@ export const {
         });
 
         const setCookie = authResponse['access_token'];
-        // 쿠키에 저장
-        console.log('set-cookie', setCookie);
         if (setCookie) {
           // 브라우저에 쿠키를 심어주기
           cookies().set('access_token', setCookie, {
@@ -47,12 +45,16 @@ export const {
           return null;
         }
 
-        const myInfo = await fetcher.get<UserResponse>('/api/v1/user/me', {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${setCookie}`,
+        const myInfo = await fetcher.get<UserResponse>(
+          '/api/v1/user/me',
+          {},
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${setCookie}`,
+            },
           },
-        });
+        );
         const { user } = myInfo;
 
         return {
@@ -60,7 +62,6 @@ export const {
           email: user.email,
           name: user.nickname,
           image: user.profile_image,
-          ...user,
         };
       },
     }),

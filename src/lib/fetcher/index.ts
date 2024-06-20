@@ -20,13 +20,13 @@ class Fetcher {
   async get<T>(endpoint: string, params?: object, options?: FetcherRequestInit): Promise<T> {
     try {
       const url = new URL(endpoint, this.baseURL);
-       
+
       let requestInit = this.defaultRequestInit;
-       
+
       if (params) {
         url.search = qs.stringify(params);
       }
-  
+
       if (options) {
         requestInit = merge(this.defaultRequestInit, options);
       }
