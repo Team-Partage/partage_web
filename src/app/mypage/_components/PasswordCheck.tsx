@@ -7,14 +7,14 @@ import { z } from 'zod';
 import FormModal from '@/components/FormModal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
-import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { Form, FormField } from '@/components/ui/form';
 import { CustomError } from '@/lib/customError';
 import { EditProfile } from '@/services/user';
 import { EditPasswordRequest } from '@/services/user/type';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+
+import PasswordInput from '../../../components/PasswordInput';
 
 const passwordValidation = z
   .string()
@@ -43,11 +43,6 @@ const PasswordSchema = z
 
 const PasswordCheck = () => {
   const [open, setOpen] = useState(false);
-  const [showPassword, setShowPassword] = useState({
-    passwordShow: false,
-    newPasswordShow: false,
-    newPasswordCheckShow: false,
-  });
 
   const form = useForm<z.infer<typeof PasswordSchema>>({
     resolver: zodResolver(PasswordSchema),
@@ -58,13 +53,6 @@ const PasswordCheck = () => {
     },
     mode: 'onChange',
   });
-
-  const togglePassword = (field: keyof typeof showPassword) => {
-    setShowPassword((prevState) => ({
-      ...prevState,
-      [field]: !prevState[field],
-    }));
-  };
 
   const onSubmit = async (data: z.infer<typeof PasswordSchema>) => {
     try {
@@ -103,87 +91,36 @@ const PasswordCheck = () => {
                     control={form.control}
                     name="password"
                     render={({ field, fieldState: { error } }) => (
-                      <FormItem className="pt-4">
-                        <FormLabel>현재 비밀번호</FormLabel>
-                        <FormControl>
-                          <Input
-                            type={showPassword.passwordShow ? 'text' : 'password'}
-                            placeholder="현재 비밀번호를 입력해주세요."
-                            isError={!!error}
-                            errorText={error?.message}
-                            endAdornment={
-                              <button type="button" onClick={() => togglePassword('passwordShow')}>
-                                {showPassword.passwordShow ? (
-                                  <Eye className="mr-2 h-[20px] text-neutral-200 " />
-                                ) : (
-                                  <EyeOff className="mr-2 h-[20px] text-neutral-200 " />
-                                )}
-                              </button>
-                            }
-                            {...field}
-                          />
-                        </FormControl>
-                      </FormItem>
+                      <PasswordInput
+                        field={field}
+                        error={error}
+                        label="현재 비밀번호"
+                        placeholder="현재 비밀번호를 입력해 주세요."
+                      />
                     )}
                   />
                   <FormField
                     control={form.control}
                     name="newPassword"
                     render={({ field, fieldState: { error } }) => (
-                      <FormItem className="pt-4">
-                        <FormLabel>새 비밀번호</FormLabel>
-                        <FormControl>
-                          <Input
-                            type={showPassword.newPasswordShow ? 'text' : 'password'}
-                            placeholder="새 비밀번호를 입력해주세요."
-                            isError={!!error}
-                            errorText={error?.message}
-                            endAdornment={
-                              <button
-                                type="button"
-                                onClick={() => togglePassword('newPasswordShow')}
-                              >
-                                {showPassword.newPasswordShow ? (
-                                  <Eye className="mr-2 h-[20px] text-neutral-200 " />
-                                ) : (
-                                  <EyeOff className="mr-2 h-[20px] text-neutral-200 " />
-                                )}
-                              </button>
-                            }
-                            {...field}
-                          />
-                        </FormControl>
-                      </FormItem>
+                      <PasswordInput
+                        field={field}
+                        error={error}
+                        label="새 비밀번호"
+                        placeholder="새 비밀번호를 입력해 주세요."
+                      />
                     )}
                   />
                   <FormField
                     control={form.control}
                     name="newPasswordCheck"
                     render={({ field, fieldState: { error } }) => (
-                      <FormItem className="pt-4">
-                        <FormLabel>새 비밀번호 확인</FormLabel>
-                        <FormControl>
-                          <Input
-                            type={showPassword.newPasswordCheckShow ? 'text' : 'password'}
-                            placeholder="새 비밀번호를 입력해주세요."
-                            isError={!!error}
-                            errorText={error?.message}
-                            endAdornment={
-                              <button
-                                type="button"
-                                onClick={() => togglePassword('newPasswordCheckShow')}
-                              >
-                                {showPassword.newPasswordCheckShow ? (
-                                  <Eye className="mr-2 h-[20px] text-neutral-200 " />
-                                ) : (
-                                  <EyeOff className="mr-2 h-[20px] text-neutral-200 " />
-                                )}
-                              </button>
-                            }
-                            {...field}
-                          />
-                        </FormControl>
-                      </FormItem>
+                      <PasswordInput
+                        field={field}
+                        error={error}
+                        label="새 비밀번호 확인"
+                        placeholder="새 비밀번호를 입력해 주세요."
+                      />
                     )}
                   />
                 </div>

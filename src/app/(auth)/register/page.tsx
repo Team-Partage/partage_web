@@ -4,35 +4,47 @@ import { useState } from 'react';
 
 import { z } from 'zod';
 
+import PasswordInput from '@/components/PasswordInput';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { SignUp } from '@/services/user';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
 import FormModal from '../../../components/FormModal';
 
-const RegisterSchema = z.object({
-  email: z.string().email('이메일 형식에 맞게 작성해주세요.'),
-  username: z.string().min(1, '이름을 입력해주세요.'),
-  nickname: z.string().min(1, '닉네임을 입력해주세요.'),
-  password: z
-    .string()
-    .min(8, '비밀번호는 최소 8자 이상이어야 합니다.')
-    .max(16, '비밀번호는 최대 16자까지 가능합니다.')
-    .regex(
-      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,16}$/,
-      '비밀번호는 영문, 숫자, 특수문자가 포함된 8~16자여야 합니다.',
-    ),
-});
+const passwordValidation = z
+  .string()
+  .min(8, '비밀번호는 최소 8자 이상이어야 합니다.')
+  .max(16, '비밀번호는 최대 16자까지 가능합니다.')
+  .regex(
+    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,16}$/,
+    '비밀번호는 영문, 숫자, 특수문자가 포함된 8~16자여야 합니다.',
+  );
+
+const RegisterSchema = z
+  .object({
+    email: z.string().email('이메일 형식에 맞게 작성해주세요.'),
+    username: z.string().min(1, '이름을 입력해주세요.'),
+    nickname: z.string().min(1, '닉네임을 입력해주세요.'),
+    password: passwordValidation,
+    passwordCheck: passwordValidation,
+  })
+  .superRefine(({ password, passwordCheck }, ctx) => {
+    if (password !== passwordCheck) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: '비밀번호가 일치하지 않아요.',
+        path: ['passwordCheck'],
+      });
+    }
+  });
 
 const RegisterPage = () => {
   const [open, setOpen] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const form = useForm<z.infer<typeof RegisterSchema>>({
@@ -42,13 +54,10 @@ const RegisterPage = () => {
       username: '',
       nickname: '',
       password: '',
+      passwordCheck: '',
     },
     mode: 'onChange',
   });
-
-  const togglePassword = () => {
-    setShowPassword(!showPassword);
-  };
 
   const onSubmit = async (data: z.infer<typeof RegisterSchema>) => {
     try {
@@ -65,29 +74,11 @@ const RegisterPage = () => {
 
   return (
     <div className="flex h-screen w-full items-center justify-center">
-      <Card className="h-[360px] w-[645px] border-0 base-regular mobile:w-[335px] tablet:w-[440px] tablet:small-regular ">
+      <Card className="h-[360px] w-[640px] border-0 base-regular mobile:w-[335px] tablet:w-[440px] tablet:small-regular ">
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field, fieldState: { error } }) => (
-                    <FormItem>
-                      <FormLabel>이메일</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="text"
-                          placeholder="이메일을 입력해 주세요."
-                          isError={!!error}
-                          errorText={error?.message}
-                          {...field}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
                 <FormField
                   control={form.control}
                   name="username"
@@ -126,29 +117,44 @@ const RegisterPage = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="password"
+                  name="email"
                   render={({ field, fieldState: { error } }) => (
                     <FormItem>
-                      <FormLabel>비밀번호</FormLabel>
+                      <FormLabel>이메일</FormLabel>
                       <FormControl>
                         <Input
-                          type={showPassword ? 'text' : 'password'}
-                          placeholder="비밀번호를 영문, 숫자, 특수문자가 포함된 8~16자로 입력해 주세요."
+                          type="text"
+                          placeholder="이메일을 입력해 주세요."
                           isError={!!error}
                           errorText={error?.message}
-                          endAdornment={
-                            <button type="button" onClick={togglePassword}>
-                              {showPassword ? (
-                                <Eye className="mr-2 h-[20px] text-neutral-200 " />
-                              ) : (
-                                <EyeOff className="mr-2 h-[20px] text-neutral-200 " />
-                              )}
-                            </button>
-                          }
                           {...field}
                         />
                       </FormControl>
                     </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field, fieldState: { error } }) => (
+                    <PasswordInput
+                      field={field}
+                      error={error}
+                      label="비밀번호"
+                      placeholder="비밀번호를 입력해 주세요"
+                    />
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="passwordCheck"
+                  render={({ field, fieldState: { error } }) => (
+                    <PasswordInput
+                      field={field}
+                      error={error}
+                      label="비밀번호 확인"
+                      placeholder="비밀번호를 입력해 주세요."
+                    />
                   )}
                 />
               </div>
