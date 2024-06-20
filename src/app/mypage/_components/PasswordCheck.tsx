@@ -5,41 +5,17 @@ import { useState } from 'react';
 import { z } from 'zod';
 
 import FormModal from '@/components/FormModal';
+import PasswordInput from '@/components/PasswordInput';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Form, FormField } from '@/components/ui/form';
 import { CustomError } from '@/lib/customError';
+import { PasswordSchema } from '@/schemas/userSchema';
 import { EditProfile } from '@/services/user';
 import { EditPasswordRequest } from '@/services/user/type';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
-import PasswordInput from '../../../components/PasswordInput';
-
-const passwordValidation = z
-  .string()
-  .min(8, '비밀번호는 최소 8자 이상이어야 합니다.')
-  .max(16, '비밀번호는 최대 16자까지 가능합니다.')
-  .regex(
-    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,16}$/,
-    '비밀번호는 영문, 숫자, 특수문자가 포함된 8~16자여야 합니다.',
-  );
-
-const PasswordSchema = z
-  .object({
-    password: passwordValidation,
-    newPassword: passwordValidation,
-    newPasswordCheck: passwordValidation,
-  })
-  .superRefine(({ newPassword, newPasswordCheck }, ctx) => {
-    if (newPassword !== newPasswordCheck) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: '새 비밀번호가 일치하지 않아요.',
-        path: ['newPasswordCheck'],
-      });
-    }
-  });
 
 const PasswordCheck = () => {
   const [open, setOpen] = useState(false);

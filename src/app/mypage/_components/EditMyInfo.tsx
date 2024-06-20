@@ -11,16 +11,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { MypageSchema } from '@/schemas/userSchema';
 import { CheckNickname, EditProfile, EditProfileImage } from '@/services/user';
 import { EditProfileColorRequest, NicknameRequest } from '@/services/user/type';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ImageUp } from 'lucide-react';
 import { useForm, useWatch } from 'react-hook-form';
-
-const MypageSchema = z.object({
-  email: z.string().email(),
-  nickname: z.string().min(1, '닉네임을 입력해주세요.'),
-});
 
 const EditMyInfo = () => {
   const [open, setOpen] = useState(false);
