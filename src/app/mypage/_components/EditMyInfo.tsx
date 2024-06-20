@@ -102,7 +102,10 @@ const EditMyInfo = () => {
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className="flex h-[240px] gap-[28px]">
                 <Avatar className="group size-[240px]">
-                  <AvatarImage src={imagePreview || '/default-profile-image.png'} />
+                  <AvatarImage
+                    className="object-cover"
+                    src={imagePreview || '/default-profile-image.png'}
+                  />
                   <AvatarFallback>profile-image</AvatarFallback>
                   <label
                     htmlFor="image"
