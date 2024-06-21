@@ -1,5 +1,5 @@
 import { ChannelWithPlaylist } from '@/services/channel/type';
-import { getChannelHoverBorderColor } from '@/utils/getChannelColorClassName';
+import { getChannelHoverBorderColor } from '@/utils/getChannelHoverBorderColor';
 import { PAGE_ROUTE } from '@/utils/route';
 import Image from 'next/image';
 import Link from 'next/link';
