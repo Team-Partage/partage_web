@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import * as LabelPrimitive from '@radix-ui/react-label';
 
 const labelVariants = cva(
-  'mb-[10px] inline-block text-foreground-high base-regular peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
+  'mb-[10px] inline-block text-neutral-100 base-regular peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
 );
 
 const Label = forwardRef<

@@ -17,7 +17,7 @@
 
   body {
     background-color: theme('colors.background');
-    color: theme('colors.foreground.high');
+    color: theme('colors.neutral.100');
   }
 
   input {
