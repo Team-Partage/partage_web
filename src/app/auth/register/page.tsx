@@ -18,6 +18,7 @@ import FormModal from '../../../components/FormModal';
 
 const RegisterPage = () => {
   const [open, setOpen] = useState(false);
+  const [emailCheck, setEmailCheck] = useState(false);
   const router = useRouter();
 
   const form = useForm<z.infer<typeof RegisterSchema>>({
@@ -31,8 +32,6 @@ const RegisterPage = () => {
     },
     mode: 'onChange',
   });
-
-  const handleEmailCheck = () => {};
 
   const onSubmit = async (data: z.infer<typeof RegisterSchema>) => {
     try {
@@ -55,7 +54,7 @@ const RegisterPage = () => {
             control={form.control}
             name="username"
             render={({ field, fieldState: { error } }) => (
-              <FormItem className="spacing-4">
+              <FormItem>
                 <FormLabel>이름</FormLabel>
                 <FormControl>
                   <Input
@@ -108,12 +107,10 @@ const RegisterPage = () => {
                   <Button
                     disabled={!!error || !field.value}
                     variant="active"
+                    font="medium"
                     className="desktop:h-[70px] desktop:w-[140px]"
-                    onClick={handleEmailCheck}
-                  >
-                    중복 확인
-                  </Button>
-                  {error?.message && <p className="desktop:h-[27px]"></p>}
+                  ></Button>
+                  {error?.message && <p className="desktop:h-[28px]"></p>}
                 </div>
               </div>
             )}
