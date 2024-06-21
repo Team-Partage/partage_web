@@ -9,8 +9,9 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { RegisterSchema } from '@/schemas/userSchema';
-import { SignUp } from '@/services/user';
+import { CheckEmail, SignUp } from '@/services/user';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { CircleCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
@@ -32,6 +33,18 @@ const RegisterPage = () => {
     },
     mode: 'onChange',
   });
+
+  const handleEmailCheck = async (email: string) => {
+    const isEmailAvailable = await CheckEmail({ email });
+    if (!isEmailAvailable) {
+      form.setError('email', {
+        type: 'manual',
+        message: '비밀번호 찾기',
+      });
+      return;
+    }
+    setEmailCheck(true);
+  };
 
   const onSubmit = async (data: z.infer<typeof RegisterSchema>) => {
     try {
@@ -97,6 +110,7 @@ const RegisterPage = () => {
                     <Input
                       type="text"
                       placeholder="이메일을 입력해 주세요."
+                      disabled={emailCheck}
                       isError={!!error}
                       errorText={error?.message}
                       {...field}
@@ -109,7 +123,10 @@ const RegisterPage = () => {
                     variant="active"
                     font="medium"
                     className="desktop:h-[70px] desktop:w-[140px]"
-                  ></Button>
+                    onClick={() => handleEmailCheck(field.value)}
+                  >
+                    {emailCheck ? <CircleCheck size={26.6} /> : '중복 확인'}
+                  </Button>
                   {error?.message && <p className="desktop:h-[28px]"></p>}
                 </div>
               </div>
