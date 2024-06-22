@@ -15,10 +15,7 @@ import { CircleCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
-import FormModal from '../../../components/FormModal';
-
 const RegisterPage = () => {
-  const [open, setOpen] = useState(false);
   const [emailCheck, setEmailCheck] = useState(false);
   const router = useRouter();
 
@@ -49,14 +46,10 @@ const RegisterPage = () => {
   const onSubmit = async (data: z.infer<typeof RegisterSchema>) => {
     try {
       await SignUp(data);
-      setOpen(true);
+      router.push('/register/email-validataion');
     } catch (err) {
       throw new Error(`${err}`);
     }
-  };
-
-  const handleModal = () => {
-    router.push('/login');
   };
 
   return (
@@ -159,19 +152,13 @@ const RegisterPage = () => {
         </div>
         <Button
           type="submit"
-          disabled={!form.formState.isValid}
+          disabled={!emailCheck || !form.formState.isValid}
           variant="active"
           size="lg"
           className="mt-[44px] w-full"
         >
           회원가입
         </Button>
-        <FormModal
-          content="회원가입이 완료되었어요!"
-          handleModal={handleModal}
-          open={open}
-          setOpen={setOpen}
-        />
       </form>
     </Form>
   );
