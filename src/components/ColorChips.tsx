@@ -1,69 +1,53 @@
-import { ReactNode, useEffect, useState } from 'react';
+'use client';
+
+import { useState } from 'react';
 
 import { cn } from '@/lib/utils';
-import { colors, customColors } from '@/utils/colors';
 import { Check } from 'lucide-react';
 
-type Size =
-  | 'size-[60px]'
-  | 'size-[70px]'
-  | 'size-[80px]'
-  | 'size-[84px]'
-  | string;
+import config from '../../tailwind.config';
 
-type Props = {
-  size: Size;
-  selectedSize: Size;
-  count: number;
-  onColorSelect: (color: string) => void;
-  children: ReactNode;
-};
+type Size = 'size-[60px]' | 'size-[70px]' | 'size-[80px]' | 'size-[84px]' | string;
 
-const ColorChips = ({ size, selectedSize, count, onColorSelect, children }: Props) => {
-  // TODO zustand 유저정보
-  const myColor = '#00FFFF';
+const colorType = { ...config.theme.extend.colors.main, ...config.theme.extend.colors.sub };
 
+type ColorType = keyof typeof colorType;
+
+interface Props {
+  className?: string;
+  onChange?: (color: string) => void;
+  children?: React.ReactNode;
+  colors: ColorType[];
+}
+
+const ColorChips = ({ onChange, className, colors }: Props) => {
   const [selectedColor, setSelectedColor] = useState<string>(colors[0]);
-  const chips = Object.keys(colors).slice(0, count);
-
-  useEffect(() => {
-    const initialColorMain = Object.keys(customColors.main).find(
-      (key) => customColors.main[key] === myColor,
-    );
-    const initialColorSub = Object.keys(customColors.sub).find(
-      (key) => customColors.sub[key] === myColor,
-    );
-    const initialColorKey = initialColorMain || initialColorSub;
-
-    if (initialColorKey) {
-      setSelectedColor(initialColorKey);
-    }
-  }, [myColor]);
 
   const handleClick = (color: string) => {
     setSelectedColor(color);
-    onColorSelect(customColors.main[color] || customColors.sub[color]);
+    onChange && onChange(color);
   };
-
   return (
-    <>
-      <div className="mb-[10px] mt-[32px] text-neutral-100 base-regular">{children}</div>
-      <div className="flex w-full items-center justify-between">
-        {chips.map((color, index) => (
+    <div className="flex w-full items-center gap-5">
+      {colors.map((color, index) => {
+        const colorID = color + index;
+
+        return (
           <div
-            key={index}
+            key={colorID}
             onClick={() => handleClick(color)}
             className={cn(
-              colors[color],
-              'rounded-lg flex items-center justify-center cursor-pointer',
-              selectedColor === color ? selectedSize : size,
+              'rounded-lg flex items-center justify-center cursor-pointer size-[60px] transition-transform',
+              selectedColor + index === colorID ? 'scale-110' : '',
+              className,
             )}
+            style={{ backgroundColor: colorType[color] }}
           >
-            {selectedColor === color && <Check />}
+            {selectedColor + index === colorID && <Check />}
           </div>
-        ))}
-      </div>
-    </>
+        );
+      })}
+    </div>
   );
 };
 
