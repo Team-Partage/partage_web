@@ -115,12 +115,14 @@ const RegisterPage = () => {
                     disabled={!!error || !field.value}
                     variant="active"
                     font="medium"
-                    className="desktop:h-[70px] desktop:w-[140px]"
+                    className="h-[56px] w-[96px] desktop:h-[70px] desktop:w-[140px]"
                     onClick={() => handleEmailCheck(field.value)}
                   >
                     {emailCheck ? <CircleCheck size={26.6} /> : '중복 확인'}
                   </Button>
-                  {error?.message && <p className="desktop:h-[28px]"></p>}
+                  {error?.message && (
+                    <p className="h-[45px] tablet:h-[49.5px] desktop:h-[28.5px]"></p>
+                  )}
                 </div>
               </div>
             )}
@@ -155,7 +157,7 @@ const RegisterPage = () => {
           disabled={!emailCheck || !form.formState.isValid}
           variant="active"
           size="lg"
-          className="mt-[44px] w-full"
+          className="mt-[45px] w-full tablet:mt-[56px]"
         >
           회원가입
         </Button>

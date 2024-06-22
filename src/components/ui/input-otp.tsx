@@ -6,7 +6,6 @@ import { cn } from '@/lib/utils';
 import { OTPInput, OTPInputContext } from 'input-otp';
 import { Dot } from 'lucide-react';
 
-
 const InputOTP = React.forwardRef<
   React.ElementRef<typeof OTPInput>,
   React.ComponentPropsWithoutRef<typeof OTPInput>
@@ -27,7 +26,14 @@ const InputOTPGroup = React.forwardRef<
   React.ElementRef<'div'>,
   React.ComponentPropsWithoutRef<'div'>
 >(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn('w-full flex items-center justify-between', className)} {...props} />
+  <div
+    ref={ref}
+    className={cn(
+      'tablet:w-full w-[244px] flex tablet:flex-nowrap flex-wrap gap-2 tablet:items-center justify-between',
+      className,
+    )}
+    {...props}
+  />
 ));
 InputOTPGroup.displayName = 'InputOTPGroup';
 
@@ -43,7 +49,7 @@ const InputOTPSlot = React.forwardRef<
     <div
       ref={ref}
       className={cn(
-        'relative flex desktop:size-[88px] items-center justify-center text-sm transition-all rounded-md bg-neutral-400',
+        'relative flex desktop:size-[88px] tablet:size-[63px] size-[70px] items-center justify-center text-sm transition-all rounded-md bg-neutral-400',
         isActive && 'z-10 ring-1 ring-main-skyblue',
         isError && 'z-10 ring-1 ring-sub-red',
         className,

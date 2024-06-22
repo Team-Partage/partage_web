@@ -53,15 +53,17 @@ const EmailValidationPage = () => {
   };
 
   return (
-    <div className="flex flex-col justify-between border-none text-neutral-100 desktop:h-[562px]">
-      <div>
-        <CardTitle className="max-bold">이메일 인증번호 확인</CardTitle>
-        <CardDescription className="text-neutral-100 base-regular">
-          인증메일이 {myEmail}(으)로 발송되었어요! <br />
-          이메일을 확인 후 인증번호를 입력해주세요!
-        </CardDescription>
-      </div>
-      <div>
+    <div className="flex h-full flex-col justify-between border-none text-neutral-100 tablet:h-[474px] desktop:h-[562px]">
+      <div className="mb-[187px] flex flex-col gap-[48px] tablet:relative tablet:mb-0">
+        <div>
+          <CardTitle className="large-bold tablet:big-bold desktop:max-bold">
+            이메일 인증번호 확인
+          </CardTitle>
+          <CardDescription className="text-neutral-100 tiny-regular tablet:small-regular desktop:base-regular">
+            인증메일이 {myEmail}(으)로 발송되었어요! <br />
+            이메일을 확인 후 인증번호를 입력해주세요!
+          </CardDescription>
+        </div>
         <InputOTP maxLength={6} onChange={onchange}>
           <InputOTPGroup>
             <InputOTPSlot index={0} isError={isError} />
@@ -72,7 +74,13 @@ const EmailValidationPage = () => {
             <InputOTPSlot index={5} isError={isError} />
           </InputOTPGroup>
         </InputOTP>
-        {isError && <p className="mt-3 text-sub-red small-regular">인증번호가 틀렸어요.</p>}
+        {isError && <p className="text-sub-red small-regular tablet:mt-3">인증번호가 틀렸어요.</p>}
+        <div className="text-neutral-200 small-regular tablet:hidden">
+          이메일을 확인할 수 없나요?{' '}
+          <button className="underline" onClick={handleResend}>
+            인증메일 재발송하기
+          </button>
+        </div>
       </div>
       <div>
         <Button
@@ -89,7 +97,7 @@ const EmailValidationPage = () => {
           회원 가입 페이지로 돌아가기
         </Button>
       </div>
-      <div className="text-neutral-200 small-regular">
+      <div className="hidden text-neutral-200 small-regular tablet:block">
         이메일을 확인할 수 없나요?{' '}
         <button className="underline" onClick={handleResend}>
           인증메일 재발송하기

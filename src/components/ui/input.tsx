@@ -17,16 +17,18 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       if (text?.includes('비밀번호 찾기')) {
         return (
           <>
-            <p className="mt-2 text-sub-red small-regular">
-              이미 사용 중인 이메일이에요. 비밀번호가 기억나지 않는다면?{' '}
-              <Link href="/auth/password-recovery" className="underline small-bold">
+            <p className="mt-2 text-sub-red micro-regular tablet:small-regular">
+              이미 사용 중인 이메일이에요.
+              <br className="tablet:hidden" />
+              비밀번호가 기억나지 않는다면?{' '}
+              <Link href="/auth/password-recovery" className="underline micro-semiBold tablet:small-bold">
                 비밀번호 찾기
               </Link>
             </p>
           </>
         );
       }
-      return <p className="mt-2 text-sub-red small-regular">{text}</p>;
+      return <p className="mt-2 text-sub-red micro-regular tablet:small-regular">{text}</p>;
     };
 
     return (
@@ -36,7 +38,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           <input
             type={type}
             className={cn(
-              'flex desktop:h-[70px] tablet:h-14 h-14 w-full bg-neutral-400 rounded-lg px-6 py-6 base-regular border border-solid transition-colors focus:border-main-skyblue text-foreground-high file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-200 focus-visible:outline-none focus-visible:ring-slate-950 disabled:cursor-not-allowed disabled:opacity-50',
+              'flex desktop:h-[70px] h-14 w-full bg-neutral-400 rounded-lg px-6 py-6 desktop:base-regular small-regular border border-solid transition-colors focus:border-main-skyblue text-foreground-high file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-200 focus-visible:outline-none focus-visible:ring-slate-950 disabled:cursor-not-allowed disabled:opacity-50',
               isError ? 'border-sub-red focus:border-sub-red' : 'border-transparent',
               className,
               startAdornment ? 'pl-10' : '',
