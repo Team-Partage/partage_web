@@ -7,23 +7,12 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { LoginSchema } from '@/schemas/userSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
-
-const LoginSchema = z.object({
-  email: z.string().email('이메일 형식에 맞게 작성해주세요.'),
-  password: z
-    .string()
-    .min(8, '비밀번호는 최소 8자 이상이어야 합니다.')
-    .max(16, '비밀번호는 최대 16자까지 가능합니다.')
-    .regex(
-      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,16}$/,
-      '비밀번호는 영문, 숫자, 특수문자가 포함된 8~16자여야 합니다.',
-    ),
-});
 
 const LoginPage = () => {
   const router = useRouter();
