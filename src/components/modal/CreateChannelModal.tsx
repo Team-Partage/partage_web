@@ -1,10 +1,15 @@
+import { useState } from 'react';
+
 import ColorChips from '../ColorChips';
+import TagInput from '../TagInput';
 import { Button } from '../ui/button';
 import { DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../ui/dialog';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 
 const CreateChannelModal = () => {
+  const [color, setColor] = useState('');
+
   return (
     <DialogContent>
       <DialogHeader>
@@ -14,20 +19,20 @@ const CreateChannelModal = () => {
         <Label htmlFor="channelName">채널명</Label>
         <Input id="channelName" placeholder="채널명을 입력해 주세요." />
       </div>
-      <div>
+      <div className="min-w-0">
         <Label htmlFor="channelTag">태그</Label>
-        <Input id="channelTag" placeholder="태그명을 입력해 주세요." />
+        <TagInput id="channelTag" placeholder="태그명을 입력해 주세요." color={color} />
       </div>
       <div>
-        <Label htmlFor="channelTag">채널 컬러</Label>
-        <ColorChips
-          size={'size-[60px]'}
-          selectedSize={'size-[70px]'}
-          count={3}
-          onColorSelect={() => {}}
-        >
-          닉네임 컬러
-        </ColorChips>
+        <Label>채널 컬러</Label>
+        <div className="flex w-full flex-wrap gap-5">
+          <ColorChips
+            colors={['skyblue', 'lightGreen', 'yellow', 'peach', 'violet', 'blue']}
+            onChange={(color) => {
+              setColor(color);
+            }}
+          />
+        </div>
       </div>
       <DialogFooter>
         <Button variant="active" disabled={true}>
