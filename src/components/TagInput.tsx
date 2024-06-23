@@ -3,22 +3,22 @@ import { useState } from 'react';
 interface Props {
   id?: string;
   placeholder?: string;
+  value?: string;
   color?: string;
-  onEnter?: (value: string) => void;
+  onChange?: (tags: string) => void;
 }
 
-const TagInput = ({ onEnter, color, ...rest }: Props) => {
-  const [value, setValue] = useState<string>('');
-  const [tags, setTags] = useState<string[]>([]);
+const TagInput = ({ onChange, color, value = '', ...rest }: Props) => {
+  const [inputValue, setInputValue] = useState<string>('');
+  const [tags, setTags] = useState<string[]>(value.split(' '));
 
   const handleEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      onEnter && onEnter(value);
-
-      if (value.length !== 0) {
-        console.log('first');
-        setTags([...tags, value]);
-        setValue('');
+      if (inputValue.length !== 0) {
+        const newTags = [...tags, inputValue];
+        onChange && onChange(newTags.join(' '));
+        setTags(newTags);
+        setInputValue('');
       }
     }
   };
@@ -28,20 +28,18 @@ const TagInput = ({ onEnter, color, ...rest }: Props) => {
       <ol className="flex flex-wrap gap-1">
         {tags.map((tag, index) => {
           return (
-            <li
-              key={tag + index}
-              className="transition-colors"
-              style={{ color: color }}
-            >{`#${tag}`}</li>
+            <li key={tag + index} className="transition-colors" style={{ color: color }}>
+              {tag && `#${tag}`}
+            </li>
           );
         })}
         <input
           className="bg-inherit text-neutral-100 placeholder:text-neutral-200"
           type="text"
-          value={value}
+          value={inputValue}
           onKeyDown={handleEnter}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setValue(e.target.value);
+            setInputValue(e.target.value);
           }}
           autoComplete="off"
           {...rest}
