@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { VariantProps, cva } from 'class-variance-authority';
 
@@ -44,11 +44,8 @@ const ColorChips = ({ onChange, className, colors, size, selected = colors[0] }:
 
   const [selectedIndex, setSelectedIndex] = useState<number>(colors.indexOf(selected));
 
-  useEffect(() => {
-    onChange && onChange(colorNameToHex(colors[selectedIndex]));
-  }, [colors, onChange, selectedIndex]);
-
   const handleClick = (index: number) => {
+    onChange && onChange(colorNameToHex(colors[index]));
     setSelectedIndex(index);
   };
 
