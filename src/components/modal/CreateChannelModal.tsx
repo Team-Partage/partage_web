@@ -25,7 +25,14 @@ const CreateChannelModal = () => {
       </div>
       <div>
         <Label>채널 컬러</Label>
-        <ColorChips colors={['orange', 'green']} />
+        <div className="flex w-full flex-wrap gap-5">
+          <ColorChips
+            colors={['skyblue', 'lightGreen', 'yellow', 'peach', 'violet', 'blue']}
+            onChange={(color) => {
+              setColor(color);
+            }}
+          />
+        </div>
       </div>
       <DialogFooter>
         <Button variant="active" disabled={true}>

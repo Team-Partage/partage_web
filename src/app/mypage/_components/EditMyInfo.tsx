@@ -11,8 +11,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { CheckNickname, EditProfile, EditProfileImage } from '@/services/user';
 import { EditProfileColorRequest, NicknameRequest } from '@/services/user/type';
+import { hexToColorName } from '@/utils/hexToColorName';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ImageUp } from 'lucide-react';
 import { useForm, useWatch } from 'react-hook-form';
@@ -149,6 +151,7 @@ const EditMyInfo = () => {
                             isError={!!error}
                             errorText={error?.message}
                             {...field}
+                            style={{ color: selectedColor }}
                           />
                         </FormControl>
                       </FormItem>
@@ -156,14 +159,27 @@ const EditMyInfo = () => {
                   />
                 </div>
               </div>
-              <ColorChips
-                size={'size-[60px]'}
-                selectedSize={'size-[70px]'}
-                count={9}
-                onColorSelect={(color) => setSelectedColor(color)}
-              >
-                닉네임 컬러
-              </ColorChips>
+              <div>
+                <Label>닉네임 컬러</Label>
+                <div className="flex flex-wrap gap-3">
+                  <ColorChips
+                    selected={hexToColorName('#FFE100')}
+                    size="user"
+                    colors={[
+                      'skyblue',
+                      'lightGreen',
+                      'green',
+                      'blue',
+                      'violet',
+                      'pink',
+                      'yellow',
+                      'orange',
+                      'peach',
+                    ]}
+                    onChange={(color) => setSelectedColor(color)}
+                  />
+                </div>
+              </div>
               <Button
                 type="submit"
                 disabled={!form.formState.isValid || watchedNickname === mynickname}

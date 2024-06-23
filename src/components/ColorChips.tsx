@@ -1,53 +1,83 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+import { VariantProps, cva } from 'class-variance-authority';
 
 import { cn } from '@/lib/utils';
 import { Check } from 'lucide-react';
 
 import config from '../../tailwind.config';
 
-type Size = 'size-[60px]' | 'size-[70px]' | 'size-[80px]' | 'size-[84px]' | string;
+const sizeVariants = cva('', {
+  variants: {
+    size: {
+      channel: 'size-[52px] tablet:size-[76px] desktop:size-[80px]',
+      user: 'size-[56px] tablet:size-[60px] desktop:size-[60px]',
+    },
+  },
+  defaultVariants: {
+    size: 'channel',
+  },
+});
 
-const colorType = { ...config.theme.extend.colors.main, ...config.theme.extend.colors.sub };
+const colorCode = { ...config.theme.extend.colors.main, ...config.theme.extend.colors.sub };
 
-type ColorType = keyof typeof colorType;
+type ColorName = keyof typeof colorCode;
 
-interface Props {
+interface Props extends VariantProps<typeof sizeVariants> {
+  colors: ColorName[];
   className?: string;
-  onChange?: (color: string) => void;
-  children?: React.ReactNode;
-  colors: ColorType[];
+  onChange?: (hex: string) => void;
+  selected?: ColorName;
 }
 
-const ColorChips = ({ onChange, className, colors }: Props) => {
-  const [selectedColor, setSelectedColor] = useState<string>(colors[0]);
+/**
+ *
+ * @param colors 화면에 보여줄 컬러칩 색상명 배열
+ * @param selected 기본 색상을 선택합니다. hex코드로 기본 색상을 지정해야 한다면 hexToColorName 함수를 사용해주세요. colors 배열 내에 색상명이 없는 경우 런타임 시 타입 에러가 발생합니다.
+ */
+const ColorChips = ({ onChange, className, colors, size, selected = colors[0] }: Props) => {
+  if (process.env.NODE_ENV === 'development' && !colors.includes(selected)) {
+    throw new TypeError(`Selected color '${selected}' is not in the list of colors.`);
+  }
 
-  const handleClick = (color: string) => {
-    setSelectedColor(color);
-    onChange && onChange(color);
+  const [selectedIndex, setSelectedIndex] = useState<number>(colors.indexOf(selected));
+
+  useEffect(() => {
+    onChange && onChange(colorNameToHex(colors[selectedIndex]));
+  }, [colors, onChange, selectedIndex]);
+
+  const handleClick = (index: number) => {
+    setSelectedIndex(index);
   };
-  return (
-    <div className="flex w-full items-center gap-5">
-      {colors.map((color, index) => {
-        const colorID = color + index;
 
+  const colorNameToHex = (colorName: ColorName) => {
+    return colorCode[colorName];
+  };
+
+  return (
+    <>
+      {colors.map((color, index) => {
         return (
           <div
-            key={colorID}
-            onClick={() => handleClick(color)}
+            key={color + index}
+            onClick={() => {
+              handleClick(index);
+            }}
             className={cn(
-              'rounded-lg flex items-center justify-center cursor-pointer size-[60px] transition-transform',
-              selectedColor + index === colorID ? 'scale-110' : '',
+              'rounded-lg flex items-center justify-center cursor-pointer tablet:size-[70px] transition-transform',
+              sizeVariants({ size }),
+              selectedIndex === index ? 'scale-105' : '',
               className,
             )}
-            style={{ backgroundColor: colorType[color] }}
+            style={{ backgroundColor: colorCode[color] }}
           >
-            {selectedColor + index === colorID && <Check />}
+            {selectedIndex === index && <Check color="#000000" />}
           </div>
         );
       })}
-    </div>
+    </>
   );
 };
 
