@@ -1,68 +1,79 @@
-import { ReactNode, useEffect, useState } from 'react';
+'use client';
+
+import { useState } from 'react';
+
+import { VariantProps, cva } from 'class-variance-authority';
 
 import { cn } from '@/lib/utils';
-import { colors, customColors } from '@/utils/colors';
 import { Check } from 'lucide-react';
 
-type Size =
-  | 'size-[60px]'
-  | 'size-[70px]'
-  | 'size-[80px]'
-  | 'size-[84px]'
-  | string;
+import config from '../../tailwind.config';
 
-type Props = {
-  size: Size;
-  selectedSize: Size;
-  count: number;
-  onColorSelect: (color: string) => void;
-  children: ReactNode;
-};
+const sizeVariants = cva('', {
+  variants: {
+    size: {
+      channel: 'size-[52px] tablet:size-[76px] desktop:size-[80px]',
+      user: 'size-[56px] tablet:size-[60px] desktop:size-[60px]',
+    },
+  },
+  defaultVariants: {
+    size: 'channel',
+  },
+});
 
-const ColorChips = ({ size, selectedSize, count, onColorSelect, children }: Props) => {
-  // TODO zustand 유저정보
-  const myColor = '#00FFFF';
+const colorCode = { ...config.theme.extend.colors.main, ...config.theme.extend.colors.sub };
 
-  const [selectedColor, setSelectedColor] = useState<string>(colors[0]);
-  const chips = Object.keys(colors).slice(0, count);
+type ColorName = keyof typeof colorCode;
 
-  useEffect(() => {
-    const initialColorMain = Object.keys(customColors.main).find(
-      (key) => customColors.main[key] === myColor,
-    );
-    const initialColorSub = Object.keys(customColors.sub).find(
-      (key) => customColors.sub[key] === myColor,
-    );
-    const initialColorKey = initialColorMain || initialColorSub;
+interface Props extends VariantProps<typeof sizeVariants> {
+  colors: ColorName[];
+  className?: string;
+  onChange?: (hex: string) => void;
+  selected?: ColorName;
+}
 
-    if (initialColorKey) {
-      setSelectedColor(initialColorKey);
-    }
-  }, [myColor]);
+/**
+ *
+ * @param colors 화면에 보여줄 컬러칩 색상명 배열
+ * @param selected 기본 색상을 선택합니다. hex코드로 기본 색상을 지정해야 한다면 hexToColorName 함수를 사용해주세요. colors 배열 내에 색상명이 없는 경우 런타임 시 타입 에러가 발생합니다.
+ */
+const ColorChips = ({ onChange, className, colors, size, selected = colors[0] }: Props) => {
+  if (process.env.NODE_ENV === 'development' && !colors.includes(selected)) {
+    throw new TypeError(`Selected color '${selected}' is not in the list of colors.`);
+  }
 
-  const handleClick = (color: string) => {
-    setSelectedColor(color);
-    onColorSelect(customColors.main[color] || customColors.sub[color]);
+  const [selectedIndex, setSelectedIndex] = useState<number>(colors.indexOf(selected));
+
+  const handleClick = (index: number) => {
+    onChange && onChange(colorNameToHex(colors[index]));
+    setSelectedIndex(index);
+  };
+
+  const colorNameToHex = (colorName: ColorName) => {
+    return colorCode[colorName];
   };
 
   return (
     <>
-      <div className="mb-[10px] mt-[32px] text-neutral-100 base-regular">{children}</div>
-      <div className="flex w-full items-center justify-between">
-        {chips.map((color, index) => (
+      {colors.map((color, index) => {
+        return (
           <div
-            key={index}
-            onClick={() => handleClick(color)}
+            key={color + index}
+            onClick={() => {
+              handleClick(index);
+            }}
             className={cn(
-              colors[color],
-              'rounded-lg flex items-center justify-center cursor-pointer',
-              selectedColor === color ? selectedSize : size,
+              'rounded-lg flex items-center justify-center cursor-pointer tablet:size-[70px] transition-transform',
+              sizeVariants({ size }),
+              selectedIndex === index ? 'scale-105' : '',
+              className,
             )}
+            style={{ backgroundColor: colorCode[color] }}
           >
-            {selectedColor === color && <Check />}
+            {selectedIndex === index && <Check color="#000000" />}
           </div>
-        ))}
-      </div>
+        );
+      })}
     </>
   );
 };

@@ -1,16 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
 
-import { getChannelBgColor, getChannelFontColor } from '@/utils/getChannelColorClassName';
-
 interface HashtagsProps {
   hashtage: string;
   color: string;
 }
 
 const Hashtags = ({ hashtage, color }: HashtagsProps) => {
-  const fontColor = getChannelFontColor(color);
-  const bgColor = getChannelBgColor(color);
-
   const hashtagArray = hashtage.split(',').map((tag) => `#${tag.trim()}`);
   const [visibleIndex, setVisibleIndex] = useState<number>(0);
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
@@ -63,14 +58,15 @@ const Hashtags = ({ hashtage, color }: HashtagsProps) => {
       {hashtagArray.map((tag, index) => {
         if (index < visibleIndex)
           return (
-            <span key={index} className={`${fontColor} shrink-0 small-regular`}>
+            <span key={index} className="shrink-0 small-regular" style={{ color: color }}>
               {tag}
             </span>
           );
       })}
       {restHashtagCount !== 0 && (
         <div
-          className={`flex size-[20px] items-center justify-center rounded-full text-neutral-600 micro-medium ${bgColor} shrink-0`}
+          className="flex size-[20px] items-center justify-center rounded-full text-neutral-600 micro-medium shrink-0"
+          style={{ backgroundColor: color }}
         >
           +{restHashtagCount}
         </div>

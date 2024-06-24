@@ -28,17 +28,7 @@ const config = {
     },
     extend: {
       colors: {
-        background: '#191919',
-        foreground: {
-          high: 'hsl(0, 0%, 87%)',
-          medium: 'hsl(0, 0%, 60%)',
-          muted: 'hsl(0, 0%, 38%)',
-        },
-        primary: {
-          default: '#25E09A',
-          hover: '#20C087',
-          active: '#1A9C71',
-        },
+        background: '#131418',
         main: {
           skyblue: '#00FFFF',
         },
@@ -52,17 +42,6 @@ const config = {
           peach: '#FF7D84',
           red: '#F94B60',
           blue: '#43B0FF',
-        },
-        gray: {
-          100: '#B4B4B4',
-          200: '#6E6E6E',
-          300: '#606060',
-          400: '#484848',
-          500: '#484848',
-          600: '#313131',
-          700: '#2A2A2A',
-          800: '#222222',
-          900: '#191919',
         },
         neutral: {
           100: '#FFFFFF',
