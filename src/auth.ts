@@ -3,7 +3,8 @@ import { cookies } from 'next/headers';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
-import { SignInResponse, UserResponse } from './services/auth/type';
+import { SignInResponse } from './services/auth/type';
+import { GetUserResponse } from './services/user/type';
 
 export const {
   handlers: { GET, POST },
@@ -45,7 +46,7 @@ export const {
           return null;
         }
 
-        const myInfo = await fetcher.get<UserResponse>(
+        const myInfo = await fetcher.get<GetUserResponse>(
           '/api/v1/user/me',
           {},
           {
