@@ -9,13 +9,15 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { RegisterSchema } from '@/schemas/userSchema';
-import { CheckEmail, SignUp } from '@/services/user';
+import { CheckEmail, SendEmail } from '@/services/user';
+import { useUserStore } from '@/stores/User';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CircleCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
 const RegisterPage = () => {
+  const { registerUser } = useUserStore();
   const [emailCheck, setEmailCheck] = useState(false);
   const router = useRouter();
 
@@ -44,12 +46,14 @@ const RegisterPage = () => {
   };
 
   const onSubmit = async (data: z.infer<typeof RegisterSchema>) => {
-    try {
-      await SignUp(data);
-      router.push('/register/email-validataion');
-    } catch (err) {
-      throw new Error(`${err}`);
-    }
+    await SendEmail({ email: data.email });
+    registerUser({
+      email: data.email,
+      username: data.username,
+      nickname: data.nickname,
+      password: data.password,
+    });
+    router.push('/auth/register/email-validation');
   };
 
   return (

@@ -6,18 +6,18 @@ import FormModal from '@/components/FormModal';
 import { Button } from '@/components/ui/button';
 import { CardDescription, CardTitle } from '@/components/ui/card';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
-import { CheckEmailNumber, SendEmail } from '@/services/user';
+import { CheckEmailNumber, SendEmail, SignUp } from '@/services/user';
+import { useUserStore } from '@/stores/User';
 import { useRouter } from 'next/navigation';
 
 const EmailValidationPage = () => {
+  const { username, nickname, email, password, clearUser } = useUserStore();
   const [validationNumber, setValidationNumber] = useState('');
   const [isError, setIsError] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
-  const myEmail = 'newjeanse@partage.com';
 
   const onchange = (value: string) => {
-    console.log(value);
     setValidationNumber(value);
   };
 
@@ -25,7 +25,7 @@ const EmailValidationPage = () => {
     setIsError(false);
     setValidationNumber('');
     try {
-      await SendEmail({ email: myEmail });
+      await SendEmail({ email });
     } catch (err) {
       alert('다시 인증메일 재발송 해주세요.');
     }
@@ -38,8 +38,11 @@ const EmailValidationPage = () => {
   const onSubmit = async () => {
     if (validationNumber) {
       try {
-        await CheckEmailNumber({ email: myEmail, auth_number: validationNumber });
-        setOpen(true);
+        const response = await CheckEmailNumber({ email, auth_number: validationNumber });
+        if (response) {
+          await SignUp({ email, username, nickname, password });
+          setOpen(true);
+        }
       } catch (err) {
         console.log(err);
         setIsError(true);
@@ -49,6 +52,7 @@ const EmailValidationPage = () => {
   };
 
   const handleModal = () => {
+    clearUser();
     router.push('/auth/login');
   };
 
@@ -60,7 +64,7 @@ const EmailValidationPage = () => {
             이메일 인증번호 확인
           </CardTitle>
           <CardDescription className="text-neutral-100 tiny-regular tablet:small-regular desktop:base-regular">
-            인증메일이 {myEmail}(으)로 발송되었어요! <br />
+            인증메일이 {email}(으)로 발송되었어요! <br />
             이메일을 확인 후 인증번호를 입력해주세요!
           </CardDescription>
         </div>
