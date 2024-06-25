@@ -13,6 +13,7 @@ import { CheckEmail, SendEmail } from '@/services/user';
 import { useUserStore } from '@/stores/User';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CircleCheck } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
@@ -38,7 +39,7 @@ const RegisterPage = () => {
     if (!isEmailAvailable) {
       form.setError('email', {
         type: 'manual',
-        message: '비밀번호 찾기',
+        message: '이메일 중복',
       });
       return;
     }
@@ -55,6 +56,17 @@ const RegisterPage = () => {
     });
     router.push('/auth/register/email-validation');
   };
+
+  const emailCheckErrorMessage = (
+    <p className="mt-2 text-sub-red micro-regular tablet:small-regular">
+      이미 사용 중인 이메일이에요.
+      <br className="tablet:hidden" />
+      비밀번호가 기억나지 않는다면?{' '}
+      <Link href="/auth/password-recovery" className="underline micro-semiBold tablet:small-bold">
+        비밀번호 찾기
+      </Link>
+    </p>
+  );
 
   return (
     <Form {...form}>
@@ -109,7 +121,9 @@ const RegisterPage = () => {
                       placeholder="이메일을 입력해 주세요."
                       disabled={emailCheck}
                       isError={!!error}
-                      errorText={error?.message}
+                      errorText={
+                        error?.message === '이메일 중복' ? emailCheckErrorMessage : error?.message
+                      }
                       {...field}
                     />
                   </FormControl>

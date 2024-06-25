@@ -27,6 +27,6 @@ export const getChannelDetail = async (params: {
 }) => {
   const { channelId, ...rest } = params;
 
-  const data = await fetcher.get<GetChannelDetailResponse>(`/api/v1/channel/${channelId}`, rest);
+  const data = await fetcher.get<GetChannelDetailResponse>(`/v1/channel/${channelId}`, rest);
   return data;
 };

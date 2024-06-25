@@ -1,34 +1,22 @@
-import { forwardRef } from 'react';
+import { ReactNode, forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
-import Link from 'next/link';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   isError?: boolean;
-  errorText?: string;
+  errorText?: string | ReactNode;
   startAdornment?: React.ReactElement;
   endAdornment?: React.ReactElement;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, isError, errorText, startAdornment, endAdornment, ...props }, ref) => {
-    const renderErrorText = (text: string | undefined) => {
-      if (!text) return null;
-      if (text?.includes('비밀번호 찾기')) {
-        return (
-          <>
-            <p className="mt-2 text-sub-red micro-regular tablet:small-regular">
-              이미 사용 중인 이메일이에요.
-              <br className="tablet:hidden" />
-              비밀번호가 기억나지 않는다면?{' '}
-              <Link href="/auth/password-recovery" className="underline micro-semiBold tablet:small-bold">
-                비밀번호 찾기
-              </Link>
-            </p>
-          </>
-        );
+    const renderErrorMessage = (errorText: string | ReactNode) => {
+      if (typeof errorText === 'string') {
+        return <p className="mt-2 text-sub-red micro-regular tablet:small-regular">{errorText}</p>;
+      } else {
+        return errorText;
       }
-      return <p className="mt-2 text-sub-red micro-regular tablet:small-regular">{text}</p>;
     };
 
     return (
@@ -49,7 +37,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           />
           {endAdornment && <div className="absolute right-0 pr-3">{endAdornment}</div>}
         </div>
-        {isError && renderErrorText(errorText)}
+        {isError && renderErrorMessage(errorText)}
       </>
     );
   },

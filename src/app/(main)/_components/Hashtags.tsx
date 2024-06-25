@@ -65,7 +65,7 @@ const Hashtags = ({ hashtage, color }: HashtagsProps) => {
       })}
       {restHashtagCount !== 0 && (
         <div
-          className="flex size-[20px] items-center justify-center rounded-full text-neutral-600 micro-medium shrink-0"
+          className="flex size-[20px] shrink-0 items-center justify-center rounded-full text-neutral-600 micro-medium"
           style={{ backgroundColor: color }}
         >
           +{restHashtagCount}
