@@ -11,13 +11,13 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: '',
-        active: 'bg-main-skyblue text-neutral-600 medium-bold',
+        active: 'bg-main-skyblue text-neutral-600 base-bold desktop:medium-bold',
         withDraw: 'border border-solid border-sub-red bg-neutral-600 text-sub-red',
       },
       size: {
         default: 'h-12 w-fit px-8',
         sm: 'h-[42px] px-8',
-        lg: 'h-16 px-8 mobile:h-[50px] tablet:h-14',
+        lg: 'h-[50px] px-8 tablet:h-14 desktop:h-16',
         icon: 'size-10 px-2',
       },
       font: {

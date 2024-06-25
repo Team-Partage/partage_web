@@ -3,7 +3,9 @@ import { cookies } from 'next/headers';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
-import { SignInResponse, UserResponse } from './services/auth/type';
+import { DOMAIN } from './constants/domains';
+import { SignInResponse } from './services/auth/type';
+import { GetUserResponse } from './services/user/type';
 
 export const {
   handlers: { GET, POST },
@@ -28,7 +30,7 @@ export const {
     CredentialsProvider({
       async authorize(credentials) {
         // 로그인 호출
-        const authResponse = await fetcher.post<SignInResponse>('/api/v1/auth/login', {
+        const authResponse = await fetcher.post<SignInResponse>(`${DOMAIN.AUTH}login`, {
           // next-auth에서 고정된 이름 credentials.~
           email: credentials.username,
           password: credentials.password,
@@ -45,8 +47,8 @@ export const {
           return null;
         }
 
-        const myInfo = await fetcher.get<UserResponse>(
-          '/api/v1/user/me',
+        const myInfo = await fetcher.get<GetUserResponse>(
+          `${DOMAIN.USER}/me`,
           {},
           {
             headers: {

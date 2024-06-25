@@ -2966,6 +2966,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"input-otp@npm:^1.2.4":
+  version: 1.2.4
+  resolution: "input-otp@npm:1.2.4"
+  peerDependencies:
+    react: ^16.8 || ^17.0 || ^18.0
+    react-dom: ^16.8 || ^17.0 || ^18.0
+  checksum: 10c0/bb2cd158cb244da6e807f791261a77a6184de19580af4afba6cc1ea5ff69e675d401537f8186dd6eab7985748e8e2f0ae67c3a7edfbffe963dda029679ee2d8d
+  languageName: node
+  linkType: hard
+
 "internal-slot@npm:^1.0.7":
   version: 1.0.7
   resolution: "internal-slot@npm:1.0.7"
@@ -4140,6 +4150,7 @@ __metadata:
     eslint-plugin-import: "npm:^2.29.1"
     eslint-plugin-tailwindcss: "npm:^3.15.1"
     husky: "npm:^9.0.11"
+    input-otp: "npm:^1.2.4"
     lint-staged: "npm:^15.2.2"
     lodash: "npm:^4.17.21"
     lucide-react: "npm:^0.378.0"
