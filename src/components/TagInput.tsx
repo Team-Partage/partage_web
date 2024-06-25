@@ -8,6 +8,9 @@ interface Props {
   onChange?: (tags: string) => void;
 }
 
+/**
+ * TODO: 태그 삭제 기능
+ */
 const TagInput = ({ onChange, color, value = '', ...rest }: Props) => {
   const [inputValue, setInputValue] = useState<string>('');
   const [tags, setTags] = useState<string[]>(value.split(' '));
