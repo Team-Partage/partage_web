@@ -8,15 +8,15 @@
 
 #### **Back-End**
 
-<img src="https://img.shields.io/badge/Java-ff4000?style=flat"/><img src="https://img.shields.io/badge/Spring-18d100?style=flat"/><img src="https://img.shields.io/badge/Spring Boot-18d100?style=flat"/><img src="https://img.shields.io/badge/Spring Security-18d100?style=flat"/><img src="https://img.shields.io/badge/MySQL-00b0bd?style=flat"/><img src="https://img.shields.io/badge/Redis-ff0000?style=flat"/><img src="https://img.shields.io/badge/Swagger-15b800?style=flat"/>
+<img src="https://img.shields.io/badge/Java-ff4000?style=flat"/> <img src="https://img.shields.io/badge/Spring-18d100?style=flat"/> <img src="https://img.shields.io/badge/Spring Boot-18d100?style=flat"/> <img src="https://img.shields.io/badge/Spring Security-18d100?style=flat"/> <img src="https://img.shields.io/badge/MySQL-00b0bd?style=flat"/> <img src="https://img.shields.io/badge/Redis-ff0000?style=flat"/> <img src="https://img.shields.io/badge/Swagger-15b800?style=flat"/>
 
-##### 예찬[@qwqw0414](https://github.com/qwqw0414), 민욱[@vvxxxxk](https://github.com/vvxxxxk)
+##### 예찬[@qwqw0414](https://github.com/qwqw0414), 병욱[@vvxxxxk](https://github.com/vvxxxxk)
 
 <br/>
 
 #### **Front-End**
 
-<img src="https://img.shields.io/badge/Next.js-000000?style=flat"/><img src="https://img.shields.io/badge/Typescript-005ADC?style=flat"/><img src="https://img.shields.io/badge/Yarn berry-00ccf5?style=flat"/><img src="https://img.shields.io/badge/Tailwind CSS-00a3f5?style=flat"/><img src="https://img.shields.io/badge/ESLint-7f5cff?style=flat"/><img src="https://img.shields.io/badge/Prettier-ff745c?style=flat"/><img src="https://img.shields.io/badge/Zustand-ffae00?style=flat"/>
+<img src="https://img.shields.io/badge/Next.js-000000?style=flat"/> <img src="https://img.shields.io/badge/Typescript-005ADC?style=flat"/> <img src="https://img.shields.io/badge/Yarn berry-00ccf5?style=flat"/> <img src="https://img.shields.io/badge/Tailwind CSS-00a3f5?style=flat"/> <img src="https://img.shields.io/badge/ESLint-7f5cff?style=flat"/> <img src="https://img.shields.io/badge/Prettier-ff745c?style=flat"/> <img src="https://img.shields.io/badge/Zustand-ffae00?style=flat"/>
 
 ##### 시온[@Si-off](https://github.com/Si-off), 예은[@MaraisLee](https://github.com/MaraisLee), 숙희[@sooki88](https://github.com/sooki88)
 
