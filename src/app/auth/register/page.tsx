@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { RegisterSchema } from '@/schemas/userSchema';
 import { CheckEmail, SendEmail } from '@/services/user';
 import { useUserStore } from '@/stores/User';
+import { PAGE_ROUTE } from '@/utils/route';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CircleCheck } from 'lucide-react';
 import Link from 'next/link';
@@ -54,7 +55,7 @@ const RegisterPage = () => {
       nickname: data.nickname,
       password: data.password,
     });
-    router.push('/auth/register/email-validation');
+    router.push(`${PAGE_ROUTE.REGISTER}/email-validation`);
   };
 
   const emailCheckErrorMessage = (
