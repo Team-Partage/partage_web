@@ -32,14 +32,9 @@ class Fetcher {
       }
 
       const res = await fetch(url, {
-        ...requestInit,
         method: 'GET',
+        ...requestInit,
       });
-
-      if (!res.ok) {
-        throw new Error(`HTTP ERROR status: ${res.status}`);
-      }
-
       const data: T = await res.json();
 
       return data;
@@ -59,14 +54,10 @@ class Fetcher {
       }
 
       const res = await fetch(url, {
-        ...requestInit,
         method: 'POST',
         body: JSON.stringify(params),
+        ...requestInit,
       });
-
-      if (!res.ok) {
-        throw new Error(`HTTP ERROR status: ${res.status}`);
-      }
 
       const data: T = await res.json();
 
@@ -86,14 +77,10 @@ class Fetcher {
       }
 
       const res = await fetch(url, {
-        ...requestInit,
         method: 'PUT',
         body: JSON.stringify(params),
+        ...requestInit,
       });
-
-      if (!res.ok) {
-        throw new Error(`HTTP ERROR status: ${res.status}`);
-      }
 
       const data: T = await res.json();
 
@@ -113,14 +100,10 @@ class Fetcher {
       }
 
       const res = await fetch(url, {
-        ...requestInit,
         method: 'PATCH',
         body: JSON.stringify(params),
+        ...requestInit,
       });
-
-      if (!res.ok) {
-        throw new Error(`HTTP ERROR status: ${res.status}`);
-      }
 
       const data: T = await res.json();
 
@@ -140,13 +123,9 @@ class Fetcher {
       }
 
       const res = await fetch(url, {
-        ...requestInit,
         method: 'DELETE',
+        ...requestInit,
       });
-
-      if (!res.ok) {
-        throw new Error(`HTTP ERROR status: ${res.status}`);
-      }
 
       const data: T = await res.json();
 
