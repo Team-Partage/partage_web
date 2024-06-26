@@ -32,8 +32,8 @@ class Fetcher {
       }
 
       const res = await fetch(url, {
-        ...requestInit,
         method: 'GET',
+        ...requestInit,
       });
       const data: T = await res.json();
 
@@ -54,9 +54,9 @@ class Fetcher {
       }
 
       const res = await fetch(url, {
-        ...requestInit,
         method: 'POST',
         body: JSON.stringify(params),
+        ...requestInit,
       });
 
       const data: T = await res.json();
@@ -77,9 +77,9 @@ class Fetcher {
       }
 
       const res = await fetch(url, {
-        ...requestInit,
         method: 'PUT',
         body: JSON.stringify(params),
+        ...requestInit,
       });
 
       const data: T = await res.json();
@@ -100,9 +100,9 @@ class Fetcher {
       }
 
       const res = await fetch(url, {
-        ...requestInit,
         method: 'PATCH',
         body: JSON.stringify(params),
+        ...requestInit,
       });
 
       const data: T = await res.json();
@@ -123,8 +123,8 @@ class Fetcher {
       }
 
       const res = await fetch(url, {
-        ...requestInit,
         method: 'DELETE',
+        ...requestInit,
       });
 
       const data: T = await res.json();
