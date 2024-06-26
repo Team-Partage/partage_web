@@ -20,13 +20,7 @@ export const getChannelList = async (params: {
 };
 
 /** 채널 상세 정보 조회 */
-export const getChannelDetail = async (params: {
-  channelId: string;
-  page?: number;
-  pageSize?: number;
-}) => {
-  const { channelId, ...rest } = params;
-
-  const data = await fetcher.get<GetChannelDetailResponse>(`/v1/channel/${channelId}`, rest);
+export const getChannelDetail = async (channelId: string) => {
+  const data = await fetcher.get<GetChannelDetailResponse>(`api/v1/channel/${channelId}`);
   return data;
 };

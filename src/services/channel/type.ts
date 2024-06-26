@@ -18,6 +18,8 @@ export type Channel = {
   channel_url: string;
   channel_color: string | null;
   create_at: string;
+  viewer_count: number;
+  current_playlist_no: number | null;
 };
 
 export type Owner = {
@@ -83,7 +85,7 @@ export type GetChannelListResponse = {
 /** 채널 상세 조회 Res */
 export type GetChannelDetailResponse = {
   channel: Channel;
-  channel_users: ChannelUser[];
+  owner: Owner;
   playlists: Playlist[];
   channel_permissions: ChannelPermission;
 };

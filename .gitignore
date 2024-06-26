@@ -44,7 +44,3 @@ next-env.d.ts
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-
-# exclude .github and .husky/_ directories
-.github
-.husky/_
