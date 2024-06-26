@@ -35,11 +35,6 @@ class Fetcher {
         ...requestInit,
         method: 'GET',
       });
-
-      if (!res.ok) {
-        throw new Error(`HTTP ERROR status: ${res.status}`);
-      }
-
       const data: T = await res.json();
 
       return data;
@@ -64,10 +59,6 @@ class Fetcher {
         body: JSON.stringify(params),
       });
 
-      if (!res.ok) {
-        throw new Error(`HTTP ERROR status: ${res.status}`);
-      }
-
       const data: T = await res.json();
 
       return data;
@@ -90,10 +81,6 @@ class Fetcher {
         method: 'PUT',
         body: JSON.stringify(params),
       });
-
-      if (!res.ok) {
-        throw new Error(`HTTP ERROR status: ${res.status}`);
-      }
 
       const data: T = await res.json();
 
@@ -118,10 +105,6 @@ class Fetcher {
         body: JSON.stringify(params),
       });
 
-      if (!res.ok) {
-        throw new Error(`HTTP ERROR status: ${res.status}`);
-      }
-
       const data: T = await res.json();
 
       return data;
@@ -143,10 +126,6 @@ class Fetcher {
         ...requestInit,
         method: 'DELETE',
       });
-
-      if (!res.ok) {
-        throw new Error(`HTTP ERROR status: ${res.status}`);
-      }
 
       const data: T = await res.json();
 
