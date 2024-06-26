@@ -11,12 +11,10 @@ interface Props {
   params: { channel_id: string };
 }
 
-const YOUTUBE_BASE_URL = 'https://www.youtube.com/watch?v=';
+// const YOUTUBE_BASE_URL = 'https://www.youtube.com/watch?v=';
 
 const page = async ({ params }: Props) => {
-  const { channel_users, channel, playlists } = await getChannelDetail({
-    channelId: params.channel_id,
-  });
+  const { channel, playlists, owner } = await getChannelDetail(params.channel_id);
 
   return (
     <div className="flex size-full justify-between">
@@ -25,22 +23,22 @@ const page = async ({ params }: Props) => {
           <ListVideo />
           <h2 className="ml-2.5 large-bold">플레이리스트</h2>
         </header>
-        <Playlist playlists={playlists} />
+        <Playlist channelId={params.channel_id} playlists={playlists} />
       </section>
       <section className="mt-10 w-full">
-        <Player src={`${YOUTUBE_BASE_URL + playlists[0]?.url}`} />
+        <Player channelId={params.channel_id} src={``} />
         <div className="mt-4 flex justify-between">
           <div className="flex flex-col gap-2">
             <h2 className="text-neutral-100 large-bold">{channel.name}</h2>
             <div className="flex items-center">
               <Image
                 className="aspect-square rounded-full object-cover"
-                src={channel_users[0].profile_image || '/default-profile-image.png'}
+                src={owner.profile_image || '/default-profile-image.png'}
                 width={36}
                 height={36}
                 alt="profile"
               />
-              <p className="ml-2.5 text-neutral-100 small-medium">{channel_users[0].nickname}</p>
+              <p className="ml-2.5 text-neutral-100 small-medium">{owner.nickname}</p>
             </div>
             <div className="text-sub-violet small-regular">{channel.hashtag}</div>
           </div>
@@ -62,7 +60,7 @@ const page = async ({ params }: Props) => {
           <MessagesSquare />
           <h2 className="ml-2.5 large-bold">채팅</h2>
         </header>
-        <Chatting />
+        <Chatting channelId={params.channel_id} />
       </section>
     </div>
   );
