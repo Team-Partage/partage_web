@@ -26,7 +26,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           <input
             type={type}
             className={cn(
-              'flex desktop:h-[70px] h-14 w-full bg-neutral-400 rounded-lg px-6 py-6 desktop:base-regular small-regular border border-solid transition-colors focus:border-main-skyblue text-foreground-high file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-200 focus-visible:outline-none focus-visible:ring-slate-950 disabled:cursor-not-allowed disabled:opacity-50',
+              'flex desktop:h-[70px] h-14 w-full bg-neutral-400 rounded-lg px-6 py-6 desktop:base-regular small-regular text-neutral-100 border border-solid transition-colors focus:border-main-skyblue file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-200 focus-visible:outline-none focus-visible:ring-slate-950 disabled:cursor-not-allowed disabled:opacity-50 disabled:text-neutral-200',
               isError ? 'border-sub-red focus:border-sub-red' : 'border-transparent',
               className,
               startAdornment ? 'pl-10' : '',
