@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { z } from 'zod';
 
@@ -15,29 +15,50 @@ import { Label } from '@/components/ui/label';
 import { MypageSchema } from '@/schemas/userSchema';
 import { CheckNickname, EditProfile, EditProfileImage } from '@/services/user';
 import { EditProfileColorRequest, NicknameRequest } from '@/services/user/type';
+import { useUserStore } from '@/stores/User';
 import { hexToColorName } from '@/utils/hexToColorName';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ImageUp } from 'lucide-react';
 import { useForm, useWatch } from 'react-hook-form';
 
 const EditMyInfo = () => {
+  const {
+    email,
+    nickname,
+    profile_color,
+    profile_image,
+    setNickname,
+    setProfileColor,
+    setProfileImage,
+  } = useUserStore();
   const [open, setOpen] = useState(false);
-  const [selectedColor, setSelectedColor] = useState<string>('');
+  const defaultColor = '#00FFFF';
+  const [selectedColor, setSelectedColor] = useState<string>(defaultColor);
   const fileRef = useRef<HTMLInputElement>(null);
-  const [imagePreview, setImagePreview] = useState('');
+  const [imagePreview, setImagePreview] = useState<string | null>(profile_image);
   const [fileData, setFileData] = useState<File>();
-  // TODO zustand 유저정보 가져오기
-  const mynickname = '테스트';
+  console.log(email, nickname, profile_color);
+  console.log(selectedColor);
 
   const form = useForm<z.infer<typeof MypageSchema>>({
     resolver: zodResolver(MypageSchema),
     defaultValues: {
-      //  TODO zustand의 유저정보 가져오기
-      email: 't2@gmail.com',
-      nickname: mynickname,
+      email: '',
+      nickname: '',
     },
     mode: 'onChange',
   });
+
+  useEffect(() => {
+    form.reset({
+      email,
+      nickname,
+    });
+    if (profile_color) {
+      setSelectedColor(profile_color);
+    }
+  }, [email, nickname, profile_color, form]);
+  
 
   const watchedNickname = useWatch({ control: form.control, name: 'nickname' });
 
@@ -70,21 +91,30 @@ const EditMyInfo = () => {
         message: '이미 사용 중인 닉네임이에요.',
       });
       return;
-    } else {
-      await EditProfile<NicknameRequest>('nickname', { nickname: data.nickname });
     }
+    const requests = [EditProfile<NicknameRequest>('nickname', { nickname: data.nickname })];
 
     if (selectedColor) {
-      await EditProfile<EditProfileColorRequest>('profile-color', { profile_color: selectedColor });
+      requests.push(
+        EditProfile<EditProfileColorRequest>('profile-color', { profile_color: selectedColor }),
+      );
     }
 
     if (fileData) {
       const formData = new FormData();
       formData.append('file', fileData);
-      await EditProfileImage(formData);
+      requests.push(EditProfileImage(formData));
     }
 
-    setOpen(true);
+    try {
+      await Promise.all(requests);
+      setNickname(data.nickname);
+      setProfileColor(selectedColor);
+      setProfileImage(imagePreview);
+      setOpen(true);
+    } catch (err) {
+      alert('에러');
+    }
   };
 
   const handleModal = () => {
@@ -159,7 +189,7 @@ const EditMyInfo = () => {
                 <Label>닉네임 컬러</Label>
                 <div className="flex flex-wrap gap-3">
                   <ColorChips
-                    selected={hexToColorName('#FFE100')}
+                    selected={hexToColorName(selectedColor)}
                     size="user"
                     colors={[
                       'skyblue',
@@ -178,7 +208,7 @@ const EditMyInfo = () => {
               </div>
               <Button
                 type="submit"
-                disabled={!form.formState.isValid || watchedNickname === mynickname}
+                disabled={!form.formState.isValid || watchedNickname === nickname}
                 variant="active"
                 size="lg"
                 className="mt-[56px] w-full"
