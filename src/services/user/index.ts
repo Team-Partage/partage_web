@@ -1,3 +1,5 @@
+'use server';
+
 import { DOMAIN } from '@/constants/domains';
 import { fetcher } from '@/lib/fetcher';
 
@@ -9,20 +11,30 @@ import {
   NicknameRequest,
   SignUpRequest,
 } from './type';
-// import { cookies } from 'next/headers';
+import { cookies } from 'next/headers';
 
 /** 회원 정보 조회 */
-// export const UserInfo = async () => {
-//   const cookieStore = cookies();
-//   const cookie = cookieStore.get('access_token');
-//   const data = await fetcher.get<GetUserResponse>('/api/v1/user/me', {
-//     headers: {
-//       Authorization: `Bearer ${cookie}`,
-//     },
-//   });
-//   const { user } = data;
-//   return user;
-// };
+export const UserInfo = async () => {
+  const cookieStore = cookies();
+  const cookie = cookieStore.get('access_token')?.value;
+  console.log('cookie', cookie);
+
+  const data = await fetcher.get<GetUserResponse>(
+    `${DOMAIN.USER}/me`,
+    {},
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${cookie}`,
+      },
+    },
+  );
+  // 잘 가져와짐
+  console.log('내정보내놔~:', data);
+
+  const { user } = data;
+  return user;
+};
 
 //** 일반 회원가입 */
 export const SignUp = async (params: SignUpRequest) => {

@@ -36,25 +36,29 @@ const LoginPage = () => {
   };
 
   const onSubmit = async (data: z.infer<typeof LoginSchema>) => {
+    let successLogin = false;
     try {
-      const response = await signIn('credentials', {
+      await signIn('credentials', {
         username: data.email,
         password: data.password,
       });
-      if (response) {
-        const user = await UserInfo();
-        if (user) {
-          setUserId(user.user_id);
-          setEmail(user.email);
-          setNickname(user.nickname);
-          setUsername(user.username);
-          setProfileColor(user.profile_color);
-          setProfileImage(user.profile_image);
-        }
+      // 유저 정보 저장
+      const user = await UserInfo();
+      if (user) {
+        setUserId(user.user_id);
+        setEmail(user.email);
+        setNickname(user.nickname);
+        setUsername(user.username);
+        setProfileColor(user.profile_color);
+        setProfileImage(user.profile_image);
+        successLogin = true;
       }
-      router.replace('/');
     } catch (err) {
       throw new Error(`${err}`);
+    }
+
+    if (successLogin) {
+      router.replace('/');
     }
   };
 
