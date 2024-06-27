@@ -89,3 +89,11 @@ export type GetChannelDetailResponse = {
   playlists: Playlist[];
   channel_permissions: ChannelPermission;
 };
+
+/** 채널 생성 Req */
+export type CreateChannelReq = {
+  type: 'PUBLIC' | 'PRIVATE';
+  channel_color: string;
+  hashtag: string;
+  name: string;
+};

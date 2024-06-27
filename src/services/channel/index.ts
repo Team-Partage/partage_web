@@ -1,6 +1,13 @@
 import { fetcher } from '@/lib/fetcher';
 
-import { GetChannelDetailResponse, GetChannelListResponse } from './type';
+import { CreateChannelReq, GetChannelDetailResponse, GetChannelListResponse } from './type';
+
+/** 채널 생성 */
+export const createChannel = async (params: CreateChannelReq) => {
+  const data = await fetcher.post<GetChannelListResponse>('/api/v1/channel', params);
+
+  return data;
+};
 
 /** 채널 검색 */
 export const getChannelList = async (params: {
