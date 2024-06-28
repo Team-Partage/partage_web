@@ -13,7 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { MypageSchema } from '@/schemas/userSchema';
-import { CheckNickname, EditProfile, EditProfileImage } from '@/services/user';
+import { CheckNickname, EditProfile, EditProfileImage, UserInfo } from '@/services/user';
 import { EditProfileColorRequest, NicknameRequest } from '@/services/user/type';
 import { useUserStore } from '@/stores/User';
 import { hexToColorName } from '@/utils/hexToColorName';
@@ -35,10 +35,8 @@ const EditMyInfo = () => {
   const defaultColor = '#00FFFF';
   const [selectedColor, setSelectedColor] = useState<string>(defaultColor);
   const fileRef = useRef<HTMLInputElement>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(profile_image);
+  const [imagePreview, setImagePreview] = useState<string>('');
   const [fileData, setFileData] = useState<File>();
-  console.log(email, nickname, profile_color);
-  console.log(selectedColor);
 
   const form = useForm<z.infer<typeof MypageSchema>>({
     resolver: zodResolver(MypageSchema),
@@ -54,11 +52,19 @@ const EditMyInfo = () => {
       email,
       nickname,
     });
+  }, [email, nickname, form]);
+
+  useEffect(() => {
+    if (profile_image) {
+      setImagePreview(profile_image);
+    }
+  }, [profile_image]);
+
+  useEffect(() => {
     if (profile_color) {
       setSelectedColor(profile_color);
     }
-  }, [email, nickname, profile_color, form]);
-  
+  }, [profile_color]);
 
   const watchedNickname = useWatch({ control: form.control, name: 'nickname' });
 
@@ -102,15 +108,16 @@ const EditMyInfo = () => {
 
     if (fileData) {
       const formData = new FormData();
-      formData.append('file', fileData);
+      formData.append('profileImage', fileData);
       requests.push(EditProfileImage(formData));
     }
 
     try {
       await Promise.all(requests);
-      setNickname(data.nickname);
-      setProfileColor(selectedColor);
-      setProfileImage(imagePreview);
+      const user = await UserInfo();
+      setNickname(user.nickname);
+      setProfileColor(user.profile_color);
+      setProfileImage(user.profile_image);
       setOpen(true);
     } catch (err) {
       alert('에러');
