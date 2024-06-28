@@ -1,14 +1,18 @@
 'use client';
 
+import useSocket from '@/hooks/useSocket';
 import { Playlist } from '@/services/playlist/type';
 
 import PlaylistCard from './PlaylistCard';
 
 interface Props {
   playlists: Playlist[];
+  channelId: string;
 }
 
-const Playlist = ({ playlists }: Props) => {
+const Playlist = ({ channelId, playlists }: Props) => {
+  useSocket(channelId);
+
   return (
     <ol className="flex flex-col gap-2">
       {playlists?.map((item) => {

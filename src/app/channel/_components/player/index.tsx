@@ -1,13 +1,16 @@
 'use client';
 import { useLayoutEffect, useState } from 'react';
 
+import useSocket from '@/hooks/useSocket';
 import ReactPlayer from 'react-player';
 
 interface Props {
   src?: string;
+  channelId: string;
 }
 
-const Player = ({ src }: Props) => {
+const Player = ({ src, channelId }: Props) => {
+  useSocket(channelId);
   const [flag, setFlag] = useState(false);
 
   useLayoutEffect(() => {
