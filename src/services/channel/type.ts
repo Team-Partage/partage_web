@@ -57,8 +57,8 @@ export type CreateChannelRequest = Pick<Channel, 'name' | 'type' | 'hashtag' | '
 /** 채널 생성 Res */
 export type CreateChannelResponse = {
   channel: Channel;
-  channel_users: ChannelUser[];
   channel_permissions: ChannelPermission;
+  owner: Owner;
 };
 
 /** 채널 수정 Req */

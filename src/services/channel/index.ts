@@ -1,10 +1,25 @@
-import { fetcher } from '@/lib/fetcher';
+'use server';
 
-import { CreateChannelReq, GetChannelDetailResponse, GetChannelListResponse } from './type';
+import { fetcher } from '@/lib/fetcher';
+import { revalidateTag } from 'next/cache';
+import { cookies } from 'next/headers';
+
+import {
+  CreateChannelReq,
+  CreateChannelResponse,
+  GetChannelDetailResponse,
+  GetChannelListResponse,
+} from './type';
 
 /** 채널 생성 */
 export const createChannel = async (params: CreateChannelReq) => {
-  const data = await fetcher.post<GetChannelListResponse>('/api/v1/channel', params);
+  const accessToken = cookies().get('access_token')?.value;
+  const data = await fetcher.post<CreateChannelResponse>('/api/v1/channel', params, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  await revalidateTag('channel');
 
   return data;
 };
@@ -17,11 +32,15 @@ export const getChannelList = async (params: {
 }) => {
   const { cursor = 1, perPage = 12, keyword } = params;
 
-  const data = await fetcher.get<GetChannelListResponse>('/api/v1/channel/search', {
-    cursor,
-    perPage,
-    keyword,
-  });
+  const data = await fetcher.get<GetChannelListResponse>(
+    '/api/v1/channel/search',
+    {
+      cursor,
+      perPage,
+      keyword,
+    },
+    { next: { tags: ['channel'] } },
+  );
 
   return data;
 };
