@@ -15,7 +15,7 @@ const buttonVariants = cva(
         withDraw: 'border border-solid border-sub-red bg-neutral-600 text-sub-red',
       },
       size: {
-        default: 'h-12 w-fit px-8',
+        default: 'h-[2.625rem] w-fit px-8 tablet:h-12',
         sm: 'h-[42px] px-8',
         lg: 'h-[50px] px-8 tablet:h-14 desktop:h-16',
         icon: 'size-10 px-2',
