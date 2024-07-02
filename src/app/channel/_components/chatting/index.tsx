@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import useSocket from '@/hooks/useSocket';
-import { useSocketStore } from '@/stores/SocketStore';
+import { useSocketStore } from '@/stores/useSocketStore';
 import { Send } from 'lucide-react';
 
 import Chat from './Chat';
@@ -31,8 +31,7 @@ const Chatting = ({ channelId }: Props) => {
     <section className="h-full">
       <div className="">
         {chatting.map((chat) => {
-          const { key, ...rest } = chat;
-          return <Chat key={key} color="red" {...rest} />;
+          return <Chat key={chat.user_id + chat.sendTime} color="red" {...chat} />;
         })}
       </div>
 
