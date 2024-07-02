@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { stomp } from '@/services/websocket';
 import {
   MessageBody,
-  // MessageHeaders,
   PlaylistAddReq,
   PlaylistMoveReq,
   PlaylistRemoveReq,
@@ -11,7 +10,8 @@ import {
   VideoMoveReq,
   VideoPlayReq,
 } from '@/services/websocket/type';
-import { useSocketStore } from '@/stores/SocketStore';
+import { useSocketStore } from '@/stores/useSocketStore';
+import { useShallow } from 'zustand/react/shallow';
 
 import type { IMessage } from '@stomp/stompjs';
 
@@ -38,20 +38,28 @@ type SendMessageType = {
 };
 
 const useSocket = (channelId: string) => {
-  const setSocketStore = useSocketStore((state) => state.setSocketStore);
+  const { reset, setStore } = useSocketStore(
+    useShallow((state) => ({
+      reset: state.resetStore,
+      setStore: state.setSocketStore,
+    })),
+  );
 
+  /** 웹소캣 연결 */
   useEffect(() => {
     const onMessage = (message: IMessage) => {
-      // const headers = message.headers as MessageHeaders;
       const body: MessageBody = JSON.parse(message.body);
 
       switch (body.type) {
         case 'CHANNEL_VIEWER':
-          console.log(body);
+          setStore({ type: 'SET_VIEWER', payload: body.data });
           break;
         case 'USER_CHAT': {
-          const { type, data } = body as MessageBody<'USER_CHAT'>;
-          setSocketStore(type, data);
+          setStore({ type: 'SET_CHATTING', payload: body.data });
+          break;
+        }
+        case 'PLAYLIST_ADD': {
+          setStore({ type: 'SET_PLAYLIST', payload: body.data });
           break;
         }
         default:
@@ -63,9 +71,11 @@ const useSocket = (channelId: string) => {
 
     return () => {
       stomp.disconnect();
+      reset();
     };
-  }, [channelId, setSocketStore]);
+  }, [channelId, reset, setStore]);
 
+  /** 메시지 전송 */
   const sendMessage = <T extends keyof typeof ENDPOINT>(type: T, message: SendMessageType[T]) => {
     stomp.send(ENDPOINT[type], message);
   };
