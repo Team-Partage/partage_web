@@ -1,4 +1,4 @@
-import { StompHeaders } from '@stomp/stompjs';
+import { Playlist } from '../playlist/type';
 
 /** 채팅 입력 */
 export type UserChatReq = {
@@ -64,15 +64,7 @@ export type MessageType = {
   };
 
   /** 플레이리스트 추가 */
-  PLAYLIST_ADD: {
-    playlist_no: number;
-    channel_id: string;
-    sequence: number;
-    title: string;
-    url: string;
-    thumbnail: string;
-    create_at: string;
-  };
+  PLAYLIST_ADD: Playlist;
 
   /** 플레이리스트 삭제 */
   PLAYLIST_REMOVE: {
@@ -102,14 +94,6 @@ export type MessageType = {
 };
 
 export interface MessageBody<T extends keyof MessageType = never> {
-  type: T;
+  type: keyof MessageType;
   data: MessageType[T];
-}
-
-export interface MessageHeaders extends StompHeaders {
-  'content-length': string;
-  'message-id': string;
-  'content-type': string;
-  subscription: string;
-  destination: string;
 }
