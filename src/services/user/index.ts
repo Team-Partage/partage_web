@@ -2,6 +2,7 @@
 
 import { DOMAIN } from '@/constants/domains';
 import { fetcher } from '@/lib/fetcher';
+import { cookies } from 'next/headers';
 
 import {
   CheckEmailNumberRequest,
@@ -11,13 +12,11 @@ import {
   NicknameRequest,
   SignUpRequest,
 } from './type';
-import { cookies } from 'next/headers';
 
 /** 회원 정보 조회 */
 export const UserInfo = async () => {
   const cookieStore = cookies();
   const cookie = cookieStore.get('access_token')?.value;
-  console.log('cookie', cookie);
 
   const data = await fetcher.get<GetUserResponse>(
     `${DOMAIN.USER}/me`,
@@ -56,13 +55,27 @@ export const CheckNickname = async (params: NicknameRequest) => {
 
 //** 프로필 수정 (닉네임, 색상, 비밀번호) */
 export const EditProfile = async <T extends EditProfileParams>(endpoint: string, params: T) => {
-  const data = await fetcher.patch(`${DOMAIN.USER}/me/${endpoint}`, params);
+  const cookieStore = cookies();
+  const cookie = cookieStore.get('access_token')?.value;
+  const data = await fetcher.patch(`${DOMAIN.USER}/me/${endpoint}`, params, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${cookie}`,
+    },
+  });
   return data;
 };
 
 //** 프로필 이미지 수정 */
 export const EditProfileImage = async (params: FormData) => {
-  const data = await fetcher.post(`${DOMAIN.USER}/me/profile-image`, params);
+  const cookieStore = cookies();
+  const cookie = cookieStore.get('access_token')?.value;
+  const data = await fetcher.post(`${DOMAIN.USER}/me/profile-image`, params, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${cookie}`,
+    },
+  });
   return data;
 };
 

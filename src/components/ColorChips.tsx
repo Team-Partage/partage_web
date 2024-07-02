@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { VariantProps, cva } from 'class-variance-authority';
 
@@ -42,7 +42,11 @@ const ColorChips = ({ onChange, className, colors, size, selected = colors[0] }:
     throw new TypeError(`Selected color '${selected}' is not in the list of colors.`);
   }
 
-  const [selectedIndex, setSelectedIndex] = useState<number>(colors.indexOf(selected));
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
+
+  useEffect(() => {
+    setSelectedIndex(colors.indexOf(selected));
+  }, [selected, colors]);
 
   const handleClick = (index: number) => {
     onChange && onChange(colorNameToHex(colors[index]));
