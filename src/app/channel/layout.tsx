@@ -3,7 +3,7 @@ interface Props {
 }
 
 const layout = ({ children }: Props) => {
-  return <main className="size-full px-10">{children}</main>;
+  return <main className="h-full min-w-[375px] px-5 tablet:px-10">{children}</main>;
 };
 
 export default layout;
