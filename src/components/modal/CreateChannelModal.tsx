@@ -4,6 +4,7 @@ import { useReducer } from 'react';
 
 import { createChannel } from '@/services/channel';
 import { CreateChannelReq } from '@/services/channel/type';
+import { useRouter } from 'next/navigation';
 
 import ColorChips from '../ColorChips';
 import TagInput from '../TagInput';
@@ -44,16 +45,15 @@ const reducer = (
 const CreateChannelModal = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const handleSubmit = () => {
-    /**
-     * TODO: accessToken 처리 필요
-     * TODO: 요청 성공 시 채널 페이지로 이동
-     */
-    createChannel(state);
+  const router = useRouter();
+
+  const handleSubmit = async () => {
+    const res = await createChannel(state);
+    router.push(`/channel/${res.channel.channel_id}`);
   };
 
   return (
-    <DialogContent>
+    <DialogContent className="min-w-[335px] gap-7 tablet:gap-8">
       <DialogHeader>
         <DialogTitle>채널 생성</DialogTitle>
       </DialogHeader>
@@ -83,8 +83,9 @@ const CreateChannelModal = () => {
           />
         </div>
       </div>
-      <DialogFooter>
+      <DialogFooter className="items-center">
         <Button
+          className="w-full tablet:w-fit"
           variant="active"
           disabled={state.name === '' || state.hashtag.length === 0}
           onClick={handleSubmit}

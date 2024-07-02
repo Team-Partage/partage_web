@@ -1,11 +1,15 @@
+'use client';
+
+import { memo } from 'react';
+
 import { Playlist } from '@/services/playlist/type';
 import Image from 'next/image';
 
-interface Props extends Pick<Playlist, 'thumbnail' | 'title'> {}
+interface Props extends Playlist {}
 
 const PlaylistCard = ({ thumbnail, title }: Props) => {
   return (
-    <div className="flex w-[320px] items-center rounded-lg border border-transparent p-3 transition-colors hover:border-main-skyblue hover:bg-main-skyblue/20">
+    <div className="flex items-center">
       <Image
         className="aspect-square rounded object-cover"
         src={thumbnail}
@@ -18,4 +22,4 @@ const PlaylistCard = ({ thumbnail, title }: Props) => {
   );
 };
 
-export default PlaylistCard;
+export default memo(PlaylistCard);

@@ -26,12 +26,26 @@ const TagInput = ({ onChange, color, value = '', ...rest }: Props) => {
     }
   };
 
+  const handleClick = (index: number) => {
+    const newTags = tags.filter((_, i) => i !== index);
+    setTags(newTags);
+    onChange && onChange(newTags.join(' '));
+  };
+
   return (
-    <div className="flex w-full flex-wrap items-center rounded-lg border border-solid border-transparent bg-neutral-400 px-6 text-neutral-100 transition-colors base-regular focus-within:border-main-skyblue  mobile:min-h-14 tablet:min-h-14">
+    <div className="flex min-h-14 w-full flex-wrap items-center rounded-lg border border-solid border-transparent bg-neutral-400 px-6 text-neutral-100 transition-colors base-regular focus-within:border-main-skyblue desktop:min-h-[70px]">
       <ol className="flex flex-wrap gap-1">
         {tags.map((tag, index) => {
+          if (tag.trim() === '') return <></>;
+
+          const tagId = tag + index;
           return (
-            <li key={tag + index} className="transition-colors" style={{ color: color }}>
+            <li
+              key={tagId}
+              className="cursor-pointer rounded px-1.5 py-[.3125rem] transition-colors hover:bg-neutral-500"
+              style={{ color: color }}
+              onClick={() => handleClick(index)}
+            >
               {tag && `#${tag}`}
             </li>
           );

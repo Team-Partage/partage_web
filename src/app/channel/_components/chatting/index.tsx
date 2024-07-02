@@ -1,20 +1,49 @@
 'use client';
 
+import { useState } from 'react';
+
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import useSocket from '@/hooks/useSocket';
+import { useSocketStore } from '@/stores/useSocketStore';
 import { Send } from 'lucide-react';
 
 import Chat from './Chat';
 
-const Chatting = () => {
+interface Props {
+  channelId: string;
+}
+
+const Chatting = ({ channelId }: Props) => {
+  const [text, setText] = useState('');
+  const { send } = useSocket(channelId);
+
+  const chatting = useSocketStore((state) => state.chatting);
+
+  const handleEnter = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (text.trim() !== '' && e.key === 'Enter') {
+      send('USER_CHAT', { nickname: 'ase', profile: '', message: text });
+      setText('');
+    }
+  };
+
   return (
     <section className="h-full">
       <div className="">
-        <Chat nickname="Lorem" message="hello world" color="asd" />
+        {chatting.map((chat) => {
+          return <Chat key={chat.user_id + chat.sendTime} color="red" {...chat} />;
+        })}
       </div>
 
       <div className="flex items-center gap-3">
-        <Textarea variant="chat" />
+        <Textarea
+          value={text}
+          variant="chat"
+          onChange={(e) => {
+            setText(e.currentTarget.value);
+          }}
+          onKeyDown={handleEnter}
+        />
         <Button variant="active" size="icon">
           <Send />
         </Button>

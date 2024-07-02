@@ -1,5 +1,7 @@
 'use client';
 
+import { memo } from 'react';
+
 import Image from 'next/image';
 
 interface Props {
@@ -24,4 +26,4 @@ const Chat = ({ nickname, message }: Props) => {
   );
 };
 
-export default Chat;
+export default memo(Chat);

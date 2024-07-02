@@ -31,13 +31,6 @@ export type Owner = {
   profile_image: string | null;
 };
 
-export type ChannelWithPlaylist = {
-  channel: Channel;
-  playlist: Playlist | null;
-  owner: Owner;
-  user_count: number;
-};
-
 /** 채널 권한 */
 export type ChannelPermission = {
   playlist_add: string;
@@ -57,8 +50,8 @@ export type CreateChannelRequest = Pick<Channel, 'name' | 'type' | 'hashtag' | '
 /** 채널 생성 Res */
 export type CreateChannelResponse = {
   channel: Channel;
-  channel_users: ChannelUser[];
   channel_permissions: ChannelPermission;
+  owner: Owner;
 };
 
 /** 채널 수정 Req */
@@ -79,7 +72,7 @@ export type DeleteChannelResponse = {
 /** 채널 목록 조회 Res */
 export type GetChannelListResponse = {
   page: { cursor: number; per_page: number; total_page: number; total_count: number };
-  channels: ChannelWithPlaylist[];
+  channels: Channel;
 };
 
 /** 채널 상세 조회 Res */
