@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="kr" className={`${pretendard.variable} h-full`}>
-      <body className={`${pretendard.className} h-full`}>
+      <body className={`${pretendard.className} flex h-full flex-col`}>
         <AuthSession>
           <Header />
           {children}
