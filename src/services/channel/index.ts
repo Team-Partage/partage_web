@@ -8,7 +8,7 @@ import {
   CreateChannelReq,
   CreateChannelResponse,
   GetChannelDetailResponse,
-  GetChannelListResponse,
+  GetChannelSearchResponse,
 } from './type';
 
 /** 채널 생성 */
@@ -24,15 +24,15 @@ export const createChannel = async (params: CreateChannelReq) => {
   return data;
 };
 
-/** 채널 검색 */
-export const getChannelList = async (params: {
+/** 채널 검색 - 채널명, 해시태그 */
+export const getSearchChannelList = async (params: {
   cursor?: number;
   perPage?: number;
   keyword?: string;
 }) => {
   const { cursor = 1, perPage = 12, keyword } = params;
 
-  const data = await fetcher.get<GetChannelListResponse>(
+  const data = await fetcher.get<GetChannelSearchResponse>(
     '/api/v1/channel/search',
     {
       cursor,

@@ -1,12 +1,12 @@
 import ChannelCreatorBox from '@/components/ChannelCreatorBox';
 import SearchBar from '@/components/SearchBar';
-import { getChannelList } from '@/services/channel';
+import { getSearchChannelList } from '@/services/channel';
 import { PLACEHOLDER } from '@/utils/constants';
 
 import ChannelList from './(main)/_components/ChannelList';
 
 const MainPage = async () => {
-  const channelsData = await getChannelList({});
+  const channelsData = await getSearchChannelList({});
 
   const noChannel = channelsData?.page.total_count === 0;
 
