@@ -8,7 +8,7 @@ interface UseChannelStoreType {
   incrementCursor: () => void;
 }
 
-export const ChannelStore = create<UseChannelStoreType>((set) => ({
+export const useChannelStore = create<UseChannelStoreType>((set) => ({
   channels: [],
   setChannels: (data) => {
     if (Array.isArray(data)) {

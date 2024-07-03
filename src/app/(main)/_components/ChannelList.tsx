@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { getSearchChannelList } from '@/services/channel';
 import { GetChannelSearchResponse } from '@/services/channel/type';
-import { ChannelStore } from '@/stores/Channel';
+import { useChannelStore } from '@/stores/useChannelStore';
 import { useInView } from 'react-intersection-observer';
 
 import ChannelItem from './ChannelItem';
@@ -14,7 +14,7 @@ interface ChannelListProps {
 }
 
 const ChannelList = ({ query, channelsData }: ChannelListProps) => {
-  const { channels, setChannels, cursor, incrementCursor } = ChannelStore();
+  const { channels, setChannels, cursor, incrementCursor } = useChannelStore();
   const [loading, setLoading] = useState(false);
 
   const [ref, inView] = useInView();
