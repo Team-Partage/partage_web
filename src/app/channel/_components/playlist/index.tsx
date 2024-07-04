@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import useSocket from '@/hooks/useSocket';
 import { getPlaylist } from '@/services/playlist';
 import { useSocketStore } from '@/stores/useSocketStore';
-import { Menu, Plus, Trash2 } from 'lucide-react';
+import { ListVideo, Menu, Plus, Trash2 } from 'lucide-react';
 import { useShallow } from 'zustand/react/shallow';
 
 import PlaylistCard from './PlaylistCard';
@@ -63,8 +63,19 @@ const Playlist = ({ channelId }: Props) => {
     setHoveredItem(null);
   };
 
+  const handlePlaylistMove = () => {};
+
+  const handlePlaylistRemove = () => {};
+
   return (
-    <>
+    <section className="h-full py-5 desktop:order-1 desktop:w-[384px] desktop:pr-8">
+      {/** 헤더 */}
+      <header className="flex h-[4.1875rem] items-center shadow-xl">
+        <ListVideo />
+        <h2 className="ml-2 text-nowrap medium-bold desktop:large-bold">플레이리스트</h2>
+      </header>
+
+      {/** 플레이리스트 */}
       <ol className="flex flex-col gap-2">
         {playlist?.map((item) => (
           <li
@@ -76,16 +87,21 @@ const Playlist = ({ channelId }: Props) => {
           >
             <PlaylistCard {...item} />
             {hoveredItem === item.playlist_no && (
-              <div className="absolute">
+              <div className="absolute right-2 top-1/2 flex -translate-y-1/2 gap-4">
+                {/** 플레이리스트 이동 */}
                 <Button
                   size="icon"
-                  className="absolute right-0 top-1/2 -translate-x-1/2 -translate-y-1/2 hover:backdrop-blur"
+                  className="size-5 p-0 tablet:size-6"
+                  onClick={() => handlePlaylistMove}
                 >
                   <Menu className="text-main-skyblue" />
+
+                  {/** 플레이리스트 삭제 */}
                 </Button>
                 <Button
                   size="icon"
-                  className="absolute right-0 top-1/2 -translate-x-1/2 -translate-y-1/2 hover:backdrop-blur"
+                  className="size-5 p-0 tablet:size-6"
+                  onClick={() => handlePlaylistRemove}
                 >
                   <Trash2 className="text-main-skyblue" />
                 </Button>
@@ -105,7 +121,7 @@ const Playlist = ({ channelId }: Props) => {
           </Button>
         }
       />
-    </>
+    </section>
   );
 };
 
