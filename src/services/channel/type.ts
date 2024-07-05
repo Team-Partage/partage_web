@@ -22,6 +22,14 @@ export type Channel = {
   current_playlist_no: number | null;
 };
 
+/** 검색된 채널 */
+export type SearchedChannel = {
+  channel: Channel;
+  playlist: Playlist | null;
+  owner: Owner;
+  user_count: number;
+};
+
 export type Owner = {
   user_id: string;
   email: string;
@@ -69,10 +77,10 @@ export type DeleteChannelResponse = {
   status: boolean;
 };
 
-/** 채널 목록 조회 Res */
-export type GetChannelListResponse = {
+/** 채널 검색 - 채널명, 해시태그 Res */
+export type GetChannelSearchResponse = {
   page: { cursor: number; per_page: number; total_page: number; total_count: number };
-  channels: Channel;
+  channels: SearchedChannel[];
 };
 
 /** 채널 상세 조회 Res */

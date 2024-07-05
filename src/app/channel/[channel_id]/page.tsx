@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { getChannelDetail } from '@/services/channel';
-import { ListVideo, MessagesSquare, Settings, Share2, UsersRound } from 'lucide-react';
+import { Settings, Share2 } from 'lucide-react';
 import Image from 'next/image';
 
 import Chatting from '../_components/chatting';
@@ -60,26 +60,10 @@ const page = async ({ params }: Props) => {
       </section>
 
       {/** 채팅 */}
-      <section className="w-full py-5 desktop:order-3 desktop:max-w-[440px]">
-        <header className="flex h-[4.1875rem] items-center shadow-xl">
-          <MessagesSquare />
-          <h2 className="ml-2 text-nowrap medium-bold desktop:large-bold">채팅</h2>
-          <div className="ml-4 flex items-center gap-1 text-neutral-200">
-            <UsersRound size={14} />
-            <p className="small-regular">{channel.viewer_count}</p>
-          </div>
-        </header>
-        <Chatting channelId={params.channel_id} />
-      </section>
+      <Chatting channelId={params.channel_id} />
 
       {/** 플레이리스트 */}
-      <section className="h-full py-5 desktop:order-1">
-        <header className="flex h-[4.1875rem] items-center shadow-xl">
-          <ListVideo />
-          <h2 className="ml-2 text-nowrap medium-bold desktop:large-bold">플레이리스트</h2>
-        </header>
-        <Playlist channelId={params.channel_id} />
-      </section>
+      <Playlist channelId={params.channel_id} />
     </div>
   );
 };

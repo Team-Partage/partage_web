@@ -22,11 +22,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <>
         <div className="relative flex items-center">
-          {startAdornment && <div className="absolute left-0 pl-3">{startAdornment}</div>}
+          {startAdornment && (
+            <div className="absolute left-0 flex items-center pl-3">{startAdornment}</div>
+          )}
           <input
             type={type}
             className={cn(
-              'flex desktop:h-[70px] h-14 w-full bg-neutral-400 rounded-lg px-6 py-6 desktop:base-regular small-regular text-neutral-100 border border-solid transition-colors focus:border-main-skyblue file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-200 focus-visible:outline-none focus-visible:ring-slate-950 disabled:cursor-not-allowed disabled:opacity-50 disabled:text-neutral-200',
+              'flex desktop:h-[70px] h-14 w-full bg-neutral-400 rounded-lg desktop:px-6 desktop:py-5 px-5 py-4 desktop:base-regular small-regular text-neutral-100 border border-solid transition-colors focus:border-main-skyblue file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-200 focus-visible:outline-none focus-visible:ring-slate-950 disabled:cursor-not-allowed disabled:opacity-50 disabled:text-neutral-200',
               isError ? 'border-sub-red focus:border-sub-red' : 'border-transparent',
               className,
               startAdornment ? 'pl-10' : '',
@@ -35,7 +37,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             {...props}
           />
-          {endAdornment && <div className="absolute right-0 pr-3">{endAdornment}</div>}
+          {endAdornment && (
+            <div className="absolute right-0 flex items-center pr-3">{endAdornment}</div>
+          )}
         </div>
         {isError && renderErrorMessage(errorText)}
       </>
