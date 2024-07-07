@@ -1,9 +1,9 @@
 'use client';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { useMainStore } from '@/providers/main-store-provider';
 import { getSearchChannelList } from '@/services/channel';
 import { GetChannelSearchResponse } from '@/services/channel/type';
-import { useChannelStore } from '@/stores/useChannelStore';
 import { useInView } from 'react-intersection-observer';
 
 import ChannelItem from './ChannelItem';
@@ -14,8 +14,14 @@ interface ChannelListProps {
 }
 
 const ChannelList = ({ query, channelsData }: ChannelListProps) => {
-  const { channels, setChannels, cursor, incrementCursor } = useChannelStore();
   const [loading, setLoading] = useState(false);
+
+  const { channels, setChannels, addChannels, cursor } = useMainStore((state) => ({
+    channels: state.channels,
+    setChannels: state.setChannels,
+    addChannels: state.addChannels,
+    cursor: state.cursor,
+  }));
 
   const [ref, inView] = useInView();
   const channelsRef = useRef<HTMLDivElement>(null);
@@ -27,14 +33,13 @@ const ChannelList = ({ query, channelsData }: ChannelListProps) => {
     setLoading(true);
 
     const nextChannelsData = await getSearchChannelList({
-      cursor: cursor + 1,
+      cursor: cursor,
       keyword: `${query ? query : ''}`,
     });
-    setChannels(nextChannelsData.channels);
-    incrementCursor();
+    addChannels(nextChannelsData.channels);
 
     setLoading(false);
-  }, [cursor, incrementCursor, loading, query, setChannels]);
+  }, [cursor, loading, query, addChannels]);
 
   useEffect(() => {
     if (channelsData && channelsData.channels) {
