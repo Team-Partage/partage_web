@@ -60,7 +60,7 @@ function Header() {
                 <AvatarFallback>profile_image</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
-            <DropdownMenuContent>
+            <DropdownMenuContent className="mr-[40px]">
               <DropdownMenuItem onClick={() => router.push('/mypage')}>
                 사용자 설정
               </DropdownMenuItem>
