@@ -1,11 +1,17 @@
+'use client';
+
 import { PAGE_ROUTE } from '@/utils/route';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
 import ModalRenderer from './ModalRenderer';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 
 function Header() {
+  const { data: session } = useSession();
+
   return (
     <header className="flex h-[68px] w-full min-w-[375px] items-center justify-between border-b-1 border-neutral-400 px-5 tablet:h-[76px] tablet:px-10 desktop:h-[84px]">
       <Link
@@ -28,12 +34,24 @@ function Header() {
             </span>
           </Button>
         </ModalRenderer>
-        <Link className="tablet:small-regular desktop:base-regular" href={PAGE_ROUTE.LOGIN}>
-          로그인
-        </Link>
-        <Link className="tablet:small-regular desktop:base-regular" href={PAGE_ROUTE.REGISTER}>
-          회원가입
-        </Link>
+        {session?.user ? (
+          <Avatar className="group size-[54px] cursor-pointer">
+            <AvatarImage
+              className="object-cover"
+              src={session.user.image || '/default-profile-image.png'}
+            />
+            <AvatarFallback>profile_image</AvatarFallback>
+          </Avatar>
+        ) : (
+          <>
+            <Link className="tablet:small-regular desktop:base-regular" href={PAGE_ROUTE.LOGIN}>
+              로그인
+            </Link>
+            <Link className="tablet:small-regular desktop:base-regular" href={PAGE_ROUTE.REGISTER}>
+              회원가입
+            </Link>
+          </>
+        )}
       </div>
     </header>
   );
