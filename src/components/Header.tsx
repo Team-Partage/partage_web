@@ -6,17 +6,26 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useUserStore } from '@/stores/User';
 import { PAGE_ROUTE } from '@/utils/route';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { signOut, useSession } from 'next-auth/react';
 
 import ModalRenderer from './ModalRenderer';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 
 function Header() {
+  const router = useRouter();
   const { data: session } = useSession();
+  const clearUser = useUserStore((state) => state.clearUser);
+
+  const handleLogout = () => {
+    signOut();
+    clearUser();
+  };
 
   return (
     <header className="flex h-[68px] w-full min-w-[375px] items-center justify-between border-b-1 border-neutral-400 px-5 tablet:h-[76px] tablet:px-10 desktop:h-[84px]">
@@ -52,8 +61,10 @@ function Header() {
               </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem>사용자 설정</DropdownMenuItem>
-              <DropdownMenuItem>로그아웃</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push('/mypage')}>
+                사용자 설정
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>로그아웃</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (

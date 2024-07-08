@@ -12,15 +12,20 @@ import { UserInfo } from '@/services/user';
 import { useUserStore } from '@/stores/User';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { signIn } from 'next-auth/react';
+import { redirect } from 'next/navigation';
+import { signIn, useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 
 const LoginPage = () => {
-  const router = useRouter();
+  const { data: session } = useSession();
   const [showPassword, setShowPassword] = useState(false);
   const { setUserId, setEmail, setUsername, setNickname, setProfileColor, setProfileImage } =
     useUserStore();
+
+  if (session?.user) {
+    redirect('/');
+    return null;
+  }
 
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
@@ -36,7 +41,6 @@ const LoginPage = () => {
   };
 
   const onSubmit = async (data: z.infer<typeof LoginSchema>) => {
-    let successLogin = false;
     try {
       await signIn('credentials', {
         username: data.email,
@@ -51,14 +55,9 @@ const LoginPage = () => {
         setUsername(user.username);
         setProfileColor(user.profile_color);
         setProfileImage(user.profile_image);
-        successLogin = true;
       }
     } catch (err) {
       throw new Error(`${err}`);
-    }
-
-    if (successLogin) {
-      router.replace('/');
     }
   };
 

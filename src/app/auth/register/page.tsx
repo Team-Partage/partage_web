@@ -15,13 +15,20 @@ import { PAGE_ROUTE } from '@/utils/route';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CircleCheck } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 
 const RegisterPage = () => {
+  const { data: session } = useSession();
   const { registerUser } = useUserStore();
   const [emailCheck, setEmailCheck] = useState(false);
   const router = useRouter();
+
+  if (session?.user) {
+    redirect('/');
+    return null;
+  }
 
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
