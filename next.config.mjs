@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  runtime: 'edge',
   unstable_allowDynamic: ['*lodash.js'],
   images: {
     remotePatterns: [
