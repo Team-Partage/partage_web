@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  unstable_allowDynamic: ['*lodash.js'],
   images: {
     remotePatterns: [
       {
