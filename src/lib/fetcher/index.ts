@@ -1,4 +1,3 @@
-import merge from 'lodash/merge';
 import qs from 'qs';
 
 type FetcherRequestInit = Omit<RequestInit, 'method'>;
@@ -17,23 +16,26 @@ class Fetcher {
     this.defaultRequestInit = config?.defaultRequestInit;
   }
 
+  // TODO: 리팩토링 필요
+  optionMerge(options?: FetcherRequestInit) {
+    if (!options) {
+      return this.defaultRequestInit;
+    } else {
+      return { ...this.defaultRequestInit, ...options };
+    }
+  }
+
   async get<T>(endpoint: string, params?: object, options?: FetcherRequestInit): Promise<T> {
     try {
       const url = new URL(endpoint, this.baseURL);
-
-      let requestInit = this.defaultRequestInit;
 
       if (params) {
         url.search = qs.stringify(params);
       }
 
-      if (options) {
-        requestInit = merge(this.defaultRequestInit, options);
-      }
-
       const res = await fetch(url, {
         method: 'GET',
-        ...requestInit,
+        ...this.optionMerge(options),
       });
       const data: T = await res.json();
 
@@ -47,16 +49,10 @@ class Fetcher {
     try {
       const url = new URL(endpoint, this.baseURL);
 
-      let requestInit = this.defaultRequestInit;
-
-      if (options) {
-        requestInit = merge(this.defaultRequestInit, options);
-      }
-
       const res = await fetch(url, {
         method: 'POST',
         body: JSON.stringify(params),
-        ...requestInit,
+        ...this.optionMerge(options),
       });
 
       const data: T = await res.json();
@@ -70,16 +66,10 @@ class Fetcher {
     try {
       const url = new URL(endpoint, this.baseURL);
 
-      let requestInit = this.defaultRequestInit;
-
-      if (options) {
-        requestInit = merge(this.defaultRequestInit, options);
-      }
-
       const res = await fetch(url, {
         method: 'PUT',
         body: JSON.stringify(params),
-        ...requestInit,
+        ...this.optionMerge(options),
       });
 
       const data: T = await res.json();
@@ -93,16 +83,10 @@ class Fetcher {
     try {
       const url = new URL(endpoint, this.baseURL);
 
-      let requestInit = this.defaultRequestInit;
-
-      if (options) {
-        requestInit = merge(this.defaultRequestInit, options);
-      }
-
       const res = await fetch(url, {
         method: 'PATCH',
         body: JSON.stringify(params),
-        ...requestInit,
+        ...this.optionMerge(options),
       });
 
       const data: T = await res.json();
@@ -116,15 +100,9 @@ class Fetcher {
     try {
       const url = new URL(endpoint, this.baseURL);
 
-      let requestInit = this.defaultRequestInit;
-
-      if (options) {
-        requestInit = merge(this.defaultRequestInit, options);
-      }
-
       const res = await fetch(url, {
         method: 'DELETE',
-        ...requestInit,
+        ...this.optionMerge(options),
       });
 
       const data: T = await res.json();
