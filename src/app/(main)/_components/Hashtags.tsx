@@ -1,5 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 
+import { PAGE_ROUTE } from '@/utils/route';
+import Link from 'next/link';
+
 interface HashtagsProps {
   hashtage: string;
   color: string;
@@ -21,17 +24,18 @@ const Hashtags = ({ hashtage, color }: HashtagsProps) => {
 
       if (windowWidth >= 1200) {
         maxWidth = 180;
-        // maxWidth = 155;
+        /** maxWidth = 155; */
       } else if (windowWidth >= 744) {
         maxWidth = 240;
-        // maxWidth = 215;
+        /** maxWidth = 215; */
       } else if (windowWidth >= 375) {
         maxWidth = 283;
-        // maxWidth = 258;
+        /** maxWidth = 258; */
       }
 
       for (let i = 0; i < hashtagArray.length; i++) {
-        const width = (hashtagArray[i].length - 1) * 12 + 9 + 5; // 전체 글자수 -1(#) * 글자당 12 + # 9 + gap 5
+        const width = (hashtagArray[i].length - 1) * 12 + 9 + 5;
+        /** 전체 글자수 -1(#) * 글자당 12 + # 9 + gap 5 */
         totalWidth += width;
 
         if (totalWidth > maxWidth) return;
@@ -56,11 +60,15 @@ const Hashtags = ({ hashtage, color }: HashtagsProps) => {
   return (
     <div className="flex h-[21px] w-fit gap-x-[5px]">
       {hashtagArray.map((tag, index) => {
+        const noSharpTag = tag.substring(tag.indexOf('#') + 1);
+
         if (index < visibleIndex)
           return (
-            <span key={index} className="shrink-0 small-regular" style={{ color: color }}>
-              {tag}
-            </span>
+            <Link key={index} href={PAGE_ROUTE.SEARCH(noSharpTag)}>
+              <span key={index} className="shrink-0 small-regular" style={{ color: color }}>
+                {tag}
+              </span>
+            </Link>
           );
       })}
       {restHashtagCount !== 0 && (
