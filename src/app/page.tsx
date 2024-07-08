@@ -15,11 +15,7 @@ const MainPage = async () => {
     <MainStoreProvider>
       <main className="flex flex-col items-center gap-[40px] p-[40px]">
         {noChannel ? (
-          <ChannelCreatorBox>
-            생성된 채널이 없어서 조용하네요!
-            <br />
-            폭탄뉴진세님의 채널을 기다릴지도!
-          </ChannelCreatorBox>
+          <ChannelCreatorBox />
         ) : (
           <>
             <SearchBar placeholder={PLACEHOLDER.CHANNEL_SEARCHBAR} />
