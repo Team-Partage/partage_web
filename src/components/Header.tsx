@@ -28,7 +28,7 @@ function Header() {
   };
 
   return (
-    <header className="flex h-[68px] w-full min-w-[375px] items-center justify-between border-b-1 border-neutral-400 px-5 tablet:h-[76px] tablet:px-10 desktop:h-[84px]">
+    <header className="flex h-[68px] w-full min-w-[375px] items-center justify-between border-b-1 border-neutral-400 px-5 tablet:min-h-[76px] tablet:px-10 desktop:min-h-[84px]">
       <Link
         href={PAGE_ROUTE.HOME}
         className="relative h-[28px] w-[92px] tablet:h-[32px] tablet:w-[105px] desktop:h-[36px] desktop:w-[120px]"
@@ -52,7 +52,7 @@ function Header() {
         {session?.user ? (
           <DropdownMenu>
             <DropdownMenuTrigger>
-              <Avatar className="group size-[54px] cursor-pointer">
+              <Avatar className="group size-[40px] cursor-pointer tablet:size-[48px] desktop:size-[54px]">
                 <AvatarImage
                   className="object-cover"
                   src={session.user.image || '/default-profile-image.png'}
@@ -60,7 +60,7 @@ function Header() {
                 <AvatarFallback>profile_image</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="mr-[40px]">
+            <DropdownMenuContent className="mr-[20px] tablet:mr-[40px]">
               <DropdownMenuItem onClick={() => router.push('/mypage')}>
                 사용자 설정
               </DropdownMenuItem>
