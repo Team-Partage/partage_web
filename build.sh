@@ -1,12 +1,10 @@
+  
 #!/bin/sh
 
-# 상위 디렉토리로 이동
-cd ../ || { echo "Failed to change directory"; exit 1; }
+cd ../
 
-# output 디렉토리 생성 (이미 존재하면 무시)
-mkdir -p output
+mkdir output
 
-# partage_web의 모든 파일과 디렉토리를 output으로 복사
-cp -R ./partage_web/* ./output
+cp -R ./[team-repo-name]/* ./output
 
-echo "Script executed successfully."
+cp -R ./output ./[team-repo-name]/
