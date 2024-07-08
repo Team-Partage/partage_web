@@ -1,5 +1,11 @@
 'use client';
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { PAGE_ROUTE } from '@/utils/route';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -35,13 +41,21 @@ function Header() {
           </Button>
         </ModalRenderer>
         {session?.user ? (
-          <Avatar className="group size-[54px] cursor-pointer">
-            <AvatarImage
-              className="object-cover"
-              src={session.user.image || '/default-profile-image.png'}
-            />
-            <AvatarFallback>profile_image</AvatarFallback>
-          </Avatar>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Avatar className="group size-[54px] cursor-pointer">
+                <AvatarImage
+                  className="object-cover"
+                  src={session.user.image || '/default-profile-image.png'}
+                />
+                <AvatarFallback>profile_image</AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem>사용자 설정</DropdownMenuItem>
+              <DropdownMenuItem>로그아웃</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         ) : (
           <>
             <Link className="tablet:small-regular desktop:base-regular" href={PAGE_ROUTE.LOGIN}>
