@@ -1,4 +1,4 @@
-import { merge } from 'lodash';
+import merge from 'lodash/merge';
 import qs from 'qs';
 
 type FetcherRequestInit = Omit<RequestInit, 'method'>;
