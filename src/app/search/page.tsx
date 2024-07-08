@@ -1,5 +1,6 @@
 import ChannelCreatorBox from '@/components/ChannelCreatorBox';
 import SearchBar from '@/components/SearchBar';
+import { MainStoreProvider } from '@/providers/main-store-provider';
 import { getSearchChannelList } from '@/services/channel';
 import { PLACEHOLDER } from '@/utils/constants';
 
@@ -12,25 +13,21 @@ interface SearchPageProps {
 const SearchPage = async ({ searchParams }: SearchPageProps) => {
   const query = typeof searchParams.query === 'string' ? searchParams.query : '';
 
-  const channelsData = await getSearchChannelList({ cursor: 1, keyword: query });
+  const channelsData = query && (await getSearchChannelList({ cursor: 1, keyword: query }));
 
-  const noChannel = channelsData?.page.total_count === 0;
+  const noChannel = channelsData && channelsData?.page.total_count === 0;
 
   return (
-    <>
+    <MainStoreProvider>
       {noChannel ? (
-        <ChannelCreatorBox page="search">
-          &apos;{query}&apos;로 검색된 채널이 없어요.
-          <br />
-          폭탄뉴진세님이 먼저 만들어보는 건 어떠세요?
-        </ChannelCreatorBox>
+        <ChannelCreatorBox query={query} />
       ) : (
         <>
           <SearchBar initialQuery={query} placeholder={PLACEHOLDER.CHANNEL_SEARCHBAR} />
-          <ChannelList channelsData={channelsData} query={query} />
+          {channelsData && <ChannelList channelsData={channelsData} query={query} />}
         </>
       )}
-    </>
+    </MainStoreProvider>
   );
 };
 
