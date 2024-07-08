@@ -6,6 +6,7 @@ import FormModal from '@/components/FormModal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Withdrawal } from '@/services/user';
+import { PAGE_ROUTE } from '@/utils/route';
 import { useRouter } from 'next/navigation';
 
 const WithDraw = () => {
@@ -18,7 +19,7 @@ const WithDraw = () => {
   };
 
   const handleModal = () => {
-    router.push('/login');
+    router.push(PAGE_ROUTE.LOGIN);
   };
 
   return (

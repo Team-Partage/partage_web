@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { z } from 'zod';
 
@@ -12,20 +12,23 @@ import { UserInfo } from '@/services/user';
 import { useUserStore } from '@/stores/User';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff } from 'lucide-react';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { signIn, useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 
 const LoginPage = () => {
   const { data: session } = useSession();
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const { setUserId, setEmail, setUsername, setNickname, setProfileColor, setProfileImage } =
     useUserStore();
 
-  if (session?.user) {
-    redirect('/');
-    return null;
-  }
+  useEffect(() => {
+    if (session?.user) {
+      router.replace('/');
+      return;
+    }
+  }, [session]);
 
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
