@@ -39,14 +39,15 @@ interface Props extends VariantProps<typeof sizeVariants> {
  */
 const ColorChips = ({ onChange, className, colors, size, selected = colors[0] }: Props) => {
   if (process.env.NODE_ENV === 'development' && !colors.includes(selected)) {
-    throw new TypeError(`Selected color '${selected}' is not in the list of colors.`);
+    console.error(`Selected color '${selected}' is not in the list of colors.`);
+    selected = colors[0];
   }
 
-  const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const [selectedIndex, setSelectedIndex] = useState<number>(colors.indexOf(selected));
 
   useEffect(() => {
-    setSelectedIndex(colors.indexOf(selected));
-  }, [selected, colors]);
+    onChange && onChange(colorNameToHex(colors[selectedIndex]));
+  }, []);
 
   const handleClick = (index: number) => {
     onChange && onChange(colorNameToHex(colors[index]));
