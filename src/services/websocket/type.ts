@@ -3,7 +3,8 @@ import { Playlist } from '../playlist/type';
 /** 채팅 입력 */
 export type UserChatReq = {
   nickname: string;
-  profile: string;
+  profile_color: string | null;
+  profile_image: string | null;
   message: string;
 };
 
@@ -48,7 +49,8 @@ export type MessageType = {
   USER_CHAT: {
     message: string;
     nickname: string;
-    profile: string;
+    profile_color: string;
+    profile_image: string;
     sendTime: string;
     user_id: string | 'NONE';
   };

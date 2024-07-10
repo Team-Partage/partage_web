@@ -97,5 +97,12 @@ export const fonts = plugin(({ addUtilities }) => {
       lineHeight: '18px',
       fontWeight: '400',
     },
+    '.no-scrollbar': {
+      '-ms-overflow-style': 'none',
+      'scrollbar-width': 'none',
+      '&::-webkit-scrollbar': {
+        display: 'none',
+      },
+    },
   });
 });

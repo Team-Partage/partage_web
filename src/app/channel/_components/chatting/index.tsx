@@ -2,64 +2,54 @@
 
 import { useState } from 'react';
 
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import useSocket from '@/hooks/useSocket';
-import { useSocketStore } from '@/stores/useSocketStore';
-import { MessagesSquare, Send, UsersRound } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
-import Chat from './Chat';
+import ConfirmModal from '@/components/modal/ConfirmModal';
+import { PAGE_ROUTE } from '@/utils/route';
 
-interface Props {
+import ChatHeader from './ChatHeader';
+import { ChatList } from './ChatList';
+import TextareaField from './TextareaField';
+
+interface ChattingProps {
   channelId: string;
 }
 
-const Chatting = ({ channelId }: Props) => {
-  const [text, setText] = useState('');
-  const { send } = useSocket(channelId);
+const Chatting = ({ channelId }: ChattingProps) => {
+  const [isFold, setIsFold] = useState<boolean>(false);
+  const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
+  const { data: session } = useSession();
 
-  const chatting = useSocketStore((state) => state.chatting);
+  const router = useRouter();
 
-  const handleEnter = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (text.trim() !== '' && e.key === 'Enter') {
-      send('USER_CHAT', { nickname: 'ase', profile: '', message: text });
-      setText('');
+  const handleClickChat = () => {
+    if (!session) {
+      setShowLoginModal(true);
     }
   };
 
   return (
-    <section className="flex w-full flex-col py-5 desktop:order-3 desktop:max-w-[440px] desktop:pl-8">
-      {/** 헤더 */}
-      <header className="flex h-[4.1875rem] items-center shadow-xl">
-        <MessagesSquare />
-        <h2 className="ml-2 text-nowrap medium-bold desktop:large-bold">채팅</h2>
-        <div className="ml-4 flex items-center gap-1 text-neutral-200">
-          <UsersRound size={14} />
-          <p className="small-regular">{1}</p>
-        </div>
-      </header>
-
-      {/** 채팅 */}
-      <div className="grow overflow-y-auto">
-        {chatting.map((chat) => {
-          return <Chat key={chat.user_id + chat.sendTime} color="red" {...chat} />;
-        })}
-      </div>
-
-      {/** 채팅 입력 */}
-      <div className="mt-3 flex items-center gap-3">
-        <Textarea
-          value={text}
-          variant="chat"
-          onChange={(e) => {
-            setText(e.currentTarget.value);
-          }}
-          onKeyDown={handleEnter}
-        />
-        <Button variant="active" size="icon">
-          <Send />
-        </Button>
-      </div>
+    <section
+      className={`mt-4 flex min-h-[385px] w-full flex-col overflow-hidden desktop:order-3 desktop:mt-0 desktop:max-h-screen desktop:max-w-[440px] ${isFold && 'min-h-[67px] desktop:max-w-[88px]'}`}
+    >
+      <ChatHeader isFold={isFold} setIsFold={setIsFold} />
+      {!isFold && <ChatList />}
+      {!isFold && (
+        <TextareaField channelId={channelId} disabled={false} onClick={handleClickChat} />
+      )}
+      {showLoginModal && (
+        <ConfirmModal
+          leftButtonText="취소"
+          defaultButtonText="로그인"
+          defaultClick={() => router.push(PAGE_ROUTE.LOGIN)}
+          onClose={() => setShowLoginModal(false)}
+        >
+          로그인이 필요한 서비스예요.
+          <br />
+          로그인 할까요?
+        </ConfirmModal>
+      )}
     </section>
   );
 };

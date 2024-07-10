@@ -14,7 +14,7 @@ const textareaVariants = cva(
     variants: {
       variant: {
         default: '',
-        chat: 'h-10 resize-none text-wrap rounded-[20px] border border-neutral-400 bg-neutral-500 px-5 py-2 text-neutral-100 small-regular',
+        chat: 'no-scrollbar w-[324px] grow resize-none text-wrap rounded-[20px] border border-neutral-400 bg-neutral-500 px-5 py-[8.5px] text-neutral-100 small-regular tablet:w-full',
       },
     },
     defaultVariants: {
