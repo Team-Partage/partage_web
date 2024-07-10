@@ -19,7 +19,7 @@ export default function ChatHeader({ isFold, setIsFold }: ChatHeaderProps) {
     <header
       className={`flex h-[67px] w-full items-center justify-between bg-neutral-600 px-0 desktop:h-[90px] desktop:px-8 ${isFold && 'desktop:ml-[-10px] desktop:w-[88px]'}`}
     >
-      <div className="flex items-center gap-2.5">
+      <div className="ml-[-10px] flex items-center gap-2.5">
         <button
           onClick={() => isFold && setIsFold(false)}
           onMouseEnter={() => setShowTooltip(true)}
