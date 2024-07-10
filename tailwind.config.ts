@@ -31,6 +31,8 @@ const config = {
         background: '#131418',
         main: {
           skyblue: '#00FFFF',
+          hover: '#8FFFFF',
+          click: '#00E8F7',
         },
         sub: {
           violet: '#9C78FF',

@@ -11,7 +11,8 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: '',
-        active: 'bg-main-skyblue text-neutral-600 base-bold desktop:medium-bold',
+        active:
+          'bg-main-skyblue text-neutral-600 base-bold hover:bg-main-hover active:bg-main-click desktop:medium-bold',
         withDraw: 'border border-solid border-sub-red bg-neutral-600 text-sub-red',
       },
       size: {
