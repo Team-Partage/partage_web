@@ -46,6 +46,12 @@
           "caseInsensitive": true
         }
       }
+    ],
+    "tailwindcss/no-custom-classname": [
+      "error",
+      {
+        "whitelist": ["no-scrollbar"]
+      }
     ]
   }
 }

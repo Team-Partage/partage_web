@@ -51,11 +51,21 @@ const config = {
           500: '#23282E',
           600: '#131418',
         },
+        overlay: 'rgba(0, 0, 0, 0.6)',
       },
       fontFamily: {
         pretendard: ['var(--font-pretendard)'],
       },
       borderWidth: { '1': '1px' },
+      height: {
+        'screen-chatList': 'calc(100vh-238px)',
+      },
+      backgroundColor: {
+        'transparent-white-10': 'rgba(255, 255, 255, 0.1)',
+      },
+      backgroundImage: {
+        'gradient-to-bottom': 'linear-gradient(rgba(19,20,24,0.85), rgba(19,20,24,1))',
+      },
     },
   },
   plugins: [fonts],
