@@ -3,7 +3,7 @@
 import { forwardRef, useImperativeHandle, useState } from 'react';
 
 import { CreateChannelModal } from './modal';
-import { Dialog, DialogTrigger } from './ui/dialog';
+import { Dialog, DialogDescription, DialogTrigger } from './ui/dialog';
 
 interface Props {
   children?: React.ReactElement;
@@ -51,8 +51,9 @@ const ModalRenderer = forwardRef(
     }));
 
     return (
-      <Dialog open={isOpen}>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>{children}</DialogTrigger>
+        <DialogDescription className="hidden">dialog</DialogDescription>
         {<Modal />}
       </Dialog>
     );
