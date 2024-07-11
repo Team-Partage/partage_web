@@ -25,7 +25,7 @@ type Props = {
 const AlertModal = ({ content }: Props) => {
   const router = useRouter();
   const [cancelWord, setCancelWord] = useState('');
-  const [actionWord, setActionWord] = useState(content);
+  const [actionWord, setActionWord] = useState('확인');
 
   useEffect(() => {
     switch (content) {
@@ -44,7 +44,7 @@ const AlertModal = ({ content }: Props) => {
         break;
       default:
         setCancelWord('');
-        setActionWord(content);
+        setActionWord('확인');
     }
   }, [content]);
 

@@ -22,9 +22,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ImageUp } from 'lucide-react';
 import { useForm, useWatch } from 'react-hook-form';
 
-
-
-
 const EditMyInfo = () => {
   const {
     email,
@@ -35,8 +32,7 @@ const EditMyInfo = () => {
     setProfileColor,
     setProfileImage,
   } = useUserStore();
-  const defaultColor = '#00FFFF';
-  const [selectedColor, setSelectedColor] = useState<string>(defaultColor);
+  const [selectedColor, setSelectedColor] = useState<string>('');
   const fileRef = useRef<HTMLInputElement>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
   const [fileData, setFileData] = useState<File>();
@@ -220,7 +216,11 @@ const EditMyInfo = () => {
               <AlertModalRenderer ref={modalRef} type="AlertModal" content={AlertContents.PROFILE}>
                 <Button
                   type="submit"
-                  disabled={!form.formState.isValid || watchedNickname === nickname}
+                  disabled={
+                    !form.formState.isValid ||
+                    watchedNickname === nickname &&
+                    selectedColor === profile_color
+                  }
                   variant="active"
                   size="lg"
                   className="mt-[56px] w-full"
