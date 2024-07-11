@@ -7,7 +7,7 @@ interface UserStoreType {
   email: string;
   username: string;
   nickname: string;
-  profile_color: string | null;
+  profile_color: string;
   profile_image: string | null;
   password: string;
 
@@ -29,7 +29,7 @@ export const useUserStore = create(
       email: '',
       username: '',
       nickname: '',
-      profile_color: null,
+      profile_color: '#00FFFF',
       profile_image: null,
       password: '',
 
@@ -53,7 +53,7 @@ export const useUserStore = create(
           email: '',
           username: '',
           nickname: '',
-          profile_color: null,
+          profile_color: '#00FFFF',
           profile_image: null,
           password: '',
         }),

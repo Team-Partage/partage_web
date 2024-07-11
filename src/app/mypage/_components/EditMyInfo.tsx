@@ -32,7 +32,7 @@ const EditMyInfo = () => {
     setProfileColor,
     setProfileImage,
   } = useUserStore();
-  const [selectedColor, setSelectedColor] = useState<string>('');
+  const [selectedColor, setSelectedColor] = useState<string>(profile_color);
   const fileRef = useRef<HTMLInputElement>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
   const [fileData, setFileData] = useState<File>();
@@ -59,12 +59,6 @@ const EditMyInfo = () => {
       setImagePreview(profile_image);
     }
   }, [profile_image]);
-
-  useEffect(() => {
-    if (profile_color) {
-      setSelectedColor(profile_color);
-    }
-  }, [profile_color]);
 
   const watchedNickname = useWatch({ control: form.control, name: 'nickname' });
 
@@ -196,7 +190,7 @@ const EditMyInfo = () => {
                 <Label>닉네임 컬러</Label>
                 <div className="flex flex-wrap gap-3">
                   <ColorChips
-                    selected={hexToColorName(selectedColor)}
+                    selected={hexToColorName(profile_color)}
                     size="user"
                     colors={[
                       'skyblue',
@@ -218,8 +212,7 @@ const EditMyInfo = () => {
                   type="submit"
                   disabled={
                     !form.formState.isValid ||
-                    watchedNickname === nickname &&
-                    selectedColor === profile_color
+                    (watchedNickname === nickname && selectedColor === profile_color)
                   }
                   variant="active"
                   size="lg"
