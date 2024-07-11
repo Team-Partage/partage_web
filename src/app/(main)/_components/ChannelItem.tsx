@@ -22,7 +22,7 @@ const ChannelItem = ({ channelData }: ChannelItemProps) => {
   const hoverColor = getChannelHoverBorderColor(channelColor);
 
   return (
-    <div className="flex w-[335px] flex-col gap-[12px] tablet:w-[320px] desktop:w-[260px]">
+    <div className="flex w-full flex-col gap-[12px] tablet:w-[320px] desktop:w-[260px]">
       <Link href={PAGE_ROUTE.CHANNEL(channel.channel_id)}>
         <div
           className={`relative overflow-hidden rounded-lg hover:border-2 ${hoverColor} h-[188px] w-full tablet:h-[180px] desktop:h-[146px]`}
@@ -38,7 +38,7 @@ const ChannelItem = ({ channelData }: ChannelItemProps) => {
         </div>
       </Link>
       <div className="flex gap-[12px]">
-        <div className="relative mt-[5px] overflow-hidden rounded-full tablet:size-[36px]">
+        <div className="relative mt-[5px] size-[40px] overflow-hidden rounded-full tablet:size-[36px]">
           <Image
             fill
             src={ownerProfile}
@@ -47,8 +47,13 @@ const ChannelItem = ({ channelData }: ChannelItemProps) => {
             style={{ objectFit: 'cover' }}
           />
         </div>
-        <div className="flex w-[283px] flex-col gap-[4px] tablet:w-[240px] desktop:w-[180px]">
-          <h3 className="text-neutral-100 base-medium">{channel.name}</h3>
+        <div className="flex w-full flex-col gap-[4px] tablet:w-[240px] desktop:w-[180px]">
+          <Link
+            href={PAGE_ROUTE.CHANNEL(channel.channel_id)}
+            className="cursor-pointer text-neutral-100 base-medium"
+          >
+            {channel.name}
+          </Link>
           {!noHashtags && <Hashtags hashtage={channel.hashtag} color={channelColor} />}
           <span className="text-neutral-200 small-regular">{user_count}명 시청중</span>
         </div>

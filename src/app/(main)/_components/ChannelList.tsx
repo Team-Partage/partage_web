@@ -1,10 +1,12 @@
 'use client';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { useSession } from 'next-auth/react';
+import { useInView } from 'react-intersection-observer';
+
 import { useMainStore } from '@/providers/main-store-provider';
 import { getSearchChannelList } from '@/services/channel';
 import { GetChannelSearchResponse } from '@/services/channel/type';
-import { useInView } from 'react-intersection-observer';
 
 import ChannelItem from './ChannelItem';
 
@@ -26,6 +28,9 @@ const ChannelList = ({ query, channelsData }: ChannelListProps) => {
   const [ref, inView] = useInView();
   const channelsRef = useRef<HTMLDivElement>(null);
   const noNextChannel = channelsData.page.total_count < cursor * 12;
+
+  const { data: session } = useSession();
+  const userName = session?.user?.name;
 
   const handleLoadMoreChannels = useCallback(async () => {
     if (loading) return;
@@ -56,8 +61,10 @@ const ChannelList = ({ query, channelsData }: ChannelListProps) => {
   }, [inView, handleLoadMoreChannels, noNextChannel]);
 
   return (
-    <section className="flex flex-col gap-[20px] tablet:w-[664px] largeTablet:w-[1008px] desktop:w-[1100px] desktop:gap-[24px]">
-      <h2 className="large-bold tablet:big-bold desktop:max-bold">당신을 기다리는 채널</h2>
+    <section className="flex w-full flex-col gap-[20px] tablet:w-[664px] largeTablet:w-[1008px] desktop:w-[1100px] desktop:gap-[24px]">
+      <h2 className="large-bold tablet:big-bold desktop:max-bold">
+        {userName || '아무개'}님을 기다리는 채널
+      </h2>
       <div
         ref={channelsRef}
         className="flex flex-wrap gap-x-[24px] gap-y-[32px] desktop:gap-x-[20px]"
