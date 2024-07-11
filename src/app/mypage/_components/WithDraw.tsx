@@ -2,11 +2,11 @@
 
 import { useRef } from 'react';
 
+import AlertModalRenderer from '@/components/AlertModalRenderer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { AlertContents } from '@/utils/alertContents';
 
-import AlertModalRenderer from './AlertModalRenderer';
 
 const WithDraw = () => {
   const modalRef = useRef({ openModal: () => {} });

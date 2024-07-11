@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { z } from 'zod';
 
+import AlertModalRenderer from '@/components/AlertModalRenderer';
 import ColorChips from '@/components/ColorChips';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -21,7 +22,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ImageUp } from 'lucide-react';
 import { useForm, useWatch } from 'react-hook-form';
 
-import AlertModalRenderer from './AlertModalRenderer';
+
+
 
 const EditMyInfo = () => {
   const {

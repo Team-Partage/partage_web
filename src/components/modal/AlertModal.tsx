@@ -25,14 +25,28 @@ type Props = {
 const AlertModal = ({ content }: Props) => {
   const router = useRouter();
   const [cancelWord, setCancelWord] = useState('');
+  const [actionWord, setActionWord] = useState(content);
 
   useEffect(() => {
-    if (content === AlertContents.WITHDRAW) {
-      setCancelWord('취소');
-    } else if (content === AlertContents.PASSWORDWRONG) {
-      setCancelWord('비번 찾기');
+    switch (content) {
+      case AlertContents.WITHDRAW:
+        setCancelWord('취소');
+        setActionWord('탈퇴');
+        break;
+      case AlertContents.PASSWORDWRONG:
+        setCancelWord('비번 찾기');
+        break;
+      case AlertContents.DELETECHANNEL:
+        setActionWord('삭제');
+        break;
+      case AlertContents.NOCHANNEL:
+        setActionWord('로그인');
+        break;
+      default:
+        setCancelWord('');
+        setActionWord(content);
     }
-  }, []);
+  }, [content]);
 
   const handleCancel = () => {
     if (content === AlertContents.PASSWORDWRONG) {
@@ -76,7 +90,7 @@ const AlertModal = ({ content }: Props) => {
             className="h-[42px] w-full tablet:h-[48px] tablet:w-[100px]"
             onClick={handleClick}
           >
-            {content === AlertContents.WITHDRAW ? '탈퇴' : '확인'}
+            {actionWord}
           </Button>
         </AlertDialogAction>
       </AlertDialogFooter>

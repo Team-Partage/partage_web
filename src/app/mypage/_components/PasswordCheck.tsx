@@ -4,6 +4,7 @@ import { useRef } from 'react';
 
 import { z } from 'zod';
 
+import AlertModalRenderer from '@/components/AlertModalRenderer';
 import PasswordInput from '@/components/PasswordInput';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
@@ -16,7 +17,6 @@ import { AlertContents } from '@/utils/alertContents';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
-import AlertModalRenderer from './AlertModalRenderer';
 
 const PasswordCheck = () => {
   const modalRef = useRef({ openModal: () => {} });
