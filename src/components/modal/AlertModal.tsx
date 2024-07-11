@@ -48,12 +48,14 @@ const AlertModal = ({ content }: Props) => {
     }
   }, [content]);
 
+  //** 왼쪽 버튼 있는 경우, 클릭시 액션 (디폴트 기능: 모달 닫기)  */
   const handleCancel = () => {
     if (content === AlertContents.PASSWORDWRONG) {
       router.push(`${PAGE_ROUTE.FINDPASSWORD}`);
     }
   };
 
+  //** 버튼 1개 or 오른쪽 버튼있는 경우, 클릭시 액션 (디폴트 기능: 모달 닫기)  */
   const handleClick = async () => {
     if (content === AlertContents.WITHDRAW) {
       await Withdrawal();

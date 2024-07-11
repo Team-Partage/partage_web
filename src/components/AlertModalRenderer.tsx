@@ -27,14 +27,16 @@ type ModalType = keyof typeof ModalComponents;
  * @param children 모달을 렌더링 시키는 트리거로 사용됩니다.
  * @param ref ref.current로 접근하여 openModal과 closeModal을 통해 모달의 isOpen 상태를 변경시킬 수 있습니다.
  *
- * @example
+ * @example // AlertModalRenderer 사용하는 컴포넌트
+ *
  * const modalRef = useRef({ openModal: () => {} });
- * const modalRef2 = useRef<ModalImperativeHandle>();
  *
- * ref.current.openModal();
+ * (...)
+ * modalRef.current?.openModal(); // 모달 오픈하는 코드
  *
- * <ModalRenderer ref={modalRef} type='#' />
- * <ModalRenderer ref={modalRef2} type='#' />
+ * (...)
+ * <ModalRenderer ref={modalRef} type='AlertModal' content={AlertContents.PROFILE} />
+ *
  */
 const AlertModalRenderer = forwardRef(
   (
