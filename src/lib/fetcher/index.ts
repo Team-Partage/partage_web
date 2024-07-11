@@ -1,3 +1,4 @@
+import merge from 'deepmerge';
 import qs from 'qs';
 
 type FetcherRequestInit = Omit<RequestInit, 'method'>;
@@ -9,19 +10,18 @@ type Config = {
 
 class Fetcher {
   private baseURL: string | URL | undefined;
-  private defaultRequestInit: FetcherRequestInit | undefined;
+  private defaultRequestInit: FetcherRequestInit;
 
   constructor(config?: Config) {
     this.baseURL = config?.baseURL;
-    this.defaultRequestInit = config?.defaultRequestInit;
+    this.defaultRequestInit = config?.defaultRequestInit ? config?.defaultRequestInit : {};
   }
 
-  // TODO: 리팩토링 필요
   optionMerge(options?: FetcherRequestInit) {
     if (!options) {
       return this.defaultRequestInit;
     } else {
-      return { ...this.defaultRequestInit, ...options };
+      return merge(this.defaultRequestInit, options);
     }
   }
 
