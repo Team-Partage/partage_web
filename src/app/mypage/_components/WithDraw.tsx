@@ -1,25 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef } from 'react';
 
-import FormModal from '@/components/FormModal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
-import { Withdrawal } from '@/services/user';
-import { PAGE_ROUTE } from '@/utils/route';
-import { useRouter } from 'next/navigation';
+import { AlertContents } from '@/utils/alertContents';
+
+import AlertModalRenderer from './AlertModalRenderer';
 
 const WithDraw = () => {
-  const [open, setOpen] = useState(false);
-  const router = useRouter();
+  const modalRef = useRef({ openModal: () => {} });
 
-  const handleWithDraw = async () => {
-    await Withdrawal();
-    setOpen(true);
-  };
-
-  const handleModal = () => {
-    router.push(PAGE_ROUTE.LOGIN);
+  const handleClick = async () => {
+    modalRef.current?.openModal();
   };
 
   return (
@@ -27,17 +20,13 @@ const WithDraw = () => {
       <Card className="mb-[140px] border-0">
         <CardTitle>회원 탈퇴</CardTitle>
         <CardContent>
-          <Button variant="withDraw" size="lg" className="w-full" onClick={handleWithDraw}>
-            회원 탈퇴
-          </Button>
+          <AlertModalRenderer ref={modalRef} type="AlertModal" content={AlertContents.WITHDRAW}>
+            <Button variant="withDraw" size="lg" className="w-full" onClick={handleClick}>
+              회원 탈퇴
+            </Button>
+          </AlertModalRenderer>
         </CardContent>
       </Card>
-      <FormModal
-        content="정말 탈퇴하실건가요? (가지마요!)"
-        open={open}
-        setOpen={setOpen}
-        handleModal={handleModal}
-      />
     </>
   );
 };
