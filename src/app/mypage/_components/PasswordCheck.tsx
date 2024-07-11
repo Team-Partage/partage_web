@@ -17,7 +17,6 @@ import { AlertContents } from '@/utils/alertContents';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
-
 const PasswordCheck = () => {
   const modalRef = useRef({ openModal: () => {} });
 

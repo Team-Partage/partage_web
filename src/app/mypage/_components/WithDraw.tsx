@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { AlertContents } from '@/utils/alertContents';
 
-
 const WithDraw = () => {
   const modalRef = useRef({ openModal: () => {} });
 
