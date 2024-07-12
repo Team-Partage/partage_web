@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 
 import { stomp } from '@/services/websocket';
 import {
@@ -11,6 +11,7 @@ import {
   VideoPlayReq,
 } from '@/services/websocket/type';
 import { useSocketStore } from '@/stores/useSocketStore';
+import { useSession } from 'next-auth/react';
 import { useShallow } from 'zustand/react/shallow';
 
 import type { IMessage } from '@stomp/stompjs';
@@ -38,6 +39,8 @@ type SendMessageType = {
 };
 
 const useSocket = (channelId: string) => {
+  const { data: session } = useSession();
+
   const { reset, setStore } = useSocketStore(
     useShallow((state) => ({
       reset: state.resetStore,
@@ -47,6 +50,10 @@ const useSocket = (channelId: string) => {
 
   /** 웹소캣 연결 */
   useEffect(() => {
+    if (!session) return;
+
+    const accessToken = session.user.accessToken ? session.user.accessToken : undefined;
+
     const onMessage = (message: IMessage) => {
       const body: MessageBody = JSON.parse(message.body);
 
@@ -67,13 +74,19 @@ const useSocket = (channelId: string) => {
       }
     };
 
-    stomp.connect(channelId, onMessage);
+    stomp.connect(
+      {
+        channelId: channelId,
+        accessToken,
+      },
+      onMessage,
+    );
 
     return () => {
       stomp.disconnect();
       reset();
     };
-  }, [channelId, reset, setStore]);
+  }, [channelId, reset, session, setStore]);
 
   /** 메시지 전송 */
   const sendMessage = <T extends keyof typeof ENDPOINT>(type: T, message: SendMessageType[T]) => {
