@@ -2,7 +2,8 @@
 
 import { DOMAIN } from '@/constants/domains';
 import { fetcher } from '@/lib/fetcher';
-import { cookies } from 'next/headers';
+
+import { auth } from '@/auth';
 
 import {
   CheckEmailNumberRequest,
@@ -15,22 +16,18 @@ import {
 
 /** 회원 정보 조회 */
 export const UserInfo = async () => {
-  const cookieStore = cookies();
-  const cookie = cookieStore.get('access_token')?.value;
-
+  const session = await auth();
+  const accesstoken = session?.user.accessToken;
   const data = await fetcher.get<GetUserResponse>(
     `${DOMAIN.USER}/me`,
     {},
     {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${cookie}`,
+        Authorization: `Bearer ${accesstoken}`,
       },
     },
   );
-  // 잘 가져와짐
-  console.log('내정보내놔~:', data);
-
   const { user } = data;
   return user;
 };
@@ -55,12 +52,12 @@ export const CheckNickname = async (params: NicknameRequest) => {
 
 //** 프로필 수정 (닉네임, 색상, 비밀번호) */
 export const EditProfile = async <T extends EditProfileParams>(endpoint: string, params: T) => {
-  const cookieStore = cookies();
-  const cookie = cookieStore.get('access_token')?.value;
+  const session = await auth();
+  const accesstoken = session?.user.accessToken;
   const data = await fetcher.patch(`${DOMAIN.USER}/me/${endpoint}`, params, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${cookie}`,
+      Authorization: `Bearer ${accesstoken}`,
     },
   });
   return data;
@@ -68,12 +65,12 @@ export const EditProfile = async <T extends EditProfileParams>(endpoint: string,
 
 //** 프로필 이미지 수정 */
 export const EditProfileImage = async (params: FormData) => {
-  const cookieStore = cookies();
-  const cookie = cookieStore.get('access_token')?.value;
+  const session = await auth();
+  const accesstoken = session?.user.accessToken;
   const data = await fetcher.post(`${DOMAIN.USER}/me/profile-image`, params, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${cookie}`,
+      Authorization: `Bearer ${accesstoken}`,
     },
   });
   return data;
