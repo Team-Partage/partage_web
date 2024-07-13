@@ -47,7 +47,7 @@ export const {
           return null;
         }
 
-        let myInfo = await fetcher.get<GetUserResponse>(
+        const myInfo = await fetcher.get<GetUserResponse>(
           `${DOMAIN.USER}/me`,
           {},
           {
@@ -59,7 +59,7 @@ export const {
         );
         const userData = myInfo['user'];
 
-        let user = { ...userData, accessToken }; 
+        const user = { ...userData, accessToken };
         return user;
       },
     }),

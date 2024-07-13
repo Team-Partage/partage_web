@@ -8,8 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { LoginSchema } from '@/schemas/userSchema';
-import { UserInfo } from '@/services/user';
-import { useUserStore } from '@/stores/User';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -20,8 +18,6 @@ const LoginPage = () => {
   const { data: session } = useSession();
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const { setUserId, setEmail, setUsername, setNickname, setProfileColor, setProfileImage } =
-    useUserStore();
 
   useEffect(() => {
     if (session?.user) {
@@ -49,16 +45,6 @@ const LoginPage = () => {
         username: data.email,
         password: data.password,
       });
-      // 유저 정보 저장
-      const user = await UserInfo();
-      if (user) {
-        setUserId(user.user_id);
-        setEmail(user.email);
-        setNickname(user.nickname);
-        setUsername(user.username);
-        setProfileColor(user.profile_color);
-        setProfileImage(user.profile_image);
-      }
     } catch (err) {
       throw new Error(`${err}`);
     }
