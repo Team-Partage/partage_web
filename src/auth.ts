@@ -17,11 +17,11 @@ export const {
     newUser: '/auth/register',
   },
   callbacks: {
-    jwt({ token }) {
-      return token;
+    jwt({ token, user }) {
+      return { ...token, ...user };
     },
-    session({ session }) {
-      return session;
+    session({ session, token }) {
+      return { ...session, user: { ...token } };
     },
   },
   providers: [
@@ -34,38 +34,33 @@ export const {
           password: credentials.password,
         });
 
-        let setCookie = authResponse['access_token'];
+        const accessToken = authResponse['access_token'];
 
-        if (setCookie) {
-          // 브라우저에 쿠키를 심어주기
-          cookies().set('access_token', setCookie, {
-            httpOnly: true,
-          });
-        }
+        // if (accessToken) {
+        //   // 브라우저에 쿠키를 심어주기
+        //   cookies().set('access_token', accessToken, {
+        //     httpOnly: true,
+        //   });
+        // }
 
         if (!authResponse) {
           return null;
         }
 
-        const myInfo = await fetcher.get<GetUserResponse>(
+        let myInfo = await fetcher.get<GetUserResponse>(
           `${DOMAIN.USER}/me`,
           {},
           {
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer ${setCookie}`,
+              Authorization: `Bearer ${accessToken}`,
             },
           },
         );
-        const { user } = myInfo;
-        console.log('auth 유저정보: ', user);
+        const userData = myInfo['user'];
 
-        return {
-          // next-auth에서는 아래의 세개 이름만 지원
-          email: user.email,
-          name: user.nickname,
-          image: user.profile_image,
-        };
+        let user = { ...userData, accessToken }; 
+        return user;
       },
     }),
   ],
