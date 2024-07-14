@@ -12,14 +12,17 @@ import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { DOMAIN } from '@/constants/domains';
+import { fetcher } from '@/lib/fetcher';
 import { MypageSchema } from '@/schemas/userSchema';
 import { CheckNickname, EditProfile, EditProfileImage, UserInfo } from '@/services/user';
-import { EditProfileColorRequest, NicknameRequest } from '@/services/user/type';
+import { EditProfileColorRequest, GetUserResponse, NicknameRequest } from '@/services/user/type';
 import { useUserStore } from '@/stores/User';
 import { AlertContents } from '@/utils/alertContents';
 import { hexToColorName } from '@/utils/hexToColorName';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ImageUp } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import { useForm, useWatch } from 'react-hook-form';
 
 const EditMyInfo = () => {
@@ -32,6 +35,7 @@ const EditMyInfo = () => {
     setProfileColor,
     setProfileImage,
   } = useUserStore();
+  const { data: session } = useSession();
   const [selectedColor, setSelectedColor] = useState<string>(profile_color);
   const fileRef = useRef<HTMLInputElement>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
@@ -41,8 +45,8 @@ const EditMyInfo = () => {
   const form = useForm<z.infer<typeof MypageSchema>>({
     resolver: zodResolver(MypageSchema),
     defaultValues: {
-      email: '',
-      nickname: '',
+      email: email,
+      nickname: nickname,
     },
     mode: 'onChange',
   });
@@ -110,10 +114,26 @@ const EditMyInfo = () => {
       await Promise.all(requests);
       modalRef.current?.openModal();
       try {
-        const user = await UserInfo();
-        setNickname(user.nickname);
-        setProfileColor(user.profile_color);
-        setProfileImage(user.profile_image);
+        const UserInfo = async () => {
+          const accesstoken = session?.user.accessToken;
+          const data = await fetcher.get<GetUserResponse>(
+            `${DOMAIN.USER}/me`,
+            {},
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accesstoken}`,
+              },
+            },
+          );
+          const { user } = data;
+          if (user) {
+            setNickname(user.nickname);
+            setProfileColor(user.profile_color);
+            setProfileImage(user.profile_image);
+          }
+        };
+        UserInfo();
       } catch (err) {
         console.log(`Fetching getUsers: ${err}`);
       }
@@ -212,7 +232,7 @@ const EditMyInfo = () => {
                   type="submit"
                   disabled={
                     !form.formState.isValid ||
-                    (watchedNickname === nickname && selectedColor === profile_color)
+                    (watchedNickname === nickname && selectedColor === profile_color && !!fileData)
                   }
                   variant="active"
                   size="lg"

@@ -5,6 +5,7 @@ import { getSearchChannelList } from '@/services/channel';
 import { PLACEHOLDER } from '@/utils/constants';
 
 import ChannelList from './(main)/_components/ChannelList';
+import GetUserInfo from './(main)/_components/GetUserInfo';
 
 const MainPage = async () => {
   const channelsData = await getSearchChannelList({});
@@ -14,6 +15,7 @@ const MainPage = async () => {
   return (
     <MainStoreProvider>
       <main className="flex flex-col items-center gap-[40px] p-[40px]">
+        <GetUserInfo />
         {noChannel ? (
           <ChannelCreatorBox />
         ) : (
