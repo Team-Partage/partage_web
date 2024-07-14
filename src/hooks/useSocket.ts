@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect } from 'react';
+import { useEffect } from 'react';
 
 import { stomp } from '@/services/websocket';
 import {
@@ -50,10 +50,6 @@ const useSocket = (channelId: string) => {
 
   /** 웹소캣 연결 */
   useEffect(() => {
-    if (!session) return;
-
-    const accessToken = session.user.accessToken ? session.user.accessToken : undefined;
-
     const onMessage = (message: IMessage) => {
       const body: MessageBody = JSON.parse(message.body);
 
@@ -74,13 +70,7 @@ const useSocket = (channelId: string) => {
       }
     };
 
-    stomp.connect(
-      {
-        channelId: channelId,
-        accessToken,
-      },
-      onMessage,
-    );
+    stomp.connect(channelId, onMessage);
 
     return () => {
       stomp.disconnect();
