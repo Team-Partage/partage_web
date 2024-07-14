@@ -148,6 +148,7 @@ const Playlist = ({ channel, owner }: Props) => {
                         }}
                         onMouseEnter={() => setHoveredItem(item.playlist_no)}
                         onMouseLeave={() => setHoveredItem(null)}
+                        className={`relative h-[66px] rounded-lg border border-transparent p-3 transition-colors desktop:w-[320px] ${isOwner && 'hover:border-main-skyblue hover:bg-main-skyblue/20'}`}
                       >
                         <PlaylistCard {...item} />
                         {isOwner && hoveredItem === item.playlist_no && (
