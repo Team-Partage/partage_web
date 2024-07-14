@@ -49,17 +49,22 @@ const useSocket = (channelId: string) => {
   useEffect(() => {
     const onMessage = (message: IMessage) => {
       const body: MessageBody = JSON.parse(message.body);
+      const data = JSON.parse(body.data);
 
       switch (body.type) {
         case 'CHANNEL_VIEWER':
-          setStore({ type: 'SET_VIEWER', payload: body.data });
+          setStore({ type: 'SET_VIEWER', payload: data });
           break;
         case 'USER_CHAT': {
-          setStore({ type: 'SET_CHATTING', payload: body.data });
+          setStore({ type: 'SET_CHATTING', payload: data });
           break;
         }
         case 'PLAYLIST_ADD': {
-          setStore({ type: 'SET_PLAYLIST', payload: body.data });
+          setStore({ type: 'SET_PLAYLIST', payload: data });
+          break;
+        }
+        case 'PLAYLIST_REMOVE': {
+          setStore({ type: 'PLAYLIST_REMOVE', payload: data });
           break;
         }
         default:
