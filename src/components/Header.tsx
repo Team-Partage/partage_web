@@ -1,13 +1,34 @@
+'use client';
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { useUserStore } from '@/stores/User';
 import { PAGE_ROUTE } from '@/utils/route';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { signOut, useSession } from 'next-auth/react';
 
 import ModalRenderer from './ModalRenderer';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 
 function Header() {
+  const router = useRouter();
+  const { data: session } = useSession();
+  const clearUser = useUserStore((state) => state.clearUser);
+
+  const handleLogout = () => {
+    signOut({ redirect: false }).then(() => router.replace('/'));
+    clearUser();
+  };
+
   return (
-    <header className="flex h-[68px] w-full items-center justify-between border-b-1 border-neutral-400 px-[20px] tablet:h-[76px] tablet:px-[40px] desktop:h-[84px]">
+    <header className="flex min-h-[68px] w-full min-w-[375px] items-center justify-between border-b-1 border-neutral-400 px-5 tablet:min-h-[76px] tablet:px-10 desktop:min-h-[84px]">
       <Link
         href={PAGE_ROUTE.HOME}
         className="relative h-[28px] w-[92px] tablet:h-[32px] tablet:w-[105px] desktop:h-[36px] desktop:w-[120px]"
@@ -28,12 +49,34 @@ function Header() {
             </span>
           </Button>
         </ModalRenderer>
-        <Link className="tablet:small-regular desktop:base-regular" href={PAGE_ROUTE.LOGIN}>
-          로그인
-        </Link>
-        <Link className="tablet:small-regular desktop:base-regular" href={PAGE_ROUTE.REGISTER}>
-          회원가입
-        </Link>
+        {session?.user ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Avatar className="group size-[40px] cursor-pointer tablet:size-[48px] desktop:size-[54px]">
+                <AvatarImage
+                  className="object-cover"
+                  src={session.user.image || '/default-profile-image.png'}
+                />
+                <AvatarFallback>profile_image</AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="mr-[20px] tablet:mr-[40px]">
+              <DropdownMenuItem onClick={() => router.push('/mypage')}>
+                사용자 설정
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>로그아웃</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <>
+            <Link className="tablet:small-regular desktop:base-regular" href={PAGE_ROUTE.LOGIN}>
+              로그인
+            </Link>
+            <Link className="tablet:small-regular desktop:base-regular" href={PAGE_ROUTE.REGISTER}>
+              회원가입
+            </Link>
+          </>
+        )}
       </div>
     </header>
   );

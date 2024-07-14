@@ -13,36 +13,36 @@ export const {
   signIn,
 } = NextAuth({
   pages: {
-    signIn: '/login',
-    newUser: '/register',
+    signIn: '/auth/login',
+    newUser: '/auth/register',
   },
   callbacks: {
-    jwt({ token }) {
-      console.log('auth.ts jwt', token);
-      return token;
+    jwt({ token, user }) {
+      return { ...token, ...user };
     },
-    session({ session }) {
-      console.log('auth.ts session', session);
-      return session;
+    session({ session, token }) {
+      return { ...session, user: { ...token } };
     },
   },
   providers: [
     CredentialsProvider({
       async authorize(credentials) {
         // 로그인 호출
-        const authResponse = await fetcher.post<SignInResponse>(`${DOMAIN.AUTH}login`, {
+        const authResponse = await fetcher.post<SignInResponse>(`${DOMAIN.AUTH}/login`, {
           // next-auth에서 고정된 이름 credentials.~
           email: credentials.username,
           password: credentials.password,
         });
 
-        const setCookie = authResponse['access_token'];
-        if (setCookie) {
-          // 브라우저에 쿠키를 심어주기
-          cookies().set('access_token', setCookie, {
-            httpOnly: true,
-          });
-        }
+        const accessToken = authResponse['access_token'];
+
+        // if (accessToken) {
+        //   // 브라우저에 쿠키를 심어주기
+        //   cookies().set('access_token', accessToken, {
+        //     httpOnly: true,
+        //   });
+        // }
+
         if (!authResponse) {
           return null;
         }
@@ -53,18 +53,14 @@ export const {
           {
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer ${setCookie}`,
+              Authorization: `Bearer ${accessToken}`,
             },
           },
         );
-        const { user } = myInfo;
+        const userData = myInfo['user'];
 
-        return {
-          // next-auth에서는 아래의 세개 이름만 지원
-          email: user.email,
-          name: user.nickname,
-          image: user.profile_image,
-        };
+        const user = { ...userData, accessToken };
+        return user;
       },
     }),
   ],

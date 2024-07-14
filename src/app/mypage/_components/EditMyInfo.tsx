@@ -1,43 +1,68 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { z } from 'zod';
 
+import AlertModalRenderer from '@/components/AlertModalRenderer';
 import ColorChips from '@/components/ColorChips';
-import FormModal from '@/components/FormModal';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { DOMAIN } from '@/constants/domains';
+import { fetcher } from '@/lib/fetcher';
 import { MypageSchema } from '@/schemas/userSchema';
-import { CheckNickname, EditProfile, EditProfileImage } from '@/services/user';
-import { EditProfileColorRequest, NicknameRequest } from '@/services/user/type';
+import { CheckNickname, EditProfile, EditProfileImage, UserInfo } from '@/services/user';
+import { EditProfileColorRequest, GetUserResponse, NicknameRequest } from '@/services/user/type';
+import { useUserStore } from '@/stores/User';
+import { AlertContents } from '@/utils/alertContents';
 import { hexToColorName } from '@/utils/hexToColorName';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ImageUp } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import { useForm, useWatch } from 'react-hook-form';
 
 const EditMyInfo = () => {
-  const [open, setOpen] = useState(false);
-  const [selectedColor, setSelectedColor] = useState<string>('');
+  const {
+    email,
+    nickname,
+    profile_color,
+    profile_image,
+    setNickname,
+    setProfileColor,
+    setProfileImage,
+  } = useUserStore();
+  const { data: session } = useSession();
+  const [selectedColor, setSelectedColor] = useState<string>(profile_color);
   const fileRef = useRef<HTMLInputElement>(null);
-  const [imagePreview, setImagePreview] = useState('');
+  const [imagePreview, setImagePreview] = useState<string>('');
   const [fileData, setFileData] = useState<File>();
-  // TODO zustand 유저정보 가져오기
-  const mynickname = '테스트';
+  const modalRef = useRef({ openModal: () => {} });
 
   const form = useForm<z.infer<typeof MypageSchema>>({
     resolver: zodResolver(MypageSchema),
     defaultValues: {
-      //  TODO zustand의 유저정보 가져오기
-      email: 't2@gmail.com',
-      nickname: mynickname,
+      email: email,
+      nickname: nickname,
     },
     mode: 'onChange',
   });
+
+  useEffect(() => {
+    form.reset({
+      email,
+      nickname,
+    });
+  }, [email, nickname, form]);
+
+  useEffect(() => {
+    if (profile_image) {
+      setImagePreview(profile_image);
+    }
+  }, [profile_image]);
 
   const watchedNickname = useWatch({ control: form.control, name: 'nickname' });
 
@@ -70,25 +95,51 @@ const EditMyInfo = () => {
         message: '이미 사용 중인 닉네임이에요.',
       });
       return;
-    } else {
-      await EditProfile<NicknameRequest>('nickname', { nickname: data.nickname });
     }
+    const requests = [EditProfile<NicknameRequest>('nickname', { nickname: data.nickname })];
 
     if (selectedColor) {
-      await EditProfile<EditProfileColorRequest>('profile-color', { profile_color: selectedColor });
+      requests.push(
+        EditProfile<EditProfileColorRequest>('profile-color', { profile_color: selectedColor }),
+      );
     }
 
     if (fileData) {
       const formData = new FormData();
-      formData.append('file', fileData);
-      await EditProfileImage(formData);
+      formData.append('profileImage', fileData);
+      requests.push(EditProfileImage(formData));
     }
 
-    setOpen(true);
-  };
-
-  const handleModal = () => {
-    setOpen(false);
+    try {
+      await Promise.all(requests);
+      modalRef.current?.openModal();
+      try {
+        const UserInfo = async () => {
+          const accesstoken = session?.user.accessToken;
+          const data = await fetcher.get<GetUserResponse>(
+            `${DOMAIN.USER}/me`,
+            {},
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accesstoken}`,
+              },
+            },
+          );
+          const { user } = data;
+          if (user) {
+            setNickname(user.nickname);
+            setProfileColor(user.profile_color);
+            setProfileImage(user.profile_image);
+          }
+        };
+        UserInfo();
+      } catch (err) {
+        console.log(`Fetching getUsers: ${err}`);
+      }
+    } catch (err) {
+      alert('에러');
+    }
   };
 
   return (
@@ -159,7 +210,7 @@ const EditMyInfo = () => {
                 <Label>닉네임 컬러</Label>
                 <div className="flex flex-wrap gap-3">
                   <ColorChips
-                    selected={hexToColorName('#FFE100')}
+                    selected={hexToColorName(profile_color)}
                     size="user"
                     colors={[
                       'skyblue',
@@ -176,25 +227,24 @@ const EditMyInfo = () => {
                   />
                 </div>
               </div>
-              <Button
-                type="submit"
-                disabled={!form.formState.isValid || watchedNickname === mynickname}
-                variant="active"
-                size="lg"
-                className="mt-[56px] w-full"
-              >
-                저장
-              </Button>
+              <AlertModalRenderer ref={modalRef} type="AlertModal" content={AlertContents.PROFILE}>
+                <Button
+                  type="submit"
+                  disabled={
+                    !form.formState.isValid ||
+                    (watchedNickname === nickname && selectedColor === profile_color && !!fileData)
+                  }
+                  variant="active"
+                  size="lg"
+                  className="mt-[56px] w-full"
+                >
+                  저장
+                </Button>
+              </AlertModalRenderer>
             </form>
           </Form>
         </CardContent>
       </Card>
-      <FormModal
-        content="프로필 정보가 변경되었어요!"
-        handleModal={handleModal}
-        open={open}
-        setOpen={setOpen}
-      />
     </>
   );
 };

@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef } from 'react';
 
 import { z } from 'zod';
 
-import FormModal from '@/components/FormModal';
+import AlertModalRenderer from '@/components/AlertModalRenderer';
 import PasswordInput from '@/components/PasswordInput';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
@@ -13,12 +13,12 @@ import { CustomError } from '@/lib/customError';
 import { PasswordSchema } from '@/schemas/userSchema';
 import { EditProfile } from '@/services/user';
 import { EditPasswordRequest } from '@/services/user/type';
+import { AlertContents } from '@/utils/alertContents';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
-
 const PasswordCheck = () => {
-  const [open, setOpen] = useState(false);
+  const modalRef = useRef({ openModal: () => {} });
 
   const form = useForm<z.infer<typeof PasswordSchema>>({
     resolver: zodResolver(PasswordSchema),
@@ -34,8 +34,9 @@ const PasswordCheck = () => {
     try {
       const dto = { current_password: data.password, new_password: data.newPassword };
       await EditProfile<EditPasswordRequest>('password', dto);
-      setOpen(true);
+      modalRef.current?.openModal();
     } catch (err) {
+      // TODO 쿠키 적용하고 에러처리 다시 1. 현재 비번 체크 2. 비밀번호 변경 완료 체크
       if (err instanceof CustomError) {
         if (err.response && err.response.code === 400) {
           form.setError('password', {
@@ -47,10 +48,6 @@ const PasswordCheck = () => {
         }
       }
     }
-  };
-
-  const handleModal = () => {
-    setOpen(false);
     form.reset();
   };
 
@@ -100,26 +97,30 @@ const PasswordCheck = () => {
                     )}
                   />
                 </div>
-                <Button
-                  type="submit"
-                  disabled={!form.formState.isValid}
-                  variant="active"
-                  size="lg"
-                  className="mt-[56px] w-full"
+                <AlertModalRenderer
+                  ref={modalRef}
+                  type="AlertModal"
+                  content={
+                    !form.formState.isValid
+                      ? AlertContents.PASSWORDWRONG
+                      : AlertContents.PASSWORDCHANGED
+                  }
                 >
-                  변경
-                </Button>
+                  <Button
+                    type="submit"
+                    disabled={!form.formState.isValid}
+                    variant="active"
+                    size="lg"
+                    className="mt-[56px] w-full"
+                  >
+                    변경
+                  </Button>
+                </AlertModalRenderer>
               </form>
             </Form>
           </div>
         </CardContent>
       </Card>
-      <FormModal
-        content="비밀번호가 변경되었어요!"
-        handleModal={handleModal}
-        open={open}
-        setOpen={setOpen}
-      />
     </>
   );
 };

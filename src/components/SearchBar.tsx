@@ -23,7 +23,7 @@ const SearchBar = ({ initialQuery = '', handleSearch, placeholder }: SearchBarPr
 
   const handleDelete = () => {
     setSearchQuery('');
-    router.replace(PAGE_ROUTE.HOME);
+    router.push(PAGE_ROUTE.HOME);
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement | HTMLButtonElement>) => {
@@ -37,7 +37,7 @@ const SearchBar = ({ initialQuery = '', handleSearch, placeholder }: SearchBarPr
     if (handleSearch) {
       handleSearch(searchQuery);
     } else {
-      router.replace(PAGE_ROUTE.SEARCH(searchQuery));
+      router.push(PAGE_ROUTE.SEARCH(searchQuery));
     }
   };
 

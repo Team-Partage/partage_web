@@ -22,6 +22,14 @@ export type Channel = {
   current_playlist_no: number | null;
 };
 
+/** 검색된 채널 */
+export type SearchedChannel = {
+  channel: Channel;
+  playlist: Playlist | null;
+  owner: Owner;
+  user_count: number;
+};
+
 export type Owner = {
   user_id: string;
   email: string;
@@ -29,13 +37,6 @@ export type Owner = {
   nickname: string;
   profile_color: string | null;
   profile_image: string | null;
-};
-
-export type ChannelWithPlaylist = {
-  channel: Channel;
-  playlist: Playlist | null;
-  owner: Owner;
-  user_count: number;
 };
 
 /** 채널 권한 */
@@ -57,8 +58,8 @@ export type CreateChannelRequest = Pick<Channel, 'name' | 'type' | 'hashtag' | '
 /** 채널 생성 Res */
 export type CreateChannelResponse = {
   channel: Channel;
-  channel_users: ChannelUser[];
   channel_permissions: ChannelPermission;
+  owner: Owner;
 };
 
 /** 채널 수정 Req */
@@ -76,10 +77,10 @@ export type DeleteChannelResponse = {
   status: boolean;
 };
 
-/** 채널 목록 조회 Res */
-export type GetChannelListResponse = {
+/** 채널 검색 - 채널명, 해시태그 Res */
+export type GetChannelSearchResponse = {
   page: { cursor: number; per_page: number; total_page: number; total_count: number };
-  channels: ChannelWithPlaylist[];
+  channels: SearchedChannel[];
 };
 
 /** 채널 상세 조회 Res */
@@ -88,4 +89,12 @@ export type GetChannelDetailResponse = {
   owner: Owner;
   playlists: Playlist[];
   channel_permissions: ChannelPermission;
+};
+
+/** 채널 생성 Req */
+export type CreateChannelReq = {
+  type: 'PUBLIC' | 'PRIVATE';
+  channel_color: string;
+  hashtag: string;
+  name: string;
 };

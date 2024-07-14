@@ -1,68 +1,86 @@
 import { useEffect } from 'react';
 
-import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
+import { stomp } from '@/services/websocket';
+import {
+  MessageBody,
+  PlaylistAddReq,
+  PlaylistMoveReq,
+  PlaylistRemoveReq,
+  UserChatReq,
+  VideoMoveReq,
+  VideoPlayReq,
+} from '@/services/websocket/type';
+import { useSocketStore } from '@/stores/useSocketStore';
+import { useShallow } from 'zustand/react/shallow';
 
-import type { IFrame, IMessage, IStompSocket } from '@stomp/stompjs';
+import type { IMessage } from '@stomp/stompjs';
 
-const BASE_URL = process.env.NEXT_PUBLIC_WEBSOCKET_SERVER_URL;
+const ENDPOINT = {
+  USER_JOIN: '/stomp/user.join',
+  USER_LEAVE: '/stomp/user.leave',
+  USER_CHAT: '/stomp/user.chat',
+  VIDEO_PLAY: '/stomp/video.play',
+  VIDEO_MOVE: '/stomp/video.move',
+  PLAYLIST_ADD: '/stomp/playlist.add',
+  PLAYLIST_MOVE: '/stomp/playlist.move',
+  PLAYLIST_REMOVE: '/stomp/playlist.remove',
+} as const;
 
-type Message = {
-  channel_id: string;
-  sender: string;
-  content: string;
-  type: string;
+type SendMessageType = {
+  USER_JOIN: object;
+  USER_LEAVE: object;
+  USER_CHAT: UserChatReq;
+  VIDEO_PLAY: VideoPlayReq;
+  VIDEO_MOVE: VideoMoveReq;
+  PLAYLIST_ADD: PlaylistAddReq;
+  PLAYLIST_MOVE: PlaylistMoveReq;
+  PLAYLIST_REMOVE: PlaylistRemoveReq;
 };
 
-const stomp = new Client({
-  reconnectDelay: 5000,
-  heartbeatIncoming: 10000,
-  heartbeatOutgoing: 10000,
-});
+const useSocket = (channelId: string) => {
+  const { reset, setStore } = useSocketStore(
+    useShallow((state) => ({
+      reset: state.resetStore,
+      setStore: state.setSocketStore,
+    })),
+  );
 
-interface Params {
-  channelId: string;
-  onMessage: (message: IMessage) => void;
-}
-
-const useSocket = ({ channelId, onMessage }: Params) => {
-  const url = new URL(`/ws?channel=${channelId}`, BASE_URL).toString();
-  stomp.webSocketFactory = () => new SockJS(url) as IStompSocket;
-
+  /** 웹소캣 연결 */
   useEffect(() => {
-    const connect = () => {
-      stomp.onConnect = () => {
-        console.log('WS: onConnect');
-        stomp.subscribe(`/channel/${channelId}`, onMessage);
-      };
+    const onMessage = (message: IMessage) => {
+      const body: MessageBody = JSON.parse(message.body);
 
-      stomp.onStompError = (frame: IFrame) => {
-        console.error('Broker reported error: ' + frame.headers['message']);
-        console.error('Additional details: ' + frame.body);
-      };
-
-      stomp.activate();
+      switch (body.type) {
+        case 'CHANNEL_VIEWER':
+          setStore({ type: 'SET_VIEWER', payload: body.data });
+          break;
+        case 'USER_CHAT': {
+          setStore({ type: 'SET_CHATTING', payload: body.data });
+          break;
+        }
+        case 'PLAYLIST_ADD': {
+          setStore({ type: 'SET_PLAYLIST', payload: body.data });
+          break;
+        }
+        default:
+          break;
+      }
     };
 
-    connect();
+    stomp.connect(channelId, onMessage);
 
     return () => {
-      const disconnect = () => {
-        stomp.deactivate();
-      };
-
-      disconnect();
+      stomp.disconnect();
+      reset();
     };
-  }, [channelId, onMessage]);
+  }, [channelId, reset, setStore]);
 
-  const send = (message: Message) => {
-    stomp.publish({
-      destination: `/channel/${channelId}`,
-      body: JSON.stringify(message),
-    });
+  /** 메시지 전송 */
+  const sendMessage = <T extends keyof typeof ENDPOINT>(type: T, message: SendMessageType[T]) => {
+    stomp.send(ENDPOINT[type], message);
   };
 
-  return { send };
+  return { send: sendMessage };
 };
 
 export default useSocket;

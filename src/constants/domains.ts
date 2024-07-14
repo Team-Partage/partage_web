@@ -1,5 +1,5 @@
 export const DOMAIN = {
-  AUTH: '/api/vi/auth',
-  USER: '/api/v1/user/',
+  AUTH: '/api/v1/auth',
+  USER: '/api/v1/user',
   PLAYLIST: ' ... ',
 } as const;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { z } from 'zod';
 
@@ -8,19 +8,23 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { LoginSchema } from '@/schemas/userSchema';
-import { UserInfo } from '@/services/user';
-import { useUserStore } from '@/stores/User';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 
 const LoginPage = () => {
+  const { data: session } = useSession();
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const { setUserId, setEmail, setUsername, setNickname, setProfileColor, setProfileImage } =
-    useUserStore();
+
+  useEffect(() => {
+    if (session?.user) {
+      router.replace('/');
+      return;
+    }
+  }, [session]);
 
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
@@ -37,22 +41,10 @@ const LoginPage = () => {
 
   const onSubmit = async (data: z.infer<typeof LoginSchema>) => {
     try {
-      const response = await signIn('credentials', {
+      await signIn('credentials', {
         username: data.email,
         password: data.password,
       });
-      if (response) {
-        const user = await UserInfo();
-        if (user) {
-          setUserId(user.user_id);
-          setEmail(user.email);
-          setNickname(user.nickname);
-          setUsername(user.username);
-          setProfileColor(user.profile_color);
-          setProfileImage(user.profile_image);
-        }
-      }
-      router.replace('/');
     } catch (err) {
       throw new Error(`${err}`);
     }

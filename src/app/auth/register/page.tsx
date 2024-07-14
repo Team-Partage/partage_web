@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { z } from 'zod';
 
@@ -16,12 +16,21 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { CircleCheck } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 
 const RegisterPage = () => {
+  const { data: session } = useSession();
   const { registerUser } = useUserStore();
   const [emailCheck, setEmailCheck] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    if (session?.user) {
+      router.replace('/');
+      return;
+    }
+  }, [session]);
 
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),

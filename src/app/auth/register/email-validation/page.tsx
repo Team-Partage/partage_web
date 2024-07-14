@@ -1,21 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
-import FormModal from '@/components/FormModal';
+import AlertModalRenderer from '@/components/AlertModalRenderer';
 import { Button } from '@/components/ui/button';
 import { CardDescription, CardTitle } from '@/components/ui/card';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { CheckEmailNumber, SendEmail, SignUp } from '@/services/user';
 import { useUserStore } from '@/stores/User';
-import { useRouter } from 'next/navigation';
+import { AlertContents } from '@/utils/alertContents';
 
 const EmailValidationPage = () => {
   const { username, nickname, email, password, clearUser } = useUserStore();
   const [validationNumber, setValidationNumber] = useState('');
   const [isError, setIsError] = useState(false);
-  const [open, setOpen] = useState(false);
-  const router = useRouter();
+  const modalRef = useRef({ openModal: () => {} });
 
   const onchange = (value: string) => {
     setValidationNumber(value);
@@ -41,19 +40,14 @@ const EmailValidationPage = () => {
         const response = await CheckEmailNumber({ email, auth_number: validationNumber });
         if (response) {
           await SignUp({ email, username, nickname, password });
-          setOpen(true);
+          modalRef.current?.openModal();
+          clearUser();
         }
       } catch (err) {
-        console.log(err);
         setIsError(true);
         setValidationNumber('');
       }
     }
-  };
-
-  const handleModal = () => {
-    clearUser();
-    router.push('/auth/login');
   };
 
   return (
@@ -87,16 +81,18 @@ const EmailValidationPage = () => {
         </div>
       </div>
       <div>
-        <Button
-          className="w-full"
-          size="lg"
-          variant="active"
-          type="submit"
-          disabled={isError || validationNumber.length < 6}
-          onClick={onSubmit}
-        >
-          인증 확인
-        </Button>
+        <AlertModalRenderer type="AlertModal" content={AlertContents.REGISTER}>
+          <Button
+            className="w-full"
+            size="lg"
+            variant="active"
+            type="submit"
+            disabled={isError || validationNumber.length < 6}
+            onClick={onSubmit}
+          >
+            인증 확인
+          </Button>
+        </AlertModalRenderer>
         <Button className="mt-4 w-full hover:bg-neutral-500" size="lg" onClick={handleGoBack}>
           회원 가입 페이지로 돌아가기
         </Button>
@@ -107,12 +103,6 @@ const EmailValidationPage = () => {
           인증메일 재발송하기
         </button>
       </div>
-      <FormModal
-        content="회원가입이 완료되었어요!"
-        handleModal={handleModal}
-        open={open}
-        setOpen={setOpen}
-      />
     </div>
   );
 };

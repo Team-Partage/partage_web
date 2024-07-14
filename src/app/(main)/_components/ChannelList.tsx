@@ -1,48 +1,57 @@
 'use client';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { getChannelList } from '@/services/channel';
-import { GetChannelListResponse } from '@/services/channel/type';
-import { ChannelStore } from '@/stores/Channel';
+import { useMainStore } from '@/providers/main-store-provider';
+import { getSearchChannelList } from '@/services/channel';
+import { GetChannelSearchResponse } from '@/services/channel/type';
+import { useSession } from 'next-auth/react';
 import { useInView } from 'react-intersection-observer';
 
 import ChannelItem from './ChannelItem';
 
 interface ChannelListProps {
   query?: string | null;
-  channelsData: GetChannelListResponse;
+  channelsData: GetChannelSearchResponse;
 }
 
 const ChannelList = ({ query, channelsData }: ChannelListProps) => {
-  const { channels, addChannels, updateChannels, cursor, incrementCursor } = ChannelStore();
   const [loading, setLoading] = useState(false);
+
+  const { channels, setChannels, addChannels, cursor } = useMainStore((state) => ({
+    channels: state.channels,
+    setChannels: state.setChannels,
+    addChannels: state.addChannels,
+    cursor: state.cursor,
+  }));
 
   const [ref, inView] = useInView();
   const channelsRef = useRef<HTMLDivElement>(null);
   const noNextChannel = channelsData.page.total_count < cursor * 12;
+
+  const { data: session } = useSession();
+  const userName = session?.user?.name;
 
   const handleLoadMoreChannels = useCallback(async () => {
     if (loading) return;
 
     setLoading(true);
 
-    const nextChannelsData = await getChannelList({
-      cursor: cursor + 1,
+    const nextChannelsData = await getSearchChannelList({
+      cursor: cursor,
       keyword: `${query ? query : ''}`,
     });
     addChannels(nextChannelsData.channels);
-    incrementCursor();
 
     setLoading(false);
-  }, [cursor, addChannels, incrementCursor, loading, query]);
+  }, [cursor, loading, query, addChannels]);
 
   useEffect(() => {
     if (channelsData && channelsData.channels) {
-      updateChannels(channelsData.channels);
+      setChannels(channelsData.channels);
     } else {
-      updateChannels([]);
+      setChannels([]);
     }
-  }, [channelsData, updateChannels]);
+  }, [channelsData, setChannels]);
 
   useEffect(() => {
     if (inView && !noNextChannel) {
@@ -51,8 +60,10 @@ const ChannelList = ({ query, channelsData }: ChannelListProps) => {
   }, [inView, handleLoadMoreChannels, noNextChannel]);
 
   return (
-    <section className="flex flex-col gap-[20px] tablet:w-[664px] largeTablet:w-[1008px] desktop:w-[1100px] desktop:gap-[24px]">
-      <h2 className="large-bold tablet:big-bold desktop:max-bold">당신을 기다리는 채널</h2>
+    <section className="flex w-full flex-col gap-[20px] tablet:w-[664px] largeTablet:w-[1008px] desktop:w-[1100px] desktop:gap-[24px]">
+      <h2 className="large-bold tablet:big-bold desktop:max-bold">
+        {userName || '아무개'}님을 기다리는 채널
+      </h2>
       <div
         ref={channelsRef}
         className="flex flex-wrap gap-x-[24px] gap-y-[32px] desktop:gap-x-[20px]"
