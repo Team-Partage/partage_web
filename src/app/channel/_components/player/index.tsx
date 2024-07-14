@@ -2,7 +2,6 @@
 
 import { useLayoutEffect, useState } from 'react';
 
-import useSocket from '@/hooks/useSocket';
 import { useSocketStore } from '@/stores/useSocketStore';
 import ReactPlayer from 'react-player';
 import { useShallow } from 'zustand/react/shallow';
@@ -14,8 +13,6 @@ interface Props {
 }
 
 const Player = ({ channelId }: Props) => {
-  useSocket(channelId);
-
   const { video } = useSocketStore(
     useShallow((state) => ({ video: state.video, setStore: state.setSocketStore })),
   );

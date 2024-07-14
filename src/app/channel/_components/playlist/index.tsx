@@ -6,9 +6,9 @@ import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import useSocket from '@/hooks/useSocket';
 import { GetChannelDetailResponse } from '@/services/channel/type';
 import { getPlaylist } from '@/services/playlist';
+import send from '@/services/websocket/send';
 import { useUserStore } from '@/stores/User';
 import { useSocketStore } from '@/stores/useSocketStore';
 import { ListVideo, Plus, Trash2 } from 'lucide-react';
@@ -30,7 +30,6 @@ const Playlist = ({ channel, owner }: Props) => {
   const { playlist, setStore } = useSocketStore(
     useShallow((state) => ({ playlist: state.playlist, setStore: state.setSocketStore })),
   );
-  const { send } = useSocket(channel_id);
 
   /** STATE */
   const [isFold, setIsFold] = useState(false);

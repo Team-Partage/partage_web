@@ -1,13 +1,11 @@
 import { useState } from 'react';
 
-import { Send } from 'lucide-react';
-import { useSession } from 'next-auth/react';
-
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import useSocket from '@/hooks/useSocket';
+import send from '@/services/websocket/send';
 import { UserChatReq } from '@/services/websocket/type';
-import { useUserStore } from '@/stores/User';
+import { Send } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 
 interface TextareaFieldProps {
   disabled?: boolean;
@@ -15,14 +13,8 @@ interface TextareaFieldProps {
   onClick?: () => void;
 }
 
-export default function TextareaField({
-  disabled = false,
-  channelId,
-  onClick,
-}: TextareaFieldProps) {
+export default function TextareaField({ disabled = false, onClick }: TextareaFieldProps) {
   const [message, setMessage] = useState('');
-
-  const { send } = useSocket(channelId);
 
   const { data: session } = useSession();
   const userData = session?.user ?? { name: '', email: '', image: null };
