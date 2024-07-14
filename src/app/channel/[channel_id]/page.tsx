@@ -12,7 +12,9 @@ interface Props {
 }
 
 const page = async ({ params }: Props) => {
-  const { channel, owner } = await getChannelDetail(params.channel_id);
+  const res = await getChannelDetail(params.channel_id);
+
+  const { channel, owner } = res;
 
   return (
     <div className="flex size-full flex-col justify-between desktop:flex-row ">
@@ -63,7 +65,7 @@ const page = async ({ params }: Props) => {
       <Chatting channelId={params.channel_id} />
 
       {/** 플레이리스트 */}
-      <Playlist channelId={params.channel_id} />
+      <Playlist {...res} />
     </div>
   );
 };

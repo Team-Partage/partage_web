@@ -1,37 +1,48 @@
 'use client';
+/* eslint-disable import/named */
+// DropResult 인식 못 함
 
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import useSocket from '@/hooks/useSocket';
+import { GetChannelDetailResponse } from '@/services/channel/type';
 import { getPlaylist } from '@/services/playlist';
+import { useUserStore } from '@/stores/User';
 import { useSocketStore } from '@/stores/useSocketStore';
-import { ListVideo, Menu, Plus, Trash2 } from 'lucide-react';
+import { ListVideo, Plus, Trash2 } from 'lucide-react';
 import Image from 'next/image';
+import { DragDropContext, Draggable, DropResult, Droppable } from 'react-beautiful-dnd';
 import { useShallow } from 'zustand/react/shallow';
 
 import PlaylistCard from './PlaylistCard';
 
-interface Props {
-  channelId: string;
-}
+interface Props extends GetChannelDetailResponse {}
 
-const Playlist = ({ channelId }: Props) => {
-  const [isFold, setIsFold] = useState(false);
+const Playlist = ({ channel, owner }: Props) => {
+  /** PROPS */
+  const { channel_id } = channel;
+  const { user_id: owner_id } = owner;
 
-  const { send } = useSocket(channelId);
+  /** STORE */
+  const user_id = useUserStore((state) => state.user_id);
   const { playlist, setStore } = useSocketStore(
     useShallow((state) => ({ playlist: state.playlist, setStore: state.setSocketStore })),
   );
+  const { send } = useSocket(channel_id);
 
+  /** STATE */
+  const [isFold, setIsFold] = useState(false);
   const [hoveredItem, setHoveredItem] = useState<number | null>(null);
-
   const [url, setUrl] = useState('');
+
+  //! 임시 권한 처리
+  const isOwner = owner_id === user_id;
 
   useEffect(() => {
     const fetch = async () => {
-      const res = await getPlaylist({ channelId });
+      const res = await getPlaylist({ channelId: channel_id });
       setStore({ type: 'SET_PLAYLIST', payload: res.playlists });
 
       res.playlists[0] &&
@@ -45,22 +56,42 @@ const Playlist = ({ channelId }: Props) => {
           },
         });
     };
-    fetch();
-  }, [channelId]);
 
-  const handleClick = (id: number) => {
+    fetch();
+  }, [channel_id]);
+
+  /** 비디오 재생 */
+  const handlePlay = (id: number) => {
+    if (!isOwner) return;
     send('VIDEO_PLAY', { playlist_no: id, playing: true });
   };
 
+  /** 비디오 삭제 */
+  const handleDelete = (id: number) => {
+    if (!isOwner) return;
+    send('PLAYLIST_REMOVE', { playlist_no: id });
+  };
+
+  /** 비디오 추가 */
   const handleAddPlaylist = () => {
     if (url.trim() === '') return;
     send('PLAYLIST_ADD', { url });
     setUrl('');
   };
 
-  const handlePlaylistMove = () => {};
+  const onDragEnd = ({ source, destination }: DropResult) => {
+    if (!isOwner || !destination) return;
 
-  const handlePlaylistRemove = () => {};
+    const items = Array.from(playlist);
+    const [reorderedItem] = items.splice(source.index, 1);
+    items.splice(destination.index, 0, reorderedItem);
+
+    setStore({ type: 'SET_PLAYLIST', payload: items });
+    send('PLAYLIST_MOVE', {
+      playlist_no: items[destination.index].playlist_no,
+      sequence: destination.index,
+    });
+  };
 
   return (
     <section
@@ -94,43 +125,58 @@ const Playlist = ({ channelId }: Props) => {
       </header>
 
       {/** 플레이리스트 */}
-      <div>
-        <ol className={`flex flex-col gap-2 ${isFold && 'hidden'}`}>
-          {playlist?.map((item) => (
-            <li
-              key={item.playlist_no}
-              onClick={() => handleClick(item.playlist_no)}
-              onMouseEnter={() => setHoveredItem(item.playlist_no)}
-              onMouseLeave={() => setHoveredItem(null)}
-              className="relative h-[66px] rounded-lg border border-transparent p-3 transition-colors hover:border-main-skyblue hover:bg-main-skyblue/20 desktop:w-[320px]"
-            >
-              <PlaylistCard {...item} />
-              {hoveredItem === item.playlist_no && (
-                <div className="absolute right-2 top-1/2 flex -translate-y-1/2 gap-4">
-                  {/** 플레이리스트 이동 */}
-                  <Button
-                    size="icon"
-                    className="size-5 p-0 tablet:size-6"
-                    onClick={() => handlePlaylistMove}
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="playlist">
+          {(provided) => (
+            <div {...provided.droppableProps} ref={provided.innerRef}>
+              <ol className={`flex flex-col ${isFold && 'hidden'}`}>
+                {playlist?.map((item, index) => (
+                  <Draggable
+                    key={item.playlist_no}
+                    draggableId={item.playlist_no.toString()}
+                    index={index}
+                    isDragDisabled={!isOwner}
                   >
-                    <Menu className="text-main-skyblue" />
+                    {(provided) => (
+                      <li
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handlePlay(item.playlist_no);
+                        }}
+                        onMouseEnter={() => setHoveredItem(item.playlist_no)}
+                        onMouseLeave={() => setHoveredItem(null)}
+                      >
+                        <PlaylistCard {...item} />
+                        {isOwner && hoveredItem === item.playlist_no && (
+                          <div className="absolute right-2 top-1/2 flex -translate-y-1/2 gap-4">
+                            <Button
+                              size="icon"
+                              className="size-5 p-0 tablet:size-6"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                handleDelete(item.playlist_no);
+                              }}
+                            >
+                              <Trash2 className="text-main-skyblue" />
+                            </Button>
+                          </div>
+                        )}
+                      </li>
+                    )}
+                  </Draggable>
+                ))}
+              </ol>
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
 
-                    {/** 플레이리스트 삭제 */}
-                  </Button>
-                  <Button
-                    size="icon"
-                    className="size-5 p-0 tablet:size-6"
-                    onClick={() => handlePlaylistRemove}
-                  >
-                    <Trash2 className="text-main-skyblue" />
-                  </Button>
-                </div>
-              )}
-            </li>
-          ))}
-        </ol>
-
-        {/** URL INPUT */}
+      {/** URL INPUT */}
+      {isOwner && (
         <div className={`${isFold && 'hidden'}`}>
           <Input
             value={url}
@@ -144,7 +190,7 @@ const Playlist = ({ channelId }: Props) => {
             }
           />
         </div>
-      </div>
+      )}
     </section>
   );
 };
