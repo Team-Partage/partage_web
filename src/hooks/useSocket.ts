@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { stomp } from '@/services/websocket';
 import {
   MessageBody,
+  MessageType,
   PlaylistAddReq,
   PlaylistMoveReq,
   PlaylistRemoveReq,
@@ -54,12 +55,18 @@ const useSocket = (channelId: string) => {
         case 'CHANNEL_VIEWER':
           setStore({ type: 'SET_VIEWER', payload: body.data });
           break;
-        case 'USER_CHAT': {
+        case 'USER_CHAT':
           setStore({ type: 'SET_CHATTING', payload: body.data });
           break;
-        }
-        case 'PLAYLIST_ADD': {
-          setStore({ type: 'SET_PLAYLIST', payload: body.data });
+        case 'PLAYLIST_ADD':
+          setStore({ type: 'SET_PLAYLIST', payload: JSON.parse(body.data) });
+          break;
+        case 'PLAYLIST_REMOVE': {
+          const data = body.data as MessageType['PLAYLIST_REMOVE'];
+          setStore({
+            type: 'PLAYLIST_REMOVE',
+            payload: data.playlist_no,
+          });
           break;
         }
         default:

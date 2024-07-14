@@ -28,6 +28,7 @@ type Action =
   | { type: 'SET_VIEWER'; payload: MessageType['CHANNEL_VIEWER'] }
   | { type: 'SET_CHATTING'; payload: ChattingType }
   | { type: 'SET_PLAYLIST'; payload: Playlist[] | Playlist }
+  | { type: 'PLAYLIST_REMOVE'; payload: number }
   | { type: 'SET_VIDEO'; payload: VideoType }
   | { type: 'RESET_STORE' };
 
@@ -49,6 +50,11 @@ export const useSocketStore = create<SocketStore>((set) => ({
           const { ...rest } = action.payload;
           set((state) => ({ playlist: [...state.playlist, rest] }));
         }
+        break;
+      case 'PLAYLIST_REMOVE':
+        set((state) => ({
+          playlist: state.playlist.filter((video) => video.playlist_no !== action.payload),
+        }));
         break;
       case 'SET_VIDEO':
         set({ video: action.payload });
