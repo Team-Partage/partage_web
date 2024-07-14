@@ -1,6 +1,8 @@
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
+import { getSession } from 'next-auth/react';
+
 import type { IFrame, IMessage, IStompSocket } from '@stomp/stompjs';
 
 const createStompClient = () => {
@@ -8,12 +10,17 @@ const createStompClient = () => {
   const BASE_URL = process.env.NEXT_PUBLIC_WEBSOCKET_SERVER_URL;
 
   /** 소켓 연결 */
-  const connect = (channelID: string, onMessageCallback: (message: IMessage) => void) => {
-    const url = new URL(`/ws?channel=${channelID}`, BASE_URL).toString();
+  const connect = async (channelId: string, onMessageCallback: (message: IMessage) => void) => {
+    const session = await getSession();
+
+    const url = await new URL(
+      `/ws?channel=${channelId}${session?.user.accessToken ? `&token=${session.user.accessToken}` : ''}`,
+      BASE_URL,
+    ).toString();
     client.webSocketFactory = () => new SockJS(url) as IStompSocket;
 
     client.onConnect = () => {
-      client.subscribe(`/channel/${channelID}`, onMessageCallback);
+      client.subscribe(`/channel/${channelId}`, onMessageCallback);
     };
 
     client.onStompError = (frame: IFrame) => {
