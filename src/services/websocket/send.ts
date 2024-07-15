@@ -36,25 +36,3 @@ const send = <T extends keyof typeof ENDPOINT>(type: T, message: SendMessageType
 };
 
 export default send;
-
-// import { stomp } from '.';
-// import { UserChatReq } from './type';
-
-// const ENDPOINT = {
-//   USER_JOIN: '/stomp/user.join',
-//   USER_LEAVE: '/stomp/user.leave',
-//   USER_CHAT: '/stomp/user.chat',
-// } as const;
-
-// type SendMessageType = {
-//   USER_JOIN: object;
-//   USER_LEAVE: object;
-//   USER_CHAT: UserChatReq;
-// };
-
-// const send = <T extends keyof typeof ENDPOINT>(type: T, message: SendMessageType[T]) => {
-//   if (!stomp) return;
-//   stomp.send(ENDPOINT[type], message);
-// };
-
-// export default send;

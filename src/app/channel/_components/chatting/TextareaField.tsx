@@ -1,35 +1,24 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import send from '@/services/websocket/send';
-import { UserChatReq, UserJoinReq } from '@/services/websocket/type';
+import { UserChatReq } from '@/services/websocket/type';
 import { useUserStore } from '@/stores/User';
-import { useSocketStore } from '@/stores/useSocketStore';
 import { Send } from 'lucide-react';
 
 interface TextareaFieldProps {
   disabled?: boolean;
-  channelId: string;
   onClick?: () => void;
 }
 
-export default function TextareaField({
-  channelId,
-  disabled = false,
-  onClick,
-}: TextareaFieldProps) {
+export default function TextareaField({ disabled = false, onClick }: TextareaFieldProps) {
   const [message, setMessage] = useState('');
 
-  const { user_id, nickname, profile_color, profile_image } = useUserStore((state) => ({
-    user_id: state.user_id,
+  const { nickname, profile_color, profile_image } = useUserStore((state) => ({
     nickname: state.nickname,
     profile_color: state.profile_color,
     profile_image: state.profile_image,
-  }));
-
-  const { isConnected } = useSocketStore((state) => ({
-    isConnected: state.isConnected,
   }));
 
   const sendChatMessage = () => {
@@ -50,23 +39,6 @@ export default function TextareaField({
       sendChatMessage();
     }
   };
-
-  const sendJoinMessage = () => {
-    const joinReqForm: UserJoinReq = {
-      channel_id: channelId,
-      sender: user_id,
-      content: `${user_id} joined the channel`,
-      type: 'USER_JOIN',
-    };
-
-    send('USER_JOIN', joinReqForm);
-  };
-
-  useEffect(() => {
-    if (user_id && isConnected) {
-      sendJoinMessage();
-    }
-  }, [user_id, channelId, isConnected]);
 
   return (
     <div className="flex w-full items-end gap-3 px-0 py-3 desktop:w-[440px] desktop:px-8">

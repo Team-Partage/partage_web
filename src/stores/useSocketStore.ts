@@ -1,6 +1,6 @@
 import { Playlist } from '@/services/playlist/type';
 import { MessageType } from '@/services/websocket/type';
-import { ServerChattingForm } from '@/utils/constants';
+import { SEVER_CHAT_MESSAGE, SEVER_NICKNAME, ServerChatForm } from '@/utils/constants';
 import { create } from 'zustand';
 
 type ChattingType = MessageType['USER_CHAT'];
@@ -65,14 +65,32 @@ export const useSocketStore = create<SocketStore>((set) => ({
         set((state) => ({ chatting: [...state.chatting, action.payload] }));
         break;
       case 'SET_JOIN':
-        // set({ userJoin: action.payload });
         set((state) => ({
-          chatting: [...state.chatting, { ...ServerChattingForm, message: action.payload.user_id }],
+          chatting: [
+            ...state.chatting,
+            {
+              ...ServerChatForm,
+              user_id: SEVER_NICKNAME,
+              nickname: action.payload.nickname,
+              message: SEVER_CHAT_MESSAGE.USER_JOIN,
+            },
+          ],
           userJoin: action.payload,
         }));
         break;
       case 'SET_LEAVE':
-        set({ userLeave: action.payload });
+        set((state) => ({
+          chatting: [
+            ...state.chatting,
+            {
+              ...ServerChatForm,
+              user_id: SEVER_NICKNAME,
+              nickname: action.payload.user_id,
+              message: SEVER_CHAT_MESSAGE.USER_LEAVE,
+            },
+          ],
+          userLeave: action.payload,
+        }));
         break;
       case 'SET_PLAYLIST':
         if (Array.isArray(action.payload)) {
