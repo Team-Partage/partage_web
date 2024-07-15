@@ -28,6 +28,10 @@ export default function TextareaField({
     profile_image: state.profile_image,
   }));
 
+  const { isConnected } = useSocketStore((state) => ({
+    isConnected: state.isConnected,
+  }));
+
   const sendChatMessage = () => {
     const chatReqForm: UserChatReq = {
       nickname: nickname,
@@ -37,8 +41,6 @@ export default function TextareaField({
     };
 
     send('USER_CHAT', chatReqForm);
-
-    sendJoinMessage(); // 여기에 넣어서 테스트해봐도 안되네요ㅜ
     setMessage('');
   };
 
@@ -60,16 +62,11 @@ export default function TextareaField({
     send('USER_JOIN', joinReqForm);
   };
 
-  const { chatting, userJoin } = useSocketStore((state) => ({
-    chatting: state.chatting,
-    userJoin: state.userJoin,
-  }));
-
   useEffect(() => {
-    if (user_id) {
-      sendJoinMessage(); // 여기에 넣으면 웹소켓 연결이 활성화 안되었다는 에러가 납니다.
+    if (user_id && isConnected) {
+      sendJoinMessage();
     }
-  }, [user_id, channelId]);
+  }, [user_id, channelId, isConnected]);
 
   return (
     <div className="flex w-full items-end gap-3 px-0 py-3 desktop:w-[440px] desktop:px-8">

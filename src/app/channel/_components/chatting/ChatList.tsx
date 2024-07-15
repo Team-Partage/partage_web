@@ -9,9 +9,8 @@ import ServerMessage from './ServerMessage';
 export function ChatList() {
   const chatListRef = useRef<HTMLDivElement>(null);
 
-  const { chatting, userJoin } = useSocketStore((state) => ({
+  const { chatting } = useSocketStore((state) => ({
     chatting: state.chatting,
-    userJoin: state.userJoin,
   }));
 
   useEffect(() => {
