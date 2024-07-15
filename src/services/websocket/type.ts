@@ -8,6 +8,14 @@ export type UserChatReq = {
   message: string;
 };
 
+/** 채널 입장 */
+export type UserJoinReq = {
+  channel_id: string;
+  sender: string;
+  content: string;
+  type: 'USER_JOIN';
+};
+
 /** 영상 재생/일시정지 */
 export type VideoPlayReq = {
   playlist_no: number;
@@ -57,7 +65,8 @@ export type MessageType = {
 
   /** 사용자 입장 알림 */
   USER_JOIN: {
-    user_id: string;
+    user_id: string | 'NONE';
+    nickname: string;
   };
 
   /** 사용자 퇴장 알림 */

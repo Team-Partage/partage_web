@@ -2,11 +2,10 @@
 
 import { useState } from 'react';
 
-import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
-
 import ConfirmModal from '@/components/modal/ConfirmModal';
 import { PAGE_ROUTE } from '@/utils/route';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 import ChatHeader from './ChatHeader';
 import { ChatList } from './ChatList';
