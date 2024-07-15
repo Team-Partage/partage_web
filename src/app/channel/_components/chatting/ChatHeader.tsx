@@ -1,9 +1,8 @@
 import { useState } from 'react';
 
-import Image from 'next/image';
-
 import Tooltip from '@/components/Tooltip';
 import { useSocketStore } from '@/stores/useSocketStore';
+import Image from 'next/image';
 
 interface ChatHeaderProps {
   isFold: boolean;
@@ -19,12 +18,12 @@ export default function ChatHeader({ isFold, setIsFold }: ChatHeaderProps) {
     <header
       className={`flex h-[67px] w-full items-center justify-between bg-neutral-600 px-0 desktop:h-[90px] desktop:px-8 ${isFold && 'desktop:ml-[-10px] desktop:w-[88px]'}`}
     >
-      <div className="ml-[-10px] flex items-center gap-2.5">
+      <div className="flex items-center gap-2.5">
         <button
           onClick={() => isFold && setIsFold(false)}
           onMouseEnter={() => setShowTooltip(true)}
           onMouseLeave={() => setShowTooltip(false)}
-          className="relative flex size-[42px] shrink-0 items-center justify-center rounded hover:bg-transparent-white-10 desktop:size-[44px]"
+          className={`relative ml-[-10px] flex size-[42px] shrink-0 items-center justify-center rounded hover:bg-transparent-white-10 desktop:size-[44px] ${isFold && 'desktop:ml-0'}`}
         >
           <div className="relative size-[22px] desktop:size-[24px]">
             <Image src="/chat-two-bubble.svg" alt="채팅 아이콘" fill sizes="30vw" />

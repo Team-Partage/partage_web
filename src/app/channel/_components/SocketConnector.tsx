@@ -33,6 +33,12 @@ const SocketConnector = ({ channelId }: Props) => {
         case 'USER_CHAT':
           setStore({ type: 'SET_CHATTING', payload: body.data });
           break;
+        case 'USER_JOIN':
+          setStore({ type: 'SET_JOIN', payload: body.data });
+          break;
+        case 'USER_LEAVE':
+          setStore({ type: 'SET_LEAVE', payload: body.data });
+          break;
         case 'PLAYLIST_ADD':
           setStore({ type: 'SET_PLAYLIST', payload: JSON.parse(body.data) });
           break;

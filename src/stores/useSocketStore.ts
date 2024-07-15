@@ -1,15 +1,22 @@
 import { Playlist } from '@/services/playlist/type';
 import { MessageType } from '@/services/websocket/type';
+import { SEVER_CHAT_MESSAGE, SEVER_NICKNAME, ServerChatForm } from '@/utils/constants';
 import { create } from 'zustand';
 
 type ChattingType = MessageType['USER_CHAT'];
+type UserJoinType = MessageType['USER_JOIN'];
+type UserLeaveType = MessageType['USER_LEAVE'];
 type VideoType = MessageType['VIDEO_PLAY'] & MessageType['VIDEO_MOVE'] & { url: string };
 
 interface SocketStore {
   chatting: ChattingType[];
+  userJoin: UserJoinType;
+  userLeave: UserLeaveType;
   playlist: Playlist[];
   video: VideoType;
   viewer: MessageType['CHANNEL_VIEWER'];
+  isConnected: boolean;
+  setIsConnected: (flag: boolean) => void;
 
   /** 스토어 초기화 */
   resetStore: () => void;
@@ -17,31 +24,73 @@ interface SocketStore {
   setSocketStore: (action: Action) => void;
 }
 
-const initialData: Pick<SocketStore, 'chatting' | 'playlist' | 'video' | 'viewer'> = {
+const initialData: Pick<
+  SocketStore,
+  'chatting' | 'userJoin' | 'userLeave' | 'playlist' | 'video' | 'viewer' | 'isConnected'
+> = {
   chatting: [],
+  userJoin: { user_id: '', nickname: '' },
+  userLeave: { user_id: '' },
   playlist: [],
   viewer: { anonymous_users: 0, login_users: 0, total_users: 0 },
   video: { playlist_no: -1, playing: false, playtime: 0, url: '' },
+  isConnected: false,
 };
 
 type Action =
   | { type: 'SET_VIEWER'; payload: MessageType['CHANNEL_VIEWER'] }
   | { type: 'SET_CHATTING'; payload: ChattingType }
+  | { type: 'SET_JOIN'; payload: MessageType['USER_JOIN'] }
+  | { type: 'SET_LEAVE'; payload: MessageType['USER_LEAVE'] }
   | { type: 'SET_PLAYLIST'; payload: Playlist[] | Playlist }
   | { type: 'PLAYLIST_REMOVE'; payload: number }
   | { type: 'SET_VIDEO'; payload: VideoType }
+  | { type: 'SET_CONNECTED'; payload: boolean }
   | { type: 'RESET_STORE' };
 
 export const useSocketStore = create<SocketStore>((set) => ({
   chatting: initialData.chatting,
+  userJoin: initialData.userJoin,
+  userLeave: initialData.userLeave,
   playlist: initialData.playlist,
   video: initialData.video,
   viewer: initialData.viewer,
+  isConnected: initialData.isConnected,
+  setIsConnected: (flag) => set({ isConnected: flag }),
+
   resetStore: () => set(initialData),
   setSocketStore: (action: Action) => {
     switch (action.type) {
       case 'SET_CHATTING':
         set((state) => ({ chatting: [...state.chatting, action.payload] }));
+        break;
+      case 'SET_JOIN':
+        set((state) => ({
+          chatting: [
+            ...state.chatting,
+            {
+              ...ServerChatForm,
+              user_id: SEVER_NICKNAME,
+              nickname: action.payload.nickname,
+              message: SEVER_CHAT_MESSAGE.USER_JOIN,
+            },
+          ],
+          userJoin: action.payload,
+        }));
+        break;
+      case 'SET_LEAVE':
+        set((state) => ({
+          chatting: [
+            ...state.chatting,
+            {
+              ...ServerChatForm,
+              user_id: SEVER_NICKNAME,
+              nickname: action.payload.user_id,
+              message: SEVER_CHAT_MESSAGE.USER_LEAVE,
+            },
+          ],
+          userLeave: action.payload,
+        }));
         break;
       case 'SET_PLAYLIST':
         if (Array.isArray(action.payload)) {
@@ -61,6 +110,9 @@ export const useSocketStore = create<SocketStore>((set) => ({
         break;
       case 'SET_VIEWER':
         set({ viewer: action.payload });
+        break;
+      case 'SET_CONNECTED':
+        set({ isConnected: action.payload });
         break;
       default:
         break;

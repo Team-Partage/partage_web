@@ -2,11 +2,10 @@
 
 import { useState } from 'react';
 
-import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
-
 import ConfirmModal from '@/components/modal/ConfirmModal';
 import { PAGE_ROUTE } from '@/utils/route';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 import ChatHeader from './ChatHeader';
 import { ChatList } from './ChatList';
@@ -34,10 +33,8 @@ const Chatting = ({ channelId }: ChattingProps) => {
       className={`mt-4 flex min-h-[385px] w-full flex-col overflow-hidden desktop:order-3 desktop:mt-0 desktop:max-h-screen desktop:max-w-[440px] ${isFold && 'min-h-[67px] desktop:max-w-[88px]'}`}
     >
       <ChatHeader isFold={isFold} setIsFold={setIsFold} />
-      {!isFold && <ChatList />}
-      {!isFold && (
-        <TextareaField channelId={channelId} disabled={false} onClick={handleClickChat} />
-      )}
+      {!isFold && <ChatList channelId={channelId} />}
+      {!isFold && <TextareaField disabled={false} onClick={handleClickChat} />}
       {showLoginModal && (
         <ConfirmModal
           leftButtonText="취소"

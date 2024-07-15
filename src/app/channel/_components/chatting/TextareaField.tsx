@@ -4,55 +4,39 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import send from '@/services/websocket/send';
 import { UserChatReq } from '@/services/websocket/type';
+import { useUserStore } from '@/stores/User';
 import { Send } from 'lucide-react';
-import { useSession } from 'next-auth/react';
 
 interface TextareaFieldProps {
   disabled?: boolean;
-  channelId: string;
   onClick?: () => void;
 }
 
 export default function TextareaField({ disabled = false, onClick }: TextareaFieldProps) {
   const [message, setMessage] = useState('');
 
-  const { data: session } = useSession();
-  const userData = session?.user ?? { name: '', email: '', image: null };
-
-  /** User 상태관리로 교체할때 사용
-   const { nickname, profile_color, profile_image } = useUserStore((state) => ({
-     nickname: state.nickname,
+  const { nickname, profile_color, profile_image } = useUserStore((state) => ({
+    nickname: state.nickname,
     profile_color: state.profile_color,
     profile_image: state.profile_image,
   }));
 
-  console.log(nickname, profile_color, profile_image); */
+  const sendChatMessage = () => {
+    const chatReqForm: UserChatReq = {
+      nickname: nickname,
+      profile_image: profile_image,
+      profile_color: profile_color,
+      message: message,
+    };
 
-  const sendMessage = () => {
-    if (message.trim() !== '') {
-      const messageToSend: UserChatReq = {
-        nickname: userData.name as string,
-        profile_image: userData.image as string,
-        profile_color: null,
-        message: message,
-      };
-      /** User 상태관리로 교체할때 사용
-      const messageToSend: UserChatReq = {
-        nickname: nickname,
-        profile_image: profile_image,
-        profile_color: profile_color,
-        message: message,
-      }; */
-
-      send('USER_CHAT', messageToSend);
-      setMessage('');
-    }
+    send('USER_CHAT', chatReqForm);
+    setMessage('');
   };
 
   const handleEnter = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
       e.preventDefault();
-      sendMessage();
+      sendChatMessage();
     }
   };
 
@@ -70,7 +54,7 @@ export default function TextareaField({ disabled = false, onClick }: TextareaFie
         rows={1}
         disabled={disabled}
       />
-      <Button variant="active" size="icon" onClick={sendMessage}>
+      <Button variant="active" size="icon" onClick={sendChatMessage}>
         <Send />
       </Button>
     </div>
