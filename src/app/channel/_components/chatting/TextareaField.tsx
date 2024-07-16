@@ -43,7 +43,7 @@ export default function TextareaField({ disabled = false, onClick }: TextareaFie
   return (
     <div className="flex w-full items-end gap-3 px-0 py-3 desktop:w-[440px] desktop:px-8">
       <Textarea
-        value={message}
+        value={disabled ? '' : message}
         variant="chat"
         onChange={(e) => {
           setMessage(e.currentTarget.value);
@@ -52,7 +52,6 @@ export default function TextareaField({ disabled = false, onClick }: TextareaFie
         onKeyDown={handleEnter}
         placeholder="채팅에 참여해보세요."
         rows={1}
-        disabled={disabled}
       />
       <Button variant="active" size="icon" onClick={sendChatMessage}>
         <Send />
