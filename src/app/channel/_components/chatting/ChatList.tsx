@@ -11,9 +11,10 @@ import ServerMessage from './ServerMessage';
 
 interface ChatListProps {
   channelId: string;
+  isFold: boolean;
 }
 
-export function ChatList({ channelId }: ChatListProps) {
+export function ChatList({ channelId, isFold }: ChatListProps) {
   const chatListRef = useRef<HTMLDivElement>(null);
 
   const { user_id, nickname } = useUserStore((state) => ({
@@ -52,7 +53,7 @@ export function ChatList({ channelId }: ChatListProps) {
   return (
     <div
       ref={chatListRef}
-      className={`h-[254px] w-full grow overflow-y-auto px-0 no-scrollbar desktop:h-screen-chatList desktop:w-[440px] desktop:px-8`}
+      className={`h-[254px] w-full grow overflow-y-auto px-0 no-scrollbar desktop:h-screen-chatList desktop:w-[440px] desktop:px-8 ${isFold && 'hidden'}`}
     >
       <div className="flex-col items-end gap-0.5">
         {chatting.map((chat, index) => {
