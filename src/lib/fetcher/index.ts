@@ -118,6 +118,6 @@ class Fetcher {
 }
 
 export const fetcher = new Fetcher({
-  baseURL: 'http://localhost:9090',
+  baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
   defaultRequestInit: { headers: { 'Content-Type': 'application/json' } },
 });
