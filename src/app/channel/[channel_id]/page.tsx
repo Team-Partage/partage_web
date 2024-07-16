@@ -23,7 +23,7 @@ const page = async ({ params }: Props) => {
       <div className="flex size-full flex-col justify-between desktop:flex-row ">
         {/** 플레이어 */}
         <section className="mt-10 w-full desktop:order-2">
-          <Player channelId={params.channel_id} />
+          <Player channelId={params.channel_id} owner_id={owner.user_id} />
 
           {/** 채널 정보 */}
           <div className="mt-4 flex flex-col justify-between tablet:flex-row desktop:order-2">

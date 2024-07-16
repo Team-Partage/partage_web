@@ -50,6 +50,10 @@ const SocketConnector = ({ channelId }: Props) => {
           });
           break;
         }
+        case 'VIDEO_TIME': {
+          setStore({ type: 'SET_VIDEO_TIME', payload: body.data });
+          break;
+        }
         default:
           break;
       }
