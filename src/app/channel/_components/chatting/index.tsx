@@ -5,11 +5,11 @@ import { useState } from 'react';
 import ConfirmModal from '@/components/modal/ConfirmModal';
 import { PAGE_ROUTE } from '@/utils/route';
 import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
 
 import ChatHeader from './ChatHeader';
 import { ChatList } from './ChatList';
 import TextareaField from './TextareaField';
+import { useUserStore } from '@/stores/User';
 
 interface ChattingProps {
   channelId: string;
@@ -18,12 +18,15 @@ interface ChattingProps {
 const Chatting = ({ channelId }: ChattingProps) => {
   const [isFold, setIsFold] = useState<boolean>(false);
   const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
-  const { data: session } = useSession();
+
+  const { nickname } = useUserStore((state) => ({
+    nickname: state.nickname,
+  }));
 
   const router = useRouter();
 
   const handleClickChat = () => {
-    if (!session) {
+    if (!nickname) {
       setShowLoginModal(true);
     }
   };
@@ -33,8 +36,8 @@ const Chatting = ({ channelId }: ChattingProps) => {
       className={`mt-4 flex min-h-[385px] w-full flex-col overflow-hidden desktop:order-3 desktop:mt-0 desktop:max-h-screen desktop:max-w-[440px] ${isFold && 'min-h-[67px] desktop:max-w-[88px]'}`}
     >
       <ChatHeader isFold={isFold} setIsFold={setIsFold} />
-      {!isFold && <ChatList channelId={channelId} />}
-      {!isFold && <TextareaField disabled={false} onClick={handleClickChat} />}
+      <ChatList channelId={channelId} isFold={isFold} />
+      {!isFold && <TextareaField disabled={!nickname} onClick={handleClickChat} />}
       {showLoginModal && (
         <ConfirmModal
           leftButtonText="취소"
