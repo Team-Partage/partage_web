@@ -43,26 +43,20 @@ const Playlist = ({ channel, owner }: Props) => {
     const fetch = async () => {
       const res = await getPlaylist({ channelId: channel_id });
       setStore({ type: 'SET_PLAYLIST', payload: res.playlists });
-
-      res.playlists[0] &&
-        setStore({
-          type: 'SET_VIDEO',
-          payload: {
-            playlist_no: res.playlists[0].playlist_no,
-            playing: false,
-            playtime: 0,
-            url: res.playlists[0].url,
-          },
-        });
     };
 
     fetch();
   }, [channel_id]);
 
   /** 비디오 재생 */
-  const handlePlay = (id: number) => {
+  const handlePlay = (index: number) => {
     if (!isOwner) return;
-    send('VIDEO_PLAY', { playlist_no: id, playing: true });
+    // send('VIDEO_PLAY', { playlist_no: id, playing: true });
+    setStore({
+      type: 'SET_VIDEO',
+      payload: { playlist_no: playlist.data[index].playlist_no, url: playlist.data[index].url },
+    });
+    setStore({ type: 'SET_PLAYLIST_CURSOR', payload: index });
   };
 
   /** 비디오 삭제 */
@@ -81,11 +75,12 @@ const Playlist = ({ channel, owner }: Props) => {
   const onDragEnd = ({ source, destination }: DropResult) => {
     if (!isOwner || !destination) return;
 
-    const items = Array.from(playlist);
+    const items = Array.from(playlist.data);
     const [reorderedItem] = items.splice(source.index, 1);
     items.splice(destination.index, 0, reorderedItem);
 
     setStore({ type: 'SET_PLAYLIST', payload: items });
+    setStore({ type: 'SET_PLAYLIST_CURSOR', payload: destination.index });
     send('PLAYLIST_MOVE', {
       playlist_no: items[destination.index].playlist_no,
       sequence: destination.index,
@@ -129,7 +124,7 @@ const Playlist = ({ channel, owner }: Props) => {
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef}>
               <ol className={`flex flex-col ${isFold && 'hidden'}`}>
-                {playlist?.map((item, index) => (
+                {playlist?.data.map((item, index) => (
                   <Draggable
                     key={item.playlist_no}
                     draggableId={item.playlist_no.toString()}
@@ -143,11 +138,11 @@ const Playlist = ({ channel, owner }: Props) => {
                         {...provided.dragHandleProps}
                         onClick={(e) => {
                           e.preventDefault();
-                          handlePlay(item.playlist_no);
+                          handlePlay(index);
                         }}
                         onMouseEnter={() => setHoveredItem(item.playlist_no)}
                         onMouseLeave={() => setHoveredItem(null)}
-                        className={`relative h-[66px] rounded-lg border border-transparent p-3 transition-colors desktop:w-[320px] ${isOwner && 'hover:border-main-skyblue hover:bg-main-skyblue/20'}`}
+                        className={`relative h-[66px] rounded-lg border border-transparent p-3 transition-colors desktop:w-[320px] ${isOwner && 'hover:border-main-skyblue hover:bg-main-skyblue/20'} ${playlist.cursor === index && 'border-main-skyblue bg-main-skyblue/20'}`}
                       >
                         <PlaylistCard {...item} />
                         {isOwner && hoveredItem === item.playlist_no && (

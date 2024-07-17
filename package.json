@@ -42,6 +42,7 @@
     "react-dom": "^18",
     "react-hook-form": "^7.51.4",
     "react-intersection-observer": "^9.10.3",
+    "react-lottie-player": "^2.0.0",
     "react-player": "^2.16.0",
     "sockjs-client": "^1.6.1",
     "tailwind-merge": "^2.3.0",
