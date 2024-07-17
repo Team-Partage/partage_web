@@ -110,7 +110,9 @@ export const useSocketStore = create<SocketStore>((set) => ({
         set({ video: action.payload });
         break;
       case 'SET_VIDEO_TIME':
-        set((state) => ({ video: { ...state.video, playtime: action.payload } }));
+        set((state) => ({
+          video: { ...state.video, playtime: action.payload },
+        }));
         break;
       case 'SET_VIEWER':
         set({ viewer: action.payload });
