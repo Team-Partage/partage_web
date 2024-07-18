@@ -1,6 +1,5 @@
-import { createStore } from 'zustand';
-
 import { SearchedChannel } from '@/services/channel/type';
+import { createStore } from 'zustand';
 
 export type MainStateType = {
   channels: SearchedChannel[];
