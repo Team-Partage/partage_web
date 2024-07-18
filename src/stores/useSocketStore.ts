@@ -44,6 +44,7 @@ type Action =
   | { type: 'SET_PLAYLIST_CURSOR'; payload: number }
   | { type: 'PLAYLIST_REMOVE'; payload: number }
   | { type: 'SET_VIDEO'; payload: Partial<VideoType> }
+  | { type: 'SET_VIDEO_TIME'; payload: number }
   | { type: 'SET_CONNECTED'; payload: boolean }
   | { type: 'RESET_STORE' };
 
@@ -145,6 +146,13 @@ export const useSocketStore = create<SocketStore>((set) => ({
         const { ...rest } = action.payload;
         set((state) => ({ video: { ...state.video, ...rest } }));
         break;
+
+      case 'SET_VIDEO_TIME':
+        set((state) => ({
+          video: { ...state.video, playtime: action.payload },
+        }));
+        break;
+
       }
 
       case 'SET_VIEWER':
