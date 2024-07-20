@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-
 import { useMainStore } from '@/providers/main-store-provider';
 import { getSearchChannelList } from '@/services/channel';
 import { GetChannelSearchResponse } from '@/services/channel/type';
@@ -29,7 +28,9 @@ const ChannelList = ({ query, channelsData }: ChannelListProps) => {
   const channelsRef = useRef<HTMLDivElement>(null);
   const noNextChannel = channelsData.page.total_count < cursor * 12;
 
-  const nickname = useUserStore((state) => state.nickname);
+  const { nickname } = useUserStore((state) => ({
+    nickname: state.nickname,
+  }));
 
   const handleLoadMoreChannels = useCallback(async () => {
     if (loading) return;
