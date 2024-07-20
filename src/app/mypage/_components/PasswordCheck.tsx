@@ -11,8 +11,7 @@ import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Form, FormField } from '@/components/ui/form';
 import { CustomError } from '@/lib/customError';
 import { PasswordSchema } from '@/schemas/userSchema';
-import { EditProfile } from '@/services/user';
-import { EditPasswordRequest } from '@/services/user/type';
+import { ChangePassword } from '@/services/user';
 import { AlertContents } from '@/utils/alertContents';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -33,7 +32,7 @@ const PasswordCheck = () => {
   const onSubmit = async (data: z.infer<typeof PasswordSchema>) => {
     try {
       const dto = { current_password: data.password, new_password: data.newPassword };
-      await EditProfile<EditPasswordRequest>('password', dto);
+      await ChangePassword(dto);
       modalRef.current?.openModal();
     } catch (err) {
       // TODO 쿠키 적용하고 에러처리 다시 1. 현재 비번 체크 2. 비밀번호 변경 완료 체크

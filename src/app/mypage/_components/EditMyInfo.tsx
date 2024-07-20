@@ -15,7 +15,7 @@ import { Label } from '@/components/ui/label';
 import { DOMAIN } from '@/constants/domains';
 import { fetcher } from '@/lib/fetcher';
 import { MypageSchema } from '@/schemas/userSchema';
-import { CheckNickname, EditProfile, EditProfileImage, UserInfo } from '@/services/user';
+import { CheckNickname, EditProfile, EditProfileImage } from '@/services/user';
 import { EditProfileColorRequest, GetUserResponse, NicknameRequest } from '@/services/user/type';
 import { useUserStore } from '@/stores/User';
 import { AlertContents } from '@/utils/alertContents';
@@ -96,12 +96,10 @@ const EditMyInfo = () => {
       });
       return;
     }
-    const requests = [EditProfile<NicknameRequest>('nickname', { nickname: data.nickname })];
+    const requests = [EditProfile<NicknameRequest>({ nickname: data.nickname })];
 
     if (selectedColor) {
-      requests.push(
-        EditProfile<EditProfileColorRequest>('profile-color', { profile_color: selectedColor }),
-      );
+      requests.push(EditProfile<EditProfileColorRequest>({ profile_color: selectedColor }));
     }
 
     if (fileData) {

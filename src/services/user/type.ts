@@ -24,13 +24,13 @@ export type NicknameRequest = Pick<User, 'nickname'>;
 export type EditProfileColorRequest = Pick<User, 'profile_color'>;
 
 //** 비밀번호 수정 Req */
-export type EditPasswordRequest = {
+export type ChangePasswordRequest = {
   current_password: string;
   new_password: string;
 };
 
 //** 프로필 수정 Params */
-export type EditProfileParams = EditProfileColorRequest | NicknameRequest | EditPasswordRequest;
+export type EditProfileParams = NicknameRequest | EditProfileColorRequest;
 
 //** 이메일 Req */
 export type EmailRequest = Pick<User, 'email'>;
