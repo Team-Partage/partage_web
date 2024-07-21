@@ -1,5 +1,3 @@
-'use server';
-
 import { fetcher } from '@/lib/fetcher';
 import { getSession } from 'next-auth/react';
 
