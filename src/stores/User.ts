@@ -7,7 +7,7 @@ interface UserStoreType {
   email: string;
   username: string;
   nickname: string;
-  profile_color: string;
+  profile_color: string | null;
   profile_image: string | null;
   password: string;
 
