@@ -1,8 +1,7 @@
 'use server';
 
 import { fetcher } from '@/lib/fetcher';
-import { revalidateTag } from 'next/cache';
-import { cookies } from 'next/headers';
+import { getSession } from 'next-auth/react';
 
 import {
   CreateChannelReq,
@@ -10,16 +9,17 @@ import {
   GetChannelDetailResponse,
   GetChannelSearchResponse,
 } from './type';
+import revalidate from '../revalidate';
 
 /** 채널 생성 */
 export const createChannel = async (params: CreateChannelReq) => {
-  const accessToken = cookies().get('access_token')?.value;
+  const session = await getSession();
   const data = await fetcher.post<CreateChannelResponse>('/api/v1/channel', params, {
     headers: {
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${session?.user.accessToken}`,
     },
   });
-  await revalidateTag('channel');
+  await revalidate('channel');
 
   return data;
 };

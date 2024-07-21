@@ -1,10 +1,10 @@
 'use client';
 
+import { useUserStore } from '@/stores/User';
 import { getNoChannelText } from '@/utils/getNoChannelText';
 import { PAGE_ROUTE } from '@/utils/route';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
 
 import { Button } from './ui/button';
 
@@ -13,8 +13,7 @@ interface ChannelCreatorBoxProps {
 }
 
 const ChannelCreatorBox = ({ query }: ChannelCreatorBoxProps) => {
-  const { data: session } = useSession();
-  const username = session?.user?.name ?? undefined;
+  const username = useUserStore((state) => state.nickname);
 
   const content = getNoChannelText(query, username);
 
