@@ -41,7 +41,14 @@ export const SignUp = async (params: SignUpRequest) => {
 
 //** 회원 탈퇴 */
 export const Withdrawal = async () => {
-  const data = await fetcher.delete(`${DOMAIN.USER}/me`);
+  const session = await auth();
+  const accesstoken = session?.user.accessToken;
+  const data = await fetcher.delete(`${DOMAIN.USER}/me`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accesstoken}`,
+    },
+  });
   return data;
 };
 
