@@ -47,7 +47,7 @@ export const Withdrawal = async () => {
 
 //** 닉네임 중복 확인 */
 export const CheckNickname = async (params: NicknameRequest) => {
-  const data = await fetcher.post(`${DOMAIN.USER}/check-nickname`, params);
+  const data = await fetcher.get(`${DOMAIN.USER}/check-nickname`, params);
   return data;
 };
 
@@ -92,7 +92,7 @@ export const EditProfileImage = async (params: FormData) => {
 
 //** 이메일 중복 확인 */
 export const CheckEmail = async (params: EmailRequest) => {
-  const data = await fetcher.post(`${DOMAIN.USER}/check-email`, params);
+  const data = await fetcher.get(`${DOMAIN.USER}/check-email`, params);
   return data;
 };
 
