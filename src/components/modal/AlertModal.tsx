@@ -12,9 +12,11 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Withdrawal } from '@/services/user';
+import { useUserStore } from '@/stores/User';
 import { AlertContents } from '@/utils/alertContents';
 import { PAGE_ROUTE } from '@/utils/route';
 import { useRouter } from 'next/navigation';
+import { signOut } from 'next-auth/react';
 
 import { Button } from '../ui/button';
 
@@ -26,6 +28,7 @@ const AlertModal = ({ content }: Props) => {
   const router = useRouter();
   const [cancelWord, setCancelWord] = useState('');
   const [actionWord, setActionWord] = useState('확인');
+  const clearUser = useUserStore((state) => state.clearUser);
 
   useEffect(() => {
     switch (content) {
@@ -59,7 +62,8 @@ const AlertModal = ({ content }: Props) => {
   const handleClick = async () => {
     if (content === AlertContents.WITHDRAW) {
       await Withdrawal();
-      router.push('/');
+      signOut({ redirect: false }).then(() => router.replace('/'));
+      clearUser();
     }
   };
 
