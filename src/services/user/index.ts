@@ -6,6 +6,7 @@ import { fetcher } from '@/lib/fetcher';
 import { auth } from '@/auth';
 
 import {
+  ChangePasswordRequest,
   CheckEmailNumberRequest,
   EditProfileParams,
   EmailRequest,
@@ -40,21 +41,41 @@ export const SignUp = async (params: SignUpRequest) => {
 
 //** 회원 탈퇴 */
 export const Withdrawal = async () => {
-  const data = await fetcher.delete(`${DOMAIN.USER}/me`);
+  const session = await auth();
+  const accesstoken = session?.user.accessToken;
+  const data = await fetcher.delete(`${DOMAIN.USER}/me`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accesstoken}`,
+    },
+  });
   return data;
 };
 
 //** 닉네임 중복 확인 */
 export const CheckNickname = async (params: NicknameRequest) => {
-  const data = await fetcher.post(`${DOMAIN.USER}/check-nickname`, params);
+  const data = await fetcher.get(`${DOMAIN.USER}/check-nickname`, params);
   return data;
 };
 
-//** 프로필 수정 (닉네임, 색상, 비밀번호) */
-export const EditProfile = async <T extends EditProfileParams>(endpoint: string, params: T) => {
+//** 프로필 수정 (닉네임, 프로필 색상) */
+export const EditProfile = async <T extends EditProfileParams>(params: T) => {
   const session = await auth();
   const accesstoken = session?.user.accessToken;
-  const data = await fetcher.patch(`${DOMAIN.USER}/me/${endpoint}`, params, {
+  const data = await fetcher.patch(`${DOMAIN.USER}/me/profile`, params, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accesstoken}`,
+    },
+  });
+  return data;
+};
+
+//** 비밀번호 수정 */
+export const ChangePassword = async (params: ChangePasswordRequest) => {
+  const session = await auth();
+  const accesstoken = session?.user.accessToken;
+  const data = await fetcher.patch(`${DOMAIN.USER}/me/password`, params, {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${accesstoken}`,
@@ -78,7 +99,7 @@ export const EditProfileImage = async (params: FormData) => {
 
 //** 이메일 중복 확인 */
 export const CheckEmail = async (params: EmailRequest) => {
-  const data = await fetcher.post(`${DOMAIN.USER}/check-email`, params);
+  const data = await fetcher.get(`${DOMAIN.USER}/check-email`, params);
   return data;
 };
 

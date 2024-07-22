@@ -118,6 +118,6 @@ class Fetcher {
 }
 
 export const fetcher = new Fetcher({
-  baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
+  baseURL: process.env.PRIVATE_SERVER_URL,
   defaultRequestInit: { headers: { 'Content-Type': 'application/json' } },
 });
