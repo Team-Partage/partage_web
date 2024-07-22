@@ -26,6 +26,17 @@ const SocketConnector = ({ channelId }: Props) => {
     nickname: state.nickname,
   }));
 
+  const sendUserLeaveMessage = () => {
+    const leaveReqForm = {
+      channel_id: channelId,
+      sender: nickname,
+      content: `${nickname} left the channel`,
+      type: 'USER_LEAVE',
+    };
+
+    stomp.send('/stomp/user.leave', leaveReqForm);
+  };
+
   /** 웹소캣 연결 */
   useEffect(() => {
     const onMessage = (message: IMessage) => {
@@ -67,7 +78,8 @@ const SocketConnector = ({ channelId }: Props) => {
     stomp.connect(channelId, onMessage);
 
     return () => {
-      stomp.disconnect(channelId, nickname);
+      sendUserLeaveMessage();
+      stomp.disconnect();
       reset();
     };
   }, [channelId, nickname, reset, setStore]);

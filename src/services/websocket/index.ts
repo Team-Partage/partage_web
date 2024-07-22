@@ -36,19 +36,7 @@ const createStompClient = () => {
   };
 
   /** 소캣 연결 해제 */
-  const disconnect = (channelId: string, nickname: string) => {
-    const leaveReqForm = {
-      channel_id: channelId,
-      sender: nickname,
-      content: `${nickname} left the channel`,
-      type: 'USER_LEAVE',
-    };
-
-    client.publish({
-      destination: `/stomp/user.leave`,
-      body: JSON.stringify(leaveReqForm),
-    });
-
+  const disconnect = () => {
     client.deactivate();
     setIsConnected(false);
   };
