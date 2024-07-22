@@ -28,7 +28,7 @@ const initialData: Pick<
 > = {
   chatting: [],
   userJoin: { user_id: '', nickname: '' },
-  userLeave: { user_id: '' },
+  userLeave: { user_id: '', nickname: '' },
   playlist: { data: [], cursor: 0, length: 0 },
   viewer: { anonymous_users: 0, login_users: 0, total_users: 0 },
   video: { playlist_no: -1, playing: false, playtime: 0, url: '' },
@@ -81,13 +81,14 @@ export const useSocketStore = create<SocketStore>((set) => ({
         break;
 
       case 'SET_LEAVE':
+        if (action.payload.user_id === 'NONE' || action.payload.nickname === '') return;
         set((state) => ({
           chatting: [
             ...state.chatting,
             {
               ...ServerChatForm,
               user_id: SEVER_NICKNAME,
-              nickname: action.payload.user_id,
+              nickname: action.payload.nickname,
               message: SEVER_CHAT_MESSAGE.USER_LEAVE,
             },
           ],

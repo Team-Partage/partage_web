@@ -3,13 +3,13 @@
 import { useState } from 'react';
 
 import ConfirmModal from '@/components/modal/ConfirmModal';
+import { useUserStore } from '@/stores/User';
 import { PAGE_ROUTE } from '@/utils/route';
 import { useRouter } from 'next/navigation';
 
 import ChatHeader from './ChatHeader';
 import { ChatList } from './ChatList';
 import TextareaField from './TextareaField';
-import { useUserStore } from '@/stores/User';
 
 interface ChattingProps {
   channelId: string;
