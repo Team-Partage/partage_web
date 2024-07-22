@@ -8,7 +8,7 @@ import type { IFrame, IMessage, IStompSocket } from '@stomp/stompjs';
 
 const createStompClient = () => {
   const client = new Client();
-  const BASE_URL = process.env.PRIVATE_SERVER_URL;
+  const BASE_URL = process.env.NEXT_PUBLIC_WEBSOCKET_SERVER_URL;
 
   const { isConnected, setIsConnected } = useSocketStore.getState();
 
