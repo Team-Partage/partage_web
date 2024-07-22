@@ -3,7 +3,7 @@ export type User = {
   email: string;
   username: string;
   nickname: string;
-  profile_color: string | null;
+  profile_color: string;
   profile_image: string | null;
 };
 
