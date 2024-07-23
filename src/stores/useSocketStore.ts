@@ -81,7 +81,6 @@ export const useSocketStore = create<SocketStore>((set) => ({
         break;
 
       case 'SET_LEAVE':
-        if (action.payload.user_id === 'NONE' || action.payload.nickname === '') return;
         set((state) => ({
           chatting: [
             ...state.chatting,

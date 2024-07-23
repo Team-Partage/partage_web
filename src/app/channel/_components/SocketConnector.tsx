@@ -78,7 +78,7 @@ const SocketConnector = ({ channelId }: Props) => {
     stomp.connect(channelId, onMessage);
 
     return () => {
-      sendUserLeaveMessage();
+      if (nickname) sendUserLeaveMessage();
       stomp.disconnect();
       reset();
     };
