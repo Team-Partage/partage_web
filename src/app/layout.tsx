@@ -6,6 +6,7 @@ import AuthSession from '../lib/AuthSession';
 import type { Metadata } from 'next';
 
 import './globals.css';
+import KakaoScript from '@/components/KakaoScript';
 
 export const metadata: Metadata = {
   title: 'Partage',
@@ -24,6 +25,7 @@ export default function RootLayout({
           <Header />
           {children}
         </AuthSession>
+        <KakaoScript />
       </body>
     </html>
   );
