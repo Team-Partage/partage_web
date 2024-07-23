@@ -16,6 +16,14 @@ export type UserJoinReq = {
   type: 'USER_JOIN';
 };
 
+/** 채널 퇴장 */
+export type UserLeaveReq = {
+  channel_id: string;
+  sender: string;
+  content: string;
+  type: 'USER_LEAVE';
+};
+
 /** 영상 재생/일시정지 */
 export type VideoPlayReq = {
   playlist_no: number;
@@ -72,6 +80,7 @@ export type MessageType = {
   /** 사용자 퇴장 알림 */
   USER_LEAVE: {
     user_id: string;
+    nickname: string;
   };
 
   /** 플레이리스트 추가 */

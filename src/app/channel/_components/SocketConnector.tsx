@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 
 import { stomp } from '@/services/websocket';
 import { MessageBody, MessageType } from '@/services/websocket/type';
+import { useUserStore } from '@/stores/User';
 import { useSocketStore } from '@/stores/useSocketStore';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -20,6 +21,21 @@ const SocketConnector = ({ channelId }: Props) => {
       setStore: state.setSocketStore,
     })),
   );
+
+  const { nickname } = useUserStore((state) => ({
+    nickname: state.nickname,
+  }));
+
+  const sendUserLeaveMessage = () => {
+    const leaveReqForm = {
+      channel_id: channelId,
+      sender: nickname,
+      content: `${nickname} left the channel`,
+      type: 'USER_LEAVE',
+    };
+
+    stomp.send('/stomp/user.leave', leaveReqForm);
+  };
 
   /** 웹소캣 연결 */
   useEffect(() => {
@@ -62,10 +78,11 @@ const SocketConnector = ({ channelId }: Props) => {
     stomp.connect(channelId, onMessage);
 
     return () => {
+      if (nickname) sendUserLeaveMessage();
       stomp.disconnect();
       reset();
     };
-  }, [channelId, reset, setStore]);
+  }, [channelId, nickname, reset, setStore]);
 
   return <></>;
 };
