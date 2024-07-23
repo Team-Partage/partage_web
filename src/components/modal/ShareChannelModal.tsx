@@ -8,7 +8,7 @@ import { Link, X } from 'lucide-react';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 
-import { DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
+import { DialogClose, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 
 const ShareChannelModal = () => {
   const params = useParams() as { channel_id: string };
@@ -59,7 +59,9 @@ const ShareChannelModal = () => {
 
   return (
     <DialogContent className="top-[85%] h-[228px] w-[335px] tablet:top-[50%] tablet:h-[277px] tablet:w-[400px]">
-      <X className="absolute right-[16px] top-[16px] size-[25px] text-right tablet:right-[20px] tablet:top-[20px] tablet:size-[32px]" />
+      <DialogClose>
+        <X className="absolute right-[16px] top-[16px] size-[25px] text-right tablet:right-[20px] tablet:top-[20px] tablet:size-[32px]" />
+      </DialogClose>
       <DialogHeader className="mt-4 tablet:mt-8">
         <DialogTitle>채널 공유</DialogTitle>
       </DialogHeader>
