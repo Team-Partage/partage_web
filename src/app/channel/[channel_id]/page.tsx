@@ -60,9 +60,11 @@ const page = async ({ params }: Props) => {
                   <Share2 />
                 </Button>
               </ModalRenderer>
-              <Button className="rounded-full bg-neutral-500" size="icon">
-                <Settings />
-              </Button>
+              <ModalRenderer type="EditChannelModal">
+                <Button className="rounded-full bg-neutral-500" size="icon">
+                  <Settings />
+                </Button>
+              </ModalRenderer>
             </div>
           </div>
         </section>

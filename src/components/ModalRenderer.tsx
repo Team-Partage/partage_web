@@ -2,7 +2,7 @@
 
 import { forwardRef, useImperativeHandle, useState } from 'react';
 
-import { CreateChannelModal, ShareChannelModal } from './modal';
+import { CreateChannelModal, ShareChannelModal, EditChannelModal } from './modal';
 import { Dialog, DialogDescription, DialogTrigger } from './ui/dialog';
 
 interface Props {
@@ -19,6 +19,7 @@ export interface ModalImperativeHandle {
 const ModalComponents = {
   CreateChannelModal,
   ShareChannelModal,
+  EditChannelModal,
 } satisfies Record<string, () => JSX.Element>;
 
 type ModalType = keyof typeof ModalComponents;
