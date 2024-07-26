@@ -48,9 +48,11 @@ const CreateChannelModal = () => {
   const router = useRouter();
 
   const handleSubmit = async () => {
-    const res = await createChannel(state);
-    if (res) {
+    try {
+      const res = await createChannel(state);
       router.push(`/channel/${res.channel.channel_id}`);
+    } catch (error) {
+      alert('채널이 이미 존재합니다.');
     }
   };
 
