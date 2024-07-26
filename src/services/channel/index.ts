@@ -7,6 +7,7 @@ import {
   CreateChannelResponse,
   GetChannelDetailResponse,
   GetChannelSearchResponse,
+  GetChannelUserResponse,
 } from './type';
 import revalidate from '../revalidate';
 
@@ -46,7 +47,10 @@ export const getSearchChannelList = async (params: {
 
 /** 채널 상세 정보 조회 */
 export const getChannelDetail = async (channelId: string) => {
-  const data = await fetcher.get<GetChannelDetailResponse>(`${DOMAIN.CHANNEL}/${channelId}`);
+  const data = await fetcher.get<GetChannelDetailResponse>(`${DOMAIN.CHANNEL}/${channelId}`,
+    {},
+    { cache: 'no-store' },
+  );
   return data;
 };
 
@@ -69,5 +73,20 @@ export const deleteChannel = async (channelId: string) => {
       Authorization: `Bearer ${session?.user.accessToken}`,
     },
   });
+  return data;
+};
+
+/** 채널 접속 유저 검색 */
+export const getChannelUser = async (channelId: string, nickname: string) => {
+  const session = await getSession();
+  const data = await fetcher.get<GetChannelUserResponse>(
+    `api/v1/channel/${channelId}/search-user`,
+    { keyword: nickname },
+    {
+      headers: {
+        Authorization: `Bearer ${session?.user.accessToken}`,
+      },
+    },
+  );
   return data;
 };

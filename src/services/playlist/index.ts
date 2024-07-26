@@ -10,6 +10,8 @@ export const getPlaylist = async (params: {
 }) => {
   const { channelId, ...rest } = params;
 
-  const data = await fetcher.get<GetPlaylistResponse>(`/api/v1/playlist/${channelId}`, rest);
+  const data = await fetcher.get<GetPlaylistResponse>(`/api/v1/playlist/${channelId}`, rest, {
+    cache: 'no-store',
+  });
   return data;
 };
