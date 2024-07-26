@@ -1,17 +1,19 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { z } from 'zod';
 
-import { getChannelDetail } from '@/services/channel';
+import { editChannel, getChannelDetail } from '@/services/channel';
 import { Channel } from '@/services/channel/type';
+import { AlertContents } from '@/utils/alertContents';
 import { hexToColorName } from '@/utils/hexToColorName';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { X } from 'lucide-react';
-import { useParams } from 'next/navigation';
+import { useParams , useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
+import AlertModalRenderer from '../AlertModalRenderer';
 import ColorChips from '../ColorChips';
 import TagInput from '../TagInput';
 import { Button } from '../ui/button';
@@ -22,16 +24,17 @@ import { Label } from '../ui/label';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Switch } from '../ui/switch';
 
-
 const FormSchema = z.object({
-  privateType: z.boolean(), //true: private, false: public
-  channelName: z.string(),
-  channelColor: z.string(),
+  /** true: PRIVATE, false: PUBLIC */
+  privateType: z.boolean(),
+  channelName: z.string().min(1, '채널 이름을 입력해주세요.'),
   channelTag: z.string(),
 });
 
 const EditChannelModal = () => {
+  const router = useRouter();
   const params = useParams() as { channel_id: string };
+  const modalRef = useRef({ openModal: () => {} });
   const [channel, setChannel] = useState<Channel>();
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -60,8 +63,30 @@ const EditChannelModal = () => {
     getData();
   }, [params.channel_id]);
 
-  const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    alert('submit');
+  const checkKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    if (e.key === 'Enter') e.preventDefault();
+  };
+
+  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    let type: 'PUBLIC' | 'PRIVATE';
+    if (data.privateType === false) {
+      type = 'PUBLIC';
+    } else {
+      type = 'PRIVATE';
+    }
+    const dto = {
+      type,
+      channel_color: selectedColor ? selectedColor : '',
+      hashtag: data.channelTag,
+      name: data.channelName,
+    }; // type 제외 다 빈값 가능
+    await editChannel(params.channel_id, dto);
+    // TODO 모달만 닫히도록
+    router.back();
+  };
+
+  const handleDeleteChannel = async () => {
+    modalRef.current.openModal;
   };
 
   return (
@@ -74,7 +99,8 @@ const EditChannelModal = () => {
       </DialogHeader>
       {channel && (
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form onSubmit={form.handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
+            {/* type */}
             <div className="space-y-8">
               <FormField
                 control={form.control}
@@ -91,6 +117,7 @@ const EditChannelModal = () => {
                   </FormItem>
                 )}
               />
+              {/* name */}
               <FormField
                 control={form.control}
                 name="channelName"
@@ -109,6 +136,7 @@ const EditChannelModal = () => {
                   </FormItem>
                 )}
               />
+              {/* hashtag */}
               <FormField
                 control={form.control}
                 name="channelTag"
@@ -117,15 +145,16 @@ const EditChannelModal = () => {
                     <FormLabel>태그</FormLabel>
                     <FormControl>
                       <TagInput
-                        id="channelTag"
                         placeholder="태그명을 입력해 주세요."
                         color={selectedColor ? selectedColor : 'skyblue'}
                         value={field.value}
+                        onChange={(tags) => field.onChange(tags)}
                       />
                     </FormControl>
                   </FormItem>
                 )}
               />
+              {/* channel_color */}
               <div>
                 <Label>채널 컬러</Label>
                 <div className="flex justify-between">
@@ -139,7 +168,7 @@ const EditChannelModal = () => {
                 </div>
               </div>
               {/* TODO 라디오 value값 수정필요 */}
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="channelTag"
                 render={({ field, fieldState: { error } }) => (
@@ -192,13 +221,15 @@ const EditChannelModal = () => {
                     </FormControl>
                   </FormItem>
                 )}
-              />
+              /> */}
               <FormItem>
                 <FormLabel>삭제</FormLabel>
                 <FormDescription>‘채널 삭제’ 버튼을 누르면 즉시 채널이 삭제돼요.</FormDescription>
-                <Button variant="withDraw" className="mt-4">
-                  채널 삭제
-                </Button>
+                <AlertModalRenderer type="AlertModal" content={AlertContents.DELETECHANNEL}>
+                  <Button variant="withDraw" className="mt-4" onClick={handleDeleteChannel}>
+                    채널 삭제
+                  </Button>
+                </AlertModalRenderer>
               </FormItem>
               <DialogFooter className="items-center">
                 <Button type="submit" className="w-full tablet:w-fit" variant="active">
