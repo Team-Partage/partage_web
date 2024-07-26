@@ -7,6 +7,10 @@ const nextConfig = {
         source: '/api/v1/:path*',
         destination: 'http://58.233.84.92:9090/api/v1/:path*',
       },
+      {
+        source: '/ws/:path*',
+        destination: 'http://58.233.84.92:9090/:path*',
+      },
     ];
   },
   images: {
