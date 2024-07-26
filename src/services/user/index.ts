@@ -23,6 +23,7 @@ export const UserInfo = async () => {
     `${DOMAIN.USER}/me`,
     {},
     {
+      cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${accesstoken}`,

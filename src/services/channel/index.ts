@@ -37,7 +37,7 @@ export const getSearchChannelList = async (params: {
       perPage,
       keyword,
     },
-    { next: { tags: ['channel'] } },
+    { cache: 'no-store', next: { tags: ['channel'] } },
   );
 
   return data;
@@ -45,6 +45,10 @@ export const getSearchChannelList = async (params: {
 
 /** 채널 상세 정보 조회 */
 export const getChannelDetail = async (channelId: string) => {
-  const data = await fetcher.get<GetChannelDetailResponse>(`api/v1/channel/${channelId}`);
+  const data = await fetcher.get<GetChannelDetailResponse>(
+    `api/v1/channel/${channelId}`,
+    {},
+    { cache: 'no-store' },
+  );
   return data;
 };
