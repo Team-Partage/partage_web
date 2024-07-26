@@ -75,16 +75,18 @@ const Playlist = ({ channel, owner }: Props) => {
   const onDragEnd = ({ source, destination }: DropResult) => {
     if (!isOwner || !destination) return;
 
-    const items = Array.from(playlist.data);
-    const [reorderedItem] = items.splice(source.index, 1);
-    items.splice(destination.index, 0, reorderedItem);
+    // swap
+    const newPlaylist = playlist.data;
+    const temp = newPlaylist[source.index];
+    newPlaylist[source.index] = newPlaylist[destination.index];
+    newPlaylist[destination.index] = temp;
 
-    setStore({ type: 'SET_PLAYLIST', payload: items });
-    setStore({ type: 'SET_PLAYLIST_CURSOR', payload: destination.index });
-    send('PLAYLIST_MOVE', {
-      playlist_no: items[destination.index].playlist_no,
-      sequence: destination.index,
-    });
+    setStore({ type: 'SET_PLAYLIST', payload: newPlaylist });
+    if (source.index === playlist.cursor) {
+      setStore({ type: 'SET_PLAYLIST_CURSOR', payload: destination.index });
+    } else {
+      setStore({ type: 'SET_PLAYLIST_CURSOR', payload: source.index });
+    }
   };
 
   return (
@@ -142,7 +144,7 @@ const Playlist = ({ channel, owner }: Props) => {
                         }}
                         onMouseEnter={() => setHoveredItem(item.playlist_no)}
                         onMouseLeave={() => setHoveredItem(null)}
-                        className={`relative h-[66px] rounded-lg border border-transparent p-3 transition-colors desktop:w-[320px] ${isOwner && 'hover:border-main-skyblue hover:bg-main-skyblue/20'} ${playlist.cursor === index && 'border-main-skyblue bg-main-skyblue/20'}`}
+                        className={`relative h-[66px] rounded-lg border p-3 transition-colors desktop:w-[320px] ${isOwner && 'hover:border-main-skyblue hover:bg-main-skyblue/20'} ${playlist.cursor === index ? 'border-main-skyblue bg-main-skyblue/20' : 'border-transparent'}`}
                       >
                         <PlaylistCard {...item} />
                         {isOwner && hoveredItem === item.playlist_no && (
