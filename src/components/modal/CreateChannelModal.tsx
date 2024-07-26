@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import ColorChips from '../ColorChips';
 import TagInput from '../TagInput';
 import { Button } from '../ui/button';
-import { DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../ui/dialog';
+import { DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '../ui/dialog';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 
@@ -49,7 +49,9 @@ const CreateChannelModal = () => {
 
   const handleSubmit = async () => {
     const res = await createChannel(state);
-    router.push(`/channel/${res.channel.channel_id}`);
+    if (res) {
+      router.push(`/channel/${res.channel.channel_id}`);
+    }
   };
 
   return (
@@ -84,14 +86,16 @@ const CreateChannelModal = () => {
         </div>
       </div>
       <DialogFooter className="items-center">
-        <Button
-          className="w-full tablet:w-fit"
-          variant="active"
-          disabled={state.name === '' || state.hashtag.length === 0}
-          onClick={handleSubmit}
-        >
-          생성
-        </Button>
+        <DialogClose asChild>
+          <Button
+            className="w-full tablet:w-fit"
+            variant="active"
+            disabled={state.name === '' || state.hashtag.length === 0}
+            onClick={handleSubmit}
+          >
+            생성
+          </Button>
+        </DialogClose>
       </DialogFooter>
     </DialogContent>
   );
