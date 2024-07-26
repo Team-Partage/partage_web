@@ -38,7 +38,7 @@ export const getSearchChannelList = async (params: {
       perPage,
       keyword,
     },
-    { cache: 'no-store', next: { tags: ['channel'] } },
+    { next: { tags: ['channel'] } },
   );
 
   return data;
