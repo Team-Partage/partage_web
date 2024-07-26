@@ -4,6 +4,9 @@ import { User } from '../user/type';
 /** 채널 공개 타입 */
 export type ChannelType = 'PUBLIC' | 'PRIVATE';
 
+/** 권한 타입 */
+export type RoleIdType = 'C0000' | 'C0100' | 'C0200' | 'C0300';
+
 /** 채널 유저 역할 */
 export type ChannelUser = {
   role_id: string;
@@ -89,6 +92,19 @@ export type GetChannelDetailResponse = {
   owner: Owner;
   playlists: Playlist[];
   channel_permissions: ChannelPermission;
+};
+
+/** 채널 접속 유저 검색 Res */
+export type GetChannelUserResponse = {
+  page: { cursor: number; per_page: number; total_page: number; total_count: number };
+  users: {
+    role_id: RoleIdType;
+    user_id: string;
+    email: string;
+    nickname: string;
+    profile_color: null | string;
+    profile_image: string | null;
+  }[];
 };
 
 /** 채널 생성 Req */
