@@ -34,8 +34,20 @@ class Fetcher {
     }
   }
 
+  makeURL(endpoint: string): URL {
+    let url: URL;
+
+    if (typeof window === 'undefined') {
+      url = new URL(endpoint, this.baseURL as string);
+    } else {
+      url = new URL(endpoint, window.location.origin);
+    }
+
+    return url;
+  }
+
   async get<T>(endpoint: string, params?: object, options?: FetcherRequestInit): Promise<T> {
-    const url = new URL(endpoint, this.baseURL);
+    const url = this.makeURL(endpoint);
 
     if (params) {
       url.search = qs.stringify(params);
