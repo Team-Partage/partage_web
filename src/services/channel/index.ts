@@ -47,7 +47,8 @@ export const getSearchChannelList = async (params: {
 
 /** 채널 상세 정보 조회 */
 export const getChannelDetail = async (channelId: string) => {
-  const data = await fetcher.get<GetChannelDetailResponse>(`${DOMAIN.CHANNEL}/${channelId}`,
+  const data = await fetcher.get<GetChannelDetailResponse>(
+    `${DOMAIN.CHANNEL}/${channelId}`,
     {},
     { cache: 'no-store' },
   );
@@ -62,6 +63,7 @@ export const editChannel = async (channelId: string, params: CreateChannelReq) =
       Authorization: `Bearer ${session?.user.accessToken}`,
     },
   });
+  await revalidate('channel');
   return data;
 };
 
@@ -73,6 +75,7 @@ export const deleteChannel = async (channelId: string) => {
       Authorization: `Bearer ${session?.user.accessToken}`,
     },
   });
+  await revalidate('channel');
   return data;
 };
 
