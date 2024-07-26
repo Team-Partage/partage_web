@@ -8,6 +8,7 @@ import type { IFrame, IMessage, IStompSocket } from '@stomp/stompjs';
 
 const createStompClient = () => {
   const client = new Client();
+  const BASE_URL = process.env.NEXT_PUBLIC_WEBSOCKET_SERVER_URL;
 
   const { isConnected, setIsConnected } = useSocketStore.getState();
 
@@ -15,10 +16,11 @@ const createStompClient = () => {
   const connect = async (channelId: string, onMessageCallback: (message: IMessage) => void) => {
     const session = await getSession();
 
-    client.webSocketFactory = () =>
-      new SockJS(
-        `${window.location.origin}/ws?channel=${channelId}${session?.user.accessToken ? `&token=${session.user.accessToken}` : ''}`,
-      ) as IStompSocket;
+    const url = await new URL(
+      `/ws?channel=${channelId}${session?.user.accessToken ? `&token=${session.user.accessToken}` : ''}`,
+      BASE_URL,
+    ).toString();
+    client.webSocketFactory = () => new SockJS(url) as IStompSocket;
 
     client.onConnect = () => {
       client.subscribe(`/channel/${channelId}`, onMessageCallback);
