@@ -17,7 +17,7 @@ const PlaylistCard = ({ thumbnail, title }: Props) => {
         height={42}
         alt="thumbnail"
       />
-      <p className="ml-4 text-neutral-100 small-regular">{title}</p>
+      <p className="ml-4 line-clamp-2 text-neutral-100 small-regular">{title}</p>
     </div>
   );
 };
