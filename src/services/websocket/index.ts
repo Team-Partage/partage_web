@@ -8,7 +8,6 @@ import type { IFrame, IMessage, IStompSocket } from '@stomp/stompjs';
 
 const createStompClient = () => {
   const client = new Client();
-  const BASE_URL = process.env.NEXT_PUBLIC_WEBSOCKET_SERVER_URL;
 
   const { isConnected, setIsConnected } = useSocketStore.getState();
 
@@ -18,7 +17,7 @@ const createStompClient = () => {
 
     client.webSocketFactory = () =>
       new SockJS(
-        `/ws/ws?channel=${channelId}${session?.user.accessToken ? `&token=${session.user.accessToken}` : ''}`,
+        `${window.location.origin}/ws?channel=${channelId}${session?.user.accessToken ? `&token=${session.user.accessToken}` : ''}`,
       ) as IStompSocket;
 
     client.onConnect = () => {

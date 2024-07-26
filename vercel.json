@@ -5,7 +5,7 @@
       "destination": "http://58.233.84.92:9090/api/v1/:path*"
     },
     {
-      "source": "/ws/:path*",
+      "source": "/ws",
       "destination": "http://58.233.84.92:9090/:path*"
     }
   ]

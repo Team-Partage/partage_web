@@ -9,7 +9,7 @@ const nextConfig = {
       },
       {
         source: '/ws/:path*',
-        destination: 'http://58.233.84.92:9090/:path*',
+        destination: 'http://58.233.84.92:9090/ws/:path*',
       },
     ];
   },
