@@ -12,7 +12,7 @@ interface Props {
 
 const TagInput = ({ onChange, color, value = '', ...rest }: Props) => {
   const [inputValue, setInputValue] = useState<string>('');
-  const [tags, setTags] = useState<string[]>(value === '' ? [] : value.trim().split(/\s+/));
+  const [tags, setTags] = useState<string[]>(value === '' ? [] : value.trim().split(','));
 
   /** 태그 입력 */
   const handleEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
