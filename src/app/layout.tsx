@@ -1,4 +1,5 @@
 import Header from '@/components/Header';
+import KakaoScript from '@/lib/KakaoScript';
 import { pretendard } from '@/utils/fonts';
 
 import AuthSession from '../lib/AuthSession';
@@ -6,7 +7,6 @@ import AuthSession from '../lib/AuthSession';
 import type { Metadata } from 'next';
 
 import './globals.css';
-import KakaoScript from '@/lib/KakaoScript';
 
 export const metadata: Metadata = {
   title: 'Partage',

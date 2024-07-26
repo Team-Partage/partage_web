@@ -7,11 +7,6 @@ import { PLACEHOLDER } from '@/utils/constants';
 import ChannelList from './(main)/_components/ChannelList';
 import GetUserInfo from './(main)/_components/GetUserInfo';
 
-declare global {
-  interface Window {
-    Kakao: any;
-  }
-}
 
 const MainPage = async () => {
   const channelsData = await getSearchChannelList({});

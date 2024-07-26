@@ -4,13 +4,14 @@ import { useEffect, useRef, useState } from 'react';
 
 import { z } from 'zod';
 
+import { ChannelSchema } from '@/schemas/channelSchema';
 import { editChannel, getChannelDetail } from '@/services/channel';
 import { Channel } from '@/services/channel/type';
 import { AlertContents } from '@/utils/alertContents';
 import { hexToColorName } from '@/utils/hexToColorName';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { X } from 'lucide-react';
-import { useParams , useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
 import AlertModalRenderer from '../AlertModalRenderer';
@@ -24,21 +25,14 @@ import { Label } from '../ui/label';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Switch } from '../ui/switch';
 
-const FormSchema = z.object({
-  /** true: PRIVATE, false: PUBLIC */
-  privateType: z.boolean(),
-  channelName: z.string().min(1, '채널 이름을 입력해주세요.'),
-  channelTag: z.string(),
-});
-
 const EditChannelModal = () => {
   const router = useRouter();
   const params = useParams() as { channel_id: string };
   const modalRef = useRef({ openModal: () => {} });
   const [channel, setChannel] = useState<Channel>();
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const form = useForm<z.infer<typeof ChannelSchema>>({
+    resolver: zodResolver(ChannelSchema),
     defaultValues: {
       privateType: false,
       channelName: '',
@@ -67,7 +61,7 @@ const EditChannelModal = () => {
     if (e.key === 'Enter') e.preventDefault();
   };
 
-  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+  const onSubmit = async (data: z.infer<typeof ChannelSchema>) => {
     let type: 'PUBLIC' | 'PRIVATE';
     if (data.privateType === false) {
       type = 'PUBLIC';
@@ -140,7 +134,7 @@ const EditChannelModal = () => {
               <FormField
                 control={form.control}
                 name="channelTag"
-                render={({ field, fieldState: { error } }) => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel>태그</FormLabel>
                     <FormControl>
