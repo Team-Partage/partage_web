@@ -63,7 +63,7 @@ class Fetcher {
   }
 
   async post<T>(endpoint: string, params: object, options?: FetcherRequestInit): Promise<T> {
-    const url = new URL(endpoint, this.baseURL);
+    const url = this.makeURL(endpoint);
 
     const res = await fetch(url, {
       method: 'POST',
@@ -77,7 +77,7 @@ class Fetcher {
   }
 
   async put<T>(endpoint: string, params: object, options?: FetcherRequestInit): Promise<T> {
-    const url = new URL(endpoint, this.baseURL);
+    const url = this.makeURL(endpoint);
 
     const res = await fetch(url, {
       method: 'PUT',
@@ -91,7 +91,7 @@ class Fetcher {
   }
 
   async patch<T>(endpoint: string, params: object, options?: FetcherRequestInit): Promise<T> {
-    const url = new URL(endpoint, this.baseURL);
+    const url = this.makeURL(endpoint);
 
     const res = await fetch(url, {
       method: 'PATCH',
@@ -105,7 +105,7 @@ class Fetcher {
   }
 
   async delete<T>(endpoint: string, options?: FetcherRequestInit): Promise<T> {
-    const url = new URL(endpoint, this.baseURL);
+    const url = this.makeURL(endpoint);
 
     const res = await fetch(url, {
       method: 'DELETE',
