@@ -27,6 +27,7 @@ const Playlist = ({ channel, owner }: Props) => {
 
   /** STORE */
   const user_id = useUserStore((state) => state.user_id);
+  const playlist_no = useSocketStore((state) => state.video.playlist_no);
   const { playlist, setStore } = useSocketStore(
     useShallow((state) => ({ playlist: state.playlist, setStore: state.setSocketStore })),
   );
@@ -41,8 +42,8 @@ const Playlist = ({ channel, owner }: Props) => {
 
   useEffect(() => {
     const fetch = async () => {
-      const res = await getPlaylist({ channelId: channel_id });
-      setStore({ type: 'SET_PLAYLIST', payload: res.playlists });
+      const res = await getPlaylist({ channelId: channel_id, pageSize: 20 });
+      setStore({ type: 'ADD_PLAYLIST', payload: res.playlists });
     };
 
     fetch();
@@ -51,12 +52,7 @@ const Playlist = ({ channel, owner }: Props) => {
   /** 비디오 재생 */
   const handlePlay = (index: number) => {
     if (!isOwner) return;
-    // send('VIDEO_PLAY', { playlist_no: id, playing: true });
-    setStore({
-      type: 'SET_VIDEO',
-      payload: { playlist_no: playlist.data[index].playlist_no, url: playlist.data[index].url },
-    });
-    setStore({ type: 'SET_PLAYLIST_CURSOR', payload: index });
+    send('VIDEO_PLAY', { playlist_no: playlist[index].playlist_no, playing: true });
   };
 
   /** 비디오 삭제 */
@@ -72,21 +68,15 @@ const Playlist = ({ channel, owner }: Props) => {
     setUrl('');
   };
 
+  /** 드래그앤드랍 */
+  //! optimistic update 필요
   const onDragEnd = ({ source, destination }: DropResult) => {
     if (!isOwner || !destination) return;
 
-    // swap
-    const newPlaylist = playlist.data;
-    const temp = newPlaylist[source.index];
-    newPlaylist[source.index] = newPlaylist[destination.index];
-    newPlaylist[destination.index] = temp;
-
-    setStore({ type: 'SET_PLAYLIST', payload: newPlaylist });
-    if (source.index === playlist.cursor) {
-      setStore({ type: 'SET_PLAYLIST_CURSOR', payload: destination.index });
-    } else {
-      setStore({ type: 'SET_PLAYLIST_CURSOR', payload: source.index });
-    }
+    send('PLAYLIST_MOVE', {
+      playlist_no: playlist[source.index].playlist_no,
+      sequence: destination.index,
+    });
   };
 
   return (
@@ -126,7 +116,7 @@ const Playlist = ({ channel, owner }: Props) => {
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef}>
               <ol className={`flex flex-col ${isFold && 'hidden'}`}>
-                {playlist?.data.map((item, index) => (
+                {playlist?.map((item, index) => (
                   <Draggable
                     key={item.playlist_no}
                     draggableId={item.playlist_no.toString()}
@@ -144,7 +134,7 @@ const Playlist = ({ channel, owner }: Props) => {
                         }}
                         onMouseEnter={() => setHoveredItem(item.playlist_no)}
                         onMouseLeave={() => setHoveredItem(null)}
-                        className={`relative h-[66px] rounded-lg border p-3 transition-colors desktop:w-[320px] ${isOwner && 'hover:border-main-skyblue hover:bg-main-skyblue/20'} ${playlist.cursor === index ? 'border-main-skyblue bg-main-skyblue/20' : 'border-transparent'}`}
+                        className={`relative h-[66px] rounded-lg border p-3 transition-colors desktop:w-[320px] ${isOwner && 'hover:border-main-skyblue hover:bg-main-skyblue/20'} ${playlist_no === item.playlist_no ? 'border-main-skyblue bg-main-skyblue/20' : 'border-transparent'}`}
                       >
                         <PlaylistCard {...item} />
                         {isOwner && hoveredItem === item.playlist_no && (
