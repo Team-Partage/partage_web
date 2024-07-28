@@ -20,7 +20,7 @@ const MainPage = async () => {
           <ChannelCreatorBox />
         ) : (
           <>
-            <SearchBar placeholder={PLACEHOLDER.CHANNEL_SEARCHBAR} />
+            <SearchBar type="page" placeholder={PLACEHOLDER.CHANNEL_SEARCHBAR} />
             <ChannelList channelsData={channelsData} />
           </>
         )}

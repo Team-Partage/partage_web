@@ -6,6 +6,8 @@ import {
   CreateChannelResponse,
   GetChannelDetailResponse,
   GetChannelSearchResponse,
+  GetChannelUsersResponse,
+  GetSearchChannelUserResponse,
 } from './type';
 import revalidate from '../revalidate';
 
@@ -37,7 +39,7 @@ export const getSearchChannelList = async (params: {
       perPage,
       keyword,
     },
-    { cache: 'no-store', next: { tags: ['channel'] } },
+    { next: { tags: ['channel'] } },
   );
 
   return data;
@@ -50,5 +52,40 @@ export const getChannelDetail = async (channelId: string) => {
     {},
     { cache: 'no-store' },
   );
+  return data;
+};
+
+/** 채널 접속 유저 검색 */
+export const getSearchChannelUser = async (channelId: string, nickname: string) => {
+  const session = await getSession();
+  const data = await fetcher.get<GetSearchChannelUserResponse>(
+    `api/v1/channel/${channelId}/search-user`,
+    { keyword: nickname },
+    {
+      headers: {
+        Authorization: `Bearer ${session?.user.accessToken}`,
+      },
+    },
+  );
+
+  return data;
+};
+
+/** 채널 접속 유저 목록 조회 */
+export const getChannelUsers = async (channelId: string, cursor: number = 1) => {
+  const session = await getSession();
+  const data = await fetcher.get<GetChannelUsersResponse>(
+    `api/v1/channel/${channelId}/user`,
+    {
+      cursor,
+      perPage: 6,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${session?.user.accessToken}`,
+      },
+    },
+  );
+
   return data;
 };
