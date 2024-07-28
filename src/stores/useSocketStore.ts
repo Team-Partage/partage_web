@@ -120,11 +120,14 @@ export const useSocketStore = create<SocketStore>((set) => ({
       case 'PLAYLIST_MOVE':
         set((state) => {
           const { playlist_no, sequence } = action.payload;
-          const index = state.playlist.findIndex((video) => video.playlist_no === playlist_no);
-          if (index === -1) return state;
 
-          const items = state.playlist;
-          const [reorderedItem] = items.splice(index, 1);
+          const currentIndex = state.playlist.findIndex(
+            (video) => video.playlist_no === playlist_no,
+          );
+          if (currentIndex === -1) return state;
+
+          const items = Array.from(state.playlist);
+          const [reorderedItem] = items.splice(currentIndex, 1);
           items.splice(sequence, 0, reorderedItem);
 
           return {

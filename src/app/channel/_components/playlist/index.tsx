@@ -42,7 +42,7 @@ const Playlist = ({ channel, owner }: Props) => {
 
   useEffect(() => {
     const fetch = async () => {
-      const res = await getPlaylist({ channelId: channel_id, pageSize: 20 });
+      const res = await getPlaylist({ channelId: channel_id, pageSize: 50 });
       setStore({ type: 'ADD_PLAYLIST', payload: res.playlists });
     };
 
@@ -52,7 +52,11 @@ const Playlist = ({ channel, owner }: Props) => {
   /** 비디오 재생 */
   const handlePlay = (index: number) => {
     if (!isOwner) return;
-    send('VIDEO_PLAY', { playlist_no: playlist[index].playlist_no, playing: true });
+    send('VIDEO_PLAY', {
+      playlist_no: playlist[index].playlist_no,
+      url: playlist[index].url,
+      playing: true,
+    });
   };
 
   /** 비디오 삭제 */
