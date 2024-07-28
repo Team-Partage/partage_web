@@ -1,3 +1,4 @@
+import { ChannelPermission } from '../channel/type';
 import { Playlist } from '../playlist/type';
 
 /** 채팅 입력 */
@@ -27,6 +28,7 @@ export type UserLeaveReq = {
 /** 영상 재생/일시정지 */
 export type VideoPlayReq = {
   playlist_no: number;
+  url: string;
   playing: boolean;
 };
 
@@ -100,6 +102,7 @@ export type MessageType = {
   /** 비디오 재생 및 일시정지 */
   VIDEO_PLAY: {
     playlist_no: number;
+    url: string;
     playing: boolean;
   };
 
@@ -111,6 +114,15 @@ export type MessageType = {
 
   /** 재생시간 */
   VIDEO_TIME: number;
+
+  /** 채널 권한 변경 */
+  CHANNEL_PERMISSION_CHANGE: { channel_permissions: ChannelPermission };
+
+  /** 채널 유저역할 변경 */
+  CHANNEL_USER_ROLE_CHANGE: {
+    user_id: string;
+    role_id: string;
+  };
 };
 
 export interface MessageBody<T extends keyof MessageType = never> {
