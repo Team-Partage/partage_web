@@ -76,6 +76,14 @@ const Playlist = ({ channel, owner }: Props) => {
   const onDragEnd = ({ source, destination }: DropResult) => {
     if (!isOwner || !destination) return;
 
+    setStore({
+      type: 'PLAYLIST_MOVE',
+      payload: {
+        playlist_no: playlist[source.index].playlist_no,
+        sequence: destination.index,
+      },
+    });
+
     send('PLAYLIST_MOVE', {
       playlist_no: playlist[source.index].playlist_no,
       sequence: destination.index,

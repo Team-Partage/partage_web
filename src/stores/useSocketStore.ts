@@ -124,7 +124,7 @@ export const useSocketStore = create<SocketStore>((set) => ({
           const currentIndex = state.playlist.findIndex(
             (video) => video.playlist_no === playlist_no,
           );
-          if (currentIndex === -1) return state;
+          if (currentIndex === -1 || currentIndex === sequence) return state;
 
           const items = Array.from(state.playlist);
           const [reorderedItem] = items.splice(currentIndex, 1);
