@@ -84,10 +84,12 @@ const Playlist = ({ channel, owner }: Props) => {
 
   return (
     <section
-      className={`flex w-full flex-col py-5 desktop:order-1 desktop:max-w-[384px] desktop:px-8 ${isFold && 'desktop:px-[22px]'}`}
+      className={`flex w-full flex-col desktop:order-1 desktop:max-h-screen desktop:max-w-[384px] desktop:px-8 ${isFold && 'desktop:px-[22px]'}`}
     >
       {/** 헤더 */}
-      <header className={`flex h-[67px] items-center justify-between shadow-xl `}>
+      <header
+        className={`flex h-[67px] shrink-0 items-center justify-between shadow-xl desktop:h-[90px]`}
+      >
         <div className="flex items-center">
           {/** 플레이리스트 펼치기 버튼 */}
           <button
@@ -120,7 +122,7 @@ const Playlist = ({ channel, owner }: Props) => {
             <ol
               {...provided.droppableProps}
               ref={provided.innerRef}
-              className={`overflow-y-auto no-scrollbar ${isFold ? 'hidden' : ''}`}
+              className={`h-[320px] overflow-y-auto no-scrollbar desktop:h-screen-playList ${isFold ? 'hidden' : ''}`}
             >
               {playlist?.map((item, index) => (
                 <Draggable
@@ -169,7 +171,9 @@ const Playlist = ({ channel, owner }: Props) => {
 
       {/** URL INPUT */}
       {isOwner && (
-        <div className={`mt-4 ${isFold ? 'hidden' : ''}`}>
+        <div
+          className={`pb-3 desktop:fixed desktop:bottom-0 desktop:w-[320px] ${isFold ? 'hidden' : ''}`}
+        >
           <Input
             value={url}
             onChange={(e) => {
