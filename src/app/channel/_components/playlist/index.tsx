@@ -84,16 +84,14 @@ const Playlist = ({ channel, owner }: Props) => {
 
   return (
     <section
-      className={`flex w-full flex-col desktop:order-1 desktop:max-h-screen desktop:max-w-[384px] desktop:px-8 ${isFold && 'desktop:px-[22px]'}`}
+      className={`flex flex-col desktop:order-1 desktop:max-h-screen desktop:max-w-[384px] desktop:px-8 ${isFold ? 'desktop:px-[22px]' : 'w-full'}`}
     >
       {/** 헤더 */}
-      <header
-        className={`flex h-[67px] shrink-0 items-center justify-between shadow-xl desktop:h-[90px]`}
-      >
+      <header className={`flex h-[67px] items-center justify-between shadow-xl desktop:h-[90px]`}>
         <div className="flex items-center">
           {/** 플레이리스트 펼치기 버튼 */}
           <button
-            className={`${isFold && 'rounded desktop:p-[10px] desktop:hover:bg-transparent-white-10'}`}
+            className={`${isFold ? 'rounded desktop:p-[10px] desktop:hover:bg-transparent-white-10' : ''}`}
             onClick={() => setIsFold(!isFold)}
             disabled={!isFold}
           >
