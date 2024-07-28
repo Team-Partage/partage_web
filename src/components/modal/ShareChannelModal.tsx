@@ -13,7 +13,7 @@ import { DialogClose, DialogContent, DialogHeader, DialogTitle } from '../ui/dia
 const ShareChannelModal = () => {
   const params = useParams() as { channel_id: string };
   const { playlist, video } = useSocketStore((state) => ({
-    playlist: state.playlist.data,
+    playlist: state.playlist,
     video: state.video,
   }));
   const [channelTitle, setChannelTitle] = useState('');
