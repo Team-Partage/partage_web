@@ -56,7 +56,6 @@ export const getChannelDetail = async (channelId: string) => {
   return data;
 };
 
-
 /** 채널 접속 유저 검색 */
 export const getSearchChannelUser = async (channelId: string, nickname: string) => {
   const session = await getSession();
@@ -82,6 +81,15 @@ export const getChannelUsers = async (channelId: string, cursor: number = 1) => 
       cursor,
       perPage: 6,
     },
+    {
+      headers: {
+        Authorization: `Bearer ${session?.user.accessToken}`,
+      },
+    },
+  );
+
+  return data;
+};
 
 /** 채널 수정 */
 export const editChannel = async (channelId: string, params: CreateChannelReq) => {
