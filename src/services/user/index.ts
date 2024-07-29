@@ -8,13 +8,10 @@ import { auth } from '@/auth';
 import {
   ChangePasswordRequest,
   CheckEmailNumberRequest,
-  EditProfileParams,
   EmailRequest,
   GetUserResponse,
-  NicknameRequest,
   SignUpRequest,
 } from './type';
-import revalidate from '../revalidate';
 
 /** 회원 정보 조회 */
 export const UserInfo = async () => {
@@ -54,25 +51,6 @@ export const Withdrawal = async () => {
   return data;
 };
 
-//** 닉네임 중복 확인 */
-export const CheckNickname = async (params: NicknameRequest) => {
-  const data = await fetcher.get(`${DOMAIN.USER}/check-nickname`, params);
-  return data;
-};
-
-//** 프로필 수정 (닉네임, 프로필 색상) */
-export const EditProfile = async <T extends EditProfileParams>(params: T) => {
-  const session = await auth();
-  const accesstoken = session?.user.accessToken;
-  const data = await fetcher.patch(`${DOMAIN.USER}/me/profile`, params, {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accesstoken}`,
-    },
-  });
-  return data;
-};
-
 //** 비밀번호 수정 */
 export const ChangePassword = async (params: ChangePasswordRequest) => {
   const session = await auth();
@@ -83,20 +61,6 @@ export const ChangePassword = async (params: ChangePasswordRequest) => {
       Authorization: `Bearer ${accesstoken}`,
     },
   });
-  return data;
-};
-
-//** 프로필 이미지 수정 */
-export const EditProfileImage = async (params: FormData) => {
-  const session = await auth();
-  const accesstoken = session?.user.accessToken;
-  const data = await fetcher.post(`${DOMAIN.USER}/me/profile-image`, params, {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accesstoken}`,
-    },
-  });
-  await revalidate('channel');
   return data;
 };
 
