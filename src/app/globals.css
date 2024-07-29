@@ -30,4 +30,19 @@
     -webkit-text-fill-color: #333236;
     -webkit-box-shadow: 0 0 0px 1000px #fff inset;
   }
+
+  ::-webkit-scrollbar {
+    display: block;
+    height: 6px;
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #6e6e82;
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
 }

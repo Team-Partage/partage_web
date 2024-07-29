@@ -35,7 +35,7 @@ const Chatting = ({ channelId }: ChattingProps) => {
     <section
       className={`mt-4 flex min-h-[385px] w-full flex-col overflow-hidden desktop:order-3 desktop:mt-0 desktop:max-h-screen desktop:max-w-[440px] ${isFold && 'min-h-[67px] desktop:max-w-[88px]'}`}
     >
-      <ChatHeader isFold={isFold} setIsFold={setIsFold} />
+      <ChatHeader isFold={isFold} setIsFold={setIsFold} channelId={channelId} />
       <ChatList channelId={channelId} isFold={isFold} />
       {!isFold && <TextareaField disabled={!nickname} onClick={handleClickChat} />}
       {showLoginModal && (

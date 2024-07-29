@@ -7,7 +7,8 @@ import {
   CreateChannelResponse,
   GetChannelDetailResponse,
   GetChannelSearchResponse,
-  GetChannelUserResponse,
+  GetChannelUsersResponse,
+  GetSearchChannelUserResponse,
 } from './type';
 import revalidate from '../revalidate';
 
@@ -55,6 +56,33 @@ export const getChannelDetail = async (channelId: string) => {
   return data;
 };
 
+
+/** 채널 접속 유저 검색 */
+export const getSearchChannelUser = async (channelId: string, nickname: string) => {
+  const session = await getSession();
+  const data = await fetcher.get<GetSearchChannelUserResponse>(
+    `api/v1/channel/${channelId}/search-user`,
+    { keyword: nickname },
+    {
+      headers: {
+        Authorization: `Bearer ${session?.user.accessToken}`,
+      },
+    },
+  );
+
+  return data;
+};
+
+/** 채널 접속 유저 목록 조회 */
+export const getChannelUsers = async (channelId: string, cursor: number = 1) => {
+  const session = await getSession();
+  const data = await fetcher.get<GetChannelUsersResponse>(
+    `api/v1/channel/${channelId}/user`,
+    {
+      cursor,
+      perPage: 6,
+    },
+
 /** 채널 수정 */
 export const editChannel = async (channelId: string, params: CreateChannelReq) => {
   const session = await getSession();
@@ -76,20 +104,5 @@ export const deleteChannel = async (channelId: string) => {
     },
   });
   await revalidate('channel');
-  return data;
-};
-
-/** 채널 접속 유저 검색 */
-export const getChannelUser = async (channelId: string, nickname: string) => {
-  const session = await getSession();
-  const data = await fetcher.get<GetChannelUserResponse>(
-    `api/v1/channel/${channelId}/search-user`,
-    { keyword: nickname },
-    {
-      headers: {
-        Authorization: `Bearer ${session?.user.accessToken}`,
-      },
-    },
-  );
   return data;
 };

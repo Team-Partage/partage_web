@@ -1,5 +1,6 @@
 export const PLACEHOLDER = {
   CHANNEL_SEARCHBAR: '채널명, 해시태그를 검색해 보세요!',
+  CHANNEL_USERS_SEARCHBAR: '닉네임을 검색해 보세요.',
 };
 
 export const SEVER_NICKNAME = 'PARTAGE_SERVER';

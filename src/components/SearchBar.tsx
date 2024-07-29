@@ -7,15 +7,26 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 interface SearchBarProps {
+  type: 'modal' | 'page';
   initialQuery?: string;
   handleSearch?: (searchQuery: string) => void;
+  resetSearch?: () => void;
   placeholder?: string;
 }
 
-const SearchBar = ({ initialQuery = '', handleSearch, placeholder }: SearchBarProps) => {
+const SearchBar = ({
+  type = 'page',
+  initialQuery = '',
+  handleSearch,
+  resetSearch,
+  placeholder,
+}: SearchBarProps) => {
   const [searchQuery, setSearchQuery] = useState<string>(initialQuery);
 
   const router = useRouter();
+
+  const isPage = type === 'page';
+  const isModal = type === 'modal';
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
@@ -23,20 +34,25 @@ const SearchBar = ({ initialQuery = '', handleSearch, placeholder }: SearchBarPr
 
   const handleDelete = () => {
     setSearchQuery('');
-    router.push(PAGE_ROUTE.HOME);
+
+    if (isModal && resetSearch) {
+      resetSearch();
+    } else if (isPage) router.push(PAGE_ROUTE.HOME);
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement | HTMLButtonElement>) => {
     event.preventDefault();
 
     if (!searchQuery) {
-      router.push(PAGE_ROUTE.HOME);
+      if (type === 'page') {
+        router.push(PAGE_ROUTE.HOME);
+      }
       return;
     }
 
     if (handleSearch) {
       handleSearch(searchQuery);
-    } else {
+    } else if (type === 'page') {
       router.push(PAGE_ROUTE.SEARCH(searchQuery));
     }
   };
@@ -49,7 +65,7 @@ const SearchBar = ({ initialQuery = '', handleSearch, placeholder }: SearchBarPr
         value={searchQuery}
         onChange={handleChange}
         placeholder={placeholder ? placeholder : '검색어를 입력해 주세요.'}
-        className="h-[48px] w-full min-w-[335px] rounded-full border border-DEFAULT border-main-skyblue bg-neutral-500 px-[24px] text-neutral-100 small-regular placeholder:text-neutral-200 tablet:h-[52px] tablet:w-[420px] tablet:base-regular desktop:h-[56px] desktop:w-[640px]"
+        className={`h-[48px] w-full min-w-[295px] rounded-full border border-DEFAULT border-main-skyblue bg-neutral-500 px-[24px] text-neutral-100 small-regular placeholder:text-neutral-200 tablet:w-[420px] tablet:base-regular ${isPage ? 'tablet:h-[52px] desktop:h-[56px] desktop:w-[640px]' : 'tablet:h-[56px]'}`}
       />
       <button
         onClick={handleSubmit}
