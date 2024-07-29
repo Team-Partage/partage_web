@@ -13,6 +13,7 @@ const usePlaylist = () => {
     const { playlist_no, url } = playlist[nextIndex];
 
     send('VIDEO_PLAY', { playlist_no, url, playing: true });
+    send('VIDEO_MOVE', { playlist_no, playtime: 0 });
   };
 
   return { next };

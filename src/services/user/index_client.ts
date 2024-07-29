@@ -28,12 +28,13 @@ export const EditProfile = async <T extends EditProfileParams>(params: T) => {
 export const EditProfileImage = async (params: FormData) => {
   const session = await getSession();
   const accesstoken = session?.user.accessToken;
-  const data = await fetcher.post(`${DOMAIN.USER}/me/profile-image`, params, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-      Authorization: `Bearer ${accesstoken}`,
-    },
+
+  const data = await fetch(`${DOMAIN.USER}/me/profile-image`, {
+    method: 'POST',
+    body: params,
+    headers: { Authorization: `Bearer ${accesstoken}` },
   });
+
   await revalidate('channel');
   return data;
 };

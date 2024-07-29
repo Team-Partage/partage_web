@@ -152,7 +152,6 @@ const EditMyInfo = () => {
 
   const onSubmit = async (data: z.infer<typeof MypageSchema>) => {
     modalRef.current?.closeModal();
-    await UserInfo();
     const requests = [];
     if (watchedNickname !== nickname) {
       try {
@@ -174,7 +173,6 @@ const EditMyInfo = () => {
     if (fileData) {
       const formData = new FormData();
       formData.append('profileImage', fileData);
-      console.log(typeof formData);
 
       requests.push(EditProfileImage(formData));
     }

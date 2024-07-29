@@ -46,6 +46,10 @@ const ColorChips = ({ onChange, className, colors, size, selected = colors[0] }:
   const [selectedIndex, setSelectedIndex] = useState<number>(colors.indexOf(selected));
 
   useEffect(() => {
+    setSelectedIndex(colors.indexOf(selected));
+  }, [selected]);
+
+  useEffect(() => {
     onChange && onChange(colorNameToHex(colors[selectedIndex]));
   }, []);
 
