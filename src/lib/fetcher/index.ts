@@ -34,20 +34,8 @@ class Fetcher {
     }
   }
 
-  makeURL(endpoint: string): URL {
-    let url: URL;
-
-    if (typeof window === 'undefined') {
-      url = new URL(endpoint, this.baseURL as string);
-    } else {
-      url = new URL(endpoint, window.location.origin);
-    }
-
-    return url;
-  }
-
   async get<T>(endpoint: string, params?: object, options?: FetcherRequestInit): Promise<T> {
-    const url = this.makeURL(endpoint);
+    const url = new URL(endpoint, this.baseURL);
 
     if (params) {
       url.search = qs.stringify(params);
@@ -63,7 +51,7 @@ class Fetcher {
   }
 
   async post<T>(endpoint: string, params: object, options?: FetcherRequestInit): Promise<T> {
-    const url = this.makeURL(endpoint);
+    const url = new URL(endpoint, this.baseURL);
 
     const res = await fetch(url, {
       method: 'POST',
@@ -77,7 +65,7 @@ class Fetcher {
   }
 
   async put<T>(endpoint: string, params: object, options?: FetcherRequestInit): Promise<T> {
-    const url = this.makeURL(endpoint);
+    const url = new URL(endpoint, this.baseURL);
 
     const res = await fetch(url, {
       method: 'PUT',
@@ -91,7 +79,7 @@ class Fetcher {
   }
 
   async patch<T>(endpoint: string, params: object, options?: FetcherRequestInit): Promise<T> {
-    const url = this.makeURL(endpoint);
+    const url = new URL(endpoint, this.baseURL);
 
     const res = await fetch(url, {
       method: 'PATCH',
@@ -105,7 +93,7 @@ class Fetcher {
   }
 
   async delete<T>(endpoint: string, options?: FetcherRequestInit): Promise<T> {
-    const url = this.makeURL(endpoint);
+    const url = new URL(endpoint, this.baseURL);
 
     const res = await fetch(url, {
       method: 'DELETE',

@@ -1,4 +1,5 @@
 import Header from '@/components/Header';
+import KakaoScript from '@/lib/KakaoScript';
 import { pretendard } from '@/utils/fonts';
 
 import AuthSession from '../lib/AuthSession';
@@ -24,6 +25,7 @@ export default function RootLayout({
           <Header />
           {children}
         </AuthSession>
+        <KakaoScript />
       </body>
     </html>
   );

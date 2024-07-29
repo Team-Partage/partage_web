@@ -56,7 +56,10 @@ const SocketConnector = ({ channelId }: Props) => {
           setStore({ type: 'SET_LEAVE', payload: body.data });
           break;
         case 'PLAYLIST_ADD':
-          setStore({ type: 'SET_PLAYLIST', payload: JSON.parse(body.data) });
+          setStore({ type: 'ADD_PLAYLIST', payload: JSON.parse(body.data) });
+          break;
+        case 'PLAYLIST_MOVE':
+          setStore({ type: 'PLAYLIST_MOVE', payload: body.data });
           break;
         case 'PLAYLIST_REMOVE': {
           const data = body.data as MessageType['PLAYLIST_REMOVE'];
@@ -70,6 +73,9 @@ const SocketConnector = ({ channelId }: Props) => {
           setStore({ type: 'SET_VIDEO_TIME', payload: body.data });
           break;
         }
+        case 'VIDEO_PLAY':
+          setStore({ type: 'SET_VIDEO', payload: body.data });
+          break;
         default:
           break;
       }

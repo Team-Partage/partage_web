@@ -14,6 +14,7 @@ import {
   NicknameRequest,
   SignUpRequest,
 } from './type';
+import revalidate from '../revalidate';
 
 /** 회원 정보 조회 */
 export const UserInfo = async () => {
@@ -95,6 +96,7 @@ export const EditProfileImage = async (params: FormData) => {
       Authorization: `Bearer ${accesstoken}`,
     },
   });
+  await revalidate('channel');
   return data;
 };
 

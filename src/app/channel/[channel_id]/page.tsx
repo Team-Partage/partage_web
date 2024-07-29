@@ -1,3 +1,4 @@
+import ModalRenderer from '@/components/ModalRenderer';
 import { Button } from '@/components/ui/button';
 import { getChannelDetail } from '@/services/channel';
 import { Settings, Share2 } from 'lucide-react';
@@ -54,12 +55,16 @@ const page = async ({ params }: Props) => {
 
             {/** 설정 및 링크 공유 */}
             <div className="mt-2 flex gap-2 tablet:mt-0">
-              <Button className="rounded-full bg-neutral-500" size="icon">
-                <Share2 />
-              </Button>
-              <Button className="rounded-full bg-neutral-500" size="icon">
-                <Settings />
-              </Button>
+              <ModalRenderer type="ShareChannelModal">
+                <Button className="rounded-full bg-neutral-500" size="icon">
+                  <Share2 />
+                </Button>
+              </ModalRenderer>
+              <ModalRenderer type="EditChannelModal">
+                <Button className="rounded-full bg-neutral-500" size="icon">
+                  <Settings />
+                </Button>
+              </ModalRenderer>
             </div>
           </div>
         </section>

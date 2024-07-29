@@ -7,6 +7,7 @@ import { PLACEHOLDER } from '@/utils/constants';
 import ChannelList from './(main)/_components/ChannelList';
 import GetUserInfo from './(main)/_components/GetUserInfo';
 
+
 const MainPage = async () => {
   const channelsData = await getSearchChannelList({});
 

@@ -10,6 +10,7 @@ import ReactPlayer from 'react-player';
 import { useShallow } from 'zustand/react/shallow';
 
 import './player.css';
+import usePlaylist from '../../_hooks/usePlaylist';
 
 const YOUTUBE_BASE_URL = 'https://www.youtube.com/watch?v=';
 
@@ -19,6 +20,7 @@ interface Props {
 }
 
 const Player = ({ channelId, owner_id }: Props) => {
+  const { next } = usePlaylist();
   const { video, setStore } = useSocketStore(
     useShallow((state) => ({ video: state.video, setStore: state.setSocketStore })),
   );
@@ -58,7 +60,7 @@ const Player = ({ channelId, owner_id }: Props) => {
   };
 
   const onEnded = () => {
-    alert('영상끝!');
+    next();
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {

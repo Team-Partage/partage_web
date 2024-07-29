@@ -4,13 +4,11 @@ import { SEVER_CHAT_MESSAGE, SEVER_NICKNAME, ServerChatForm } from '@/utils/cons
 import { create } from 'zustand';
 
 type VideoType = MessageType['VIDEO_PLAY'] & MessageType['VIDEO_MOVE'] & { url: string };
-type PlaylistType = { data: Playlist[]; cursor: number; length: number };
-
 interface SocketStore {
   chatting: MessageType['USER_CHAT'][];
   userJoin: MessageType['USER_JOIN'];
   userLeave: MessageType['USER_LEAVE'];
-  playlist: PlaylistType;
+  playlist: Playlist[];
   video: VideoType;
   viewer: MessageType['CHANNEL_VIEWER'];
   isConnected: boolean;
@@ -29,7 +27,7 @@ const initialData: Pick<
   chatting: [],
   userJoin: { user_id: '', nickname: '' },
   userLeave: { user_id: '', nickname: '' },
-  playlist: { data: [], cursor: 0, length: 0 },
+  playlist: [],
   viewer: { anonymous_users: 0, login_users: 0, total_users: 0 },
   video: { playlist_no: -1, playing: false, playtime: 0, url: '' },
   isConnected: false,
@@ -40,9 +38,11 @@ type Action =
   | { type: 'SET_CHATTING'; payload: MessageType['USER_CHAT'] }
   | { type: 'SET_JOIN'; payload: MessageType['USER_JOIN'] }
   | { type: 'SET_LEAVE'; payload: MessageType['USER_LEAVE'] }
-  | { type: 'SET_PLAYLIST'; payload: Playlist[] | Playlist }
+  | { type: 'ADD_PLAYLIST'; payload: Playlist[] | Playlist }
   | { type: 'SET_PLAYLIST_CURSOR'; payload: number }
   | { type: 'PLAYLIST_REMOVE'; payload: number }
+  | { type: 'SET_PLAYLIST'; payload: Playlist[] }
+  | { type: 'PLAYLIST_MOVE'; payload: MessageType['PLAYLIST_MOVE'] }
   | { type: 'SET_VIDEO'; payload: Partial<VideoType> }
   | { type: 'SET_VIDEO_TIME'; payload: number }
   | { type: 'SET_CONNECTED'; payload: boolean }
@@ -95,51 +95,49 @@ export const useSocketStore = create<SocketStore>((set) => ({
         }));
         break;
 
-      case 'SET_PLAYLIST':
+      case 'ADD_PLAYLIST':
         if (Array.isArray(action.payload)) {
           const payload = action.payload;
-          set((state) => ({
-            playlist: { data: payload, cursor: state.playlist.cursor, length: payload.length },
-          }));
+          set((state) => ({ playlist: [...state.playlist, ...payload] }));
         } else {
           const { ...rest } = action.payload;
           set((state) => ({
-            playlist: {
-              data: [...state.playlist.data, rest],
-              cursor: state.playlist.cursor,
-              length: state.playlist.length + 1,
-            },
+            playlist: [...state.playlist, rest],
           }));
         }
         break;
 
-      case 'SET_PLAYLIST_CURSOR':
-        set((state) => ({
-          playlist: {
-            data: state.playlist.data,
-            cursor: action.payload,
-            length: state.playlist.length,
-          },
-        }));
-        break;
-
       case 'PLAYLIST_REMOVE':
         set((state) => {
-          const newPlaylistData = state.playlist.data.filter(
+          const newPlaylistData = state.playlist.filter(
             (video) => video.playlist_no !== action.payload,
           );
-          const newCursor =
-            state.playlist.cursor >= state.playlist.data.length - 1
-              ? state.playlist.data.length - 2
-              : state.playlist.cursor;
+
+          return { playlist: newPlaylistData };
+        });
+        break;
+
+      case 'PLAYLIST_MOVE':
+        set((state) => {
+          const { playlist_no, sequence } = action.payload;
+
+          const currentIndex = state.playlist.findIndex(
+            (video) => video.playlist_no === playlist_no,
+          );
+          if (currentIndex === -1 || currentIndex === sequence) return state;
+
+          const items = Array.from(state.playlist);
+          const [reorderedItem] = items.splice(currentIndex, 1);
+          items.splice(sequence, 0, reorderedItem);
+
           return {
-            playlist: {
-              data: newPlaylistData,
-              cursor: newCursor < 0 ? 0 : newCursor,
-              length: newPlaylistData.length,
-            },
+            playlist: items,
           };
         });
+        break;
+
+      case 'SET_PLAYLIST':
+        set({ playlist: action.payload });
         break;
 
       case 'SET_VIDEO': {

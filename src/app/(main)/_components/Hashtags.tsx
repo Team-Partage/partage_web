@@ -64,8 +64,8 @@ const Hashtags = ({ hashtage, color }: HashtagsProps) => {
 
         if (index < visibleIndex)
           return (
-            <Link key={index} href={PAGE_ROUTE.SEARCH(noSharpTag)}>
-              <span key={index} className="shrink-0 small-regular" style={{ color: color }}>
+            <Link key={index} href={PAGE_ROUTE.SEARCH(noSharpTag)} className="shrink-0">
+              <span key={index} className="small-regular" style={{ color: color }}>
                 {tag}
               </span>
             </Link>

@@ -1,30 +1,18 @@
+import send from '@/services/websocket/send';
 import { useSocketStore } from '@/stores/useSocketStore';
 
 const usePlaylist = () => {
-  const setStore = useSocketStore((state) => state.setSocketStore);
+  const next = () => {
+    const { playlist, video } = useSocketStore.getState();
 
-  const next = (cursor?: number) => {
-    const { playlist } = useSocketStore.getState();
+    let nextIndex = playlist.findIndex((item) => item.playlist_no === video.playlist_no) + 1;
+    if (playlist.length <= nextIndex) {
+      nextIndex = 0;
+    }
 
-    const calc = () => {
-      let newCursor = 0;
-      if (cursor) {
-        newCursor = cursor;
-      } else {
-        newCursor = playlist.cursor + 1;
-      }
+    const { playlist_no, url } = playlist[nextIndex];
 
-      if (playlist.length <= newCursor) newCursor = 0;
-
-      return newCursor;
-    };
-
-    const nextCursor = calc();
-
-    const { playlist_no, url } = playlist.data[nextCursor];
-
-    setStore({ type: 'SET_VIDEO', payload: { playlist_no, url } });
-    setStore({ type: 'SET_PLAYLIST_CURSOR', payload: nextCursor });
+    send('VIDEO_PLAY', { playlist_no, url, playing: true });
   };
 
   return { next };
