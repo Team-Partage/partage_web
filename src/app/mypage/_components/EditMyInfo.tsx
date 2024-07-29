@@ -15,7 +15,12 @@ import { Label } from '@/components/ui/label';
 import { DOMAIN } from '@/constants/domains';
 import { fetcher } from '@/lib/fetcher';
 import { MypageSchema } from '@/schemas/userSchema';
-import { CheckNickname, EditProfile, EditProfileImage } from '@/services/user';
+import {
+  CheckNickname,
+  EditProfile,
+  EditProfileImage,
+  UserInfo,
+} from '@/services/user/index_client';
 import { EditProfileColorRequest, GetUserResponse, NicknameRequest } from '@/services/user/type';
 import { useUserStore } from '@/stores/User';
 import { AlertContents } from '@/utils/alertContents';
@@ -35,12 +40,13 @@ const EditMyInfo = () => {
     setProfileColor,
     setProfileImage,
   } = useUserStore();
+  const my_profile_color: string = profile_color || '#00FFFF';
   const { data: session } = useSession();
-  const [selectedColor, setSelectedColor] = useState<string>(profile_color);
+  const [selectedColor, setSelectedColor] = useState<string>(my_profile_color);
   const fileRef = useRef<HTMLInputElement>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
   const [fileData, setFileData] = useState<File>();
-  const modalRef = useRef({ openModal: () => {} });
+  const modalRef = useRef({ openModal: () => {}, closeModal: () => {} });
 
   const form = useForm<z.infer<typeof MypageSchema>>({
     resolver: zodResolver(MypageSchema),
@@ -88,17 +94,22 @@ const EditMyInfo = () => {
   };
 
   const onSubmit = async (data: z.infer<typeof MypageSchema>) => {
-    const isNicknameAvailable = await CheckNickname({ nickname: data.nickname });
-    if (!isNicknameAvailable) {
-      form.setError('nickname', {
-        type: 'manual',
-        message: '이미 사용 중인 닉네임이에요.',
-      });
-      return;
+    modalRef.current?.closeModal();
+    const requests = [];
+    if (watchedNickname !== nickname) {
+      try {
+        await CheckNickname({ nickname: data.nickname });
+      } catch (err) {
+        form.setError('nickname', {
+          type: 'manual',
+          message: '이미 사용 중인 닉네임이에요.',
+        });
+        return;
+      }
+      requests.push(EditProfile<NicknameRequest>({ nickname: data.nickname }));
     }
-    const requests = [EditProfile<NicknameRequest>({ nickname: data.nickname })];
 
-    if (selectedColor) {
+    if (selectedColor !== my_profile_color) {
       requests.push(EditProfile<EditProfileColorRequest>({ profile_color: selectedColor }));
     }
 
@@ -107,36 +118,21 @@ const EditMyInfo = () => {
       formData.append('profileImage', fileData);
       requests.push(EditProfileImage(formData));
     }
+    if (!requests.length) return;
 
     try {
       await Promise.all(requests);
       modalRef.current?.openModal();
-      try {
-        const UserInfo = async () => {
-          const accesstoken = session?.user.accessToken;
-          const data = await fetcher.get<GetUserResponse>(
-            `${DOMAIN.USER}/me`,
-            {},
-            {
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${accesstoken}`,
-              },
-            },
-          );
-          const { user } = data;
-          if (user) {
-            setNickname(user.nickname);
-            setProfileColor(user.profile_color);
-            setProfileImage(user.profile_image);
-          }
-        };
-        UserInfo();
-      } catch (err) {
-        console.log(`Fetching getUsers: ${err}`);
+
+      const data = await UserInfo();
+      const { user } = data;
+      if (user) {
+        setNickname(user.nickname);
+        setProfileColor(user.profile_color);
+        setProfileImage(user.profile_image);
       }
     } catch (err) {
-      alert('에러');
+      console.log(err);
     }
   };
 
@@ -208,7 +204,7 @@ const EditMyInfo = () => {
                 <Label>닉네임 컬러</Label>
                 <div className="flex flex-wrap gap-3">
                   <ColorChips
-                    selected={hexToColorName(profile_color)}
+                    selected={hexToColorName(my_profile_color)}
                     size="user"
                     colors={[
                       'skyblue',
@@ -230,7 +226,9 @@ const EditMyInfo = () => {
                   type="submit"
                   disabled={
                     !form.formState.isValid ||
-                    (watchedNickname === nickname && selectedColor === profile_color && !!fileData)
+                    (watchedNickname === nickname &&
+                      selectedColor === my_profile_color &&
+                      !fileData)
                   }
                   variant="active"
                   size="lg"
