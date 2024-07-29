@@ -30,7 +30,7 @@ export const EditProfileImage = async (params: FormData) => {
   const accesstoken = session?.user.accessToken;
   const data = await fetcher.post(`${DOMAIN.USER}/me/profile-image`, params, {
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'multipart/form-data',
       Authorization: `Bearer ${accesstoken}`,
     },
   });

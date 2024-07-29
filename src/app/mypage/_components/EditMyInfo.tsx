@@ -30,6 +30,11 @@ import { ImageUp } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useForm, useWatch } from 'react-hook-form';
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const MIN_IMAGE_WIDTH = 240;
+const MIN_IMAGE_HEIGHT = 240;
+const SUPPORTED_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
+
 const EditMyInfo = () => {
   const {
     email,
@@ -72,10 +77,63 @@ const EditMyInfo = () => {
 
   const watchedNickname = useWatch({ control: form.control, name: 'nickname' });
 
+  // 파일 유효성 검증 함수
+  const validateImageFile = (file: File): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const fileReader = new FileReader();
+      const image = new Image();
+
+      // 파일 포맷 및 크기 확인
+      if (!SUPPORTED_FORMATS.includes(file.type)) {
+        alert('지원되지 않는 이미지 형식입니다. .jpg, .jpeg, .png 파일만 가능합니다.');
+        return resolve(false);
+      }
+
+      if (file.size > MAX_FILE_SIZE) {
+        alert('이미지 파일 크기가 5MB를 초과합니다.');
+        return resolve(false);
+      }
+
+      fileReader.onload = (e) => {
+        if (e.target?.result) {
+          image.src = e.target.result as string;
+
+          image.onload = () => {
+            // 이미지 너비 및 높이 확인
+            if (image.width < MIN_IMAGE_WIDTH || image.height < MIN_IMAGE_HEIGHT) {
+              alert('이미지의 최소 크기는 240x240 픽셀입니다.');
+              return resolve(false);
+            }
+
+            resolve(true);
+          };
+
+          image.onerror = () => {
+            alert('이미지 파일을 읽을 수 없습니다.');
+            resolve(false);
+          };
+        }
+      };
+
+      fileReader.onerror = () => {
+        alert('이미지 파일을 읽을 수 없습니다.');
+        resolve(false);
+      };
+
+      fileReader.readAsDataURL(file);
+    });
+  };
+
   const addPreviewImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files !== null) {
       const file = e.target.files[0];
       if (file) {
+        // 이미지 파일 유효성 검사
+        const isValid = await validateImageFile(file);
+        if (!isValid) {
+          return;
+        }
+
         setFileData(file);
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -116,6 +174,8 @@ const EditMyInfo = () => {
     if (fileData) {
       const formData = new FormData();
       formData.append('profileImage', fileData);
+      console.log(typeof formData);
+      
       requests.push(EditProfileImage(formData));
     }
     if (!requests.length) return;
