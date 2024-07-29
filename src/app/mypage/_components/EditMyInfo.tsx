@@ -12,8 +12,6 @@ import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { DOMAIN } from '@/constants/domains';
-import { fetcher } from '@/lib/fetcher';
 import { MypageSchema } from '@/schemas/userSchema';
 import {
   CheckNickname,
@@ -21,13 +19,12 @@ import {
   EditProfileImage,
   UserInfo,
 } from '@/services/user/index_client';
-import { EditProfileColorRequest, GetUserResponse, NicknameRequest } from '@/services/user/type';
+import { EditProfileColorRequest, NicknameRequest } from '@/services/user/type';
 import { useUserStore } from '@/stores/User';
 import { AlertContents } from '@/utils/alertContents';
 import { hexToColorName } from '@/utils/hexToColorName';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ImageUp } from 'lucide-react';
-import { useSession } from 'next-auth/react';
 import { useForm, useWatch } from 'react-hook-form';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -45,9 +42,8 @@ const EditMyInfo = () => {
     setProfileColor,
     setProfileImage,
   } = useUserStore();
-  const my_profile_color: string = profile_color || '#00FFFF';
-  const { data: session } = useSession();
-  const [selectedColor, setSelectedColor] = useState<string>(my_profile_color);
+
+  const [selectedColor, setSelectedColor] = useState<string>(profile_color);
   const fileRef = useRef<HTMLInputElement>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
   const [fileData, setFileData] = useState<File>();
@@ -73,7 +69,10 @@ const EditMyInfo = () => {
     if (profile_image) {
       setImagePreview(profile_image);
     }
-  }, [profile_image]);
+    if (profile_color) {
+      setSelectedColor(profile_color);
+    }
+  }, [profile_image, profile_color]);
 
   const watchedNickname = useWatch({ control: form.control, name: 'nickname' });
 
@@ -153,6 +152,7 @@ const EditMyInfo = () => {
 
   const onSubmit = async (data: z.infer<typeof MypageSchema>) => {
     modalRef.current?.closeModal();
+    await UserInfo();
     const requests = [];
     if (watchedNickname !== nickname) {
       try {
@@ -167,7 +167,7 @@ const EditMyInfo = () => {
       requests.push(EditProfile<NicknameRequest>({ nickname: data.nickname }));
     }
 
-    if (selectedColor !== my_profile_color) {
+    if (selectedColor !== profile_color) {
       requests.push(EditProfile<EditProfileColorRequest>({ profile_color: selectedColor }));
     }
 
@@ -175,7 +175,7 @@ const EditMyInfo = () => {
       const formData = new FormData();
       formData.append('profileImage', fileData);
       console.log(typeof formData);
-      
+
       requests.push(EditProfileImage(formData));
     }
     if (!requests.length) return;
@@ -264,7 +264,7 @@ const EditMyInfo = () => {
                 <Label>닉네임 컬러</Label>
                 <div className="flex flex-wrap gap-3">
                   <ColorChips
-                    selected={hexToColorName(my_profile_color)}
+                    selected={hexToColorName(profile_color)}
                     size="user"
                     colors={[
                       'skyblue',
@@ -286,9 +286,7 @@ const EditMyInfo = () => {
                   type="submit"
                   disabled={
                     !form.formState.isValid ||
-                    (watchedNickname === nickname &&
-                      selectedColor === my_profile_color &&
-                      !fileData)
+                    (watchedNickname === nickname && selectedColor === profile_color && !fileData)
                   }
                   variant="active"
                   size="lg"
