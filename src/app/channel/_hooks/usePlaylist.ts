@@ -10,9 +10,9 @@ const usePlaylist = () => {
       nextIndex = 0;
     }
 
-    const { playlist_no, url } = playlist[nextIndex];
+    const { playlist_no } = playlist[nextIndex];
 
-    send('VIDEO_PLAY', { playlist_no, url, playing: true });
+    send('VIDEO_PLAY', { playlist_no, playing: true });
     send('VIDEO_MOVE', { playlist_no, playtime: 0 });
   };
 

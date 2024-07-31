@@ -28,7 +28,6 @@ export type UserLeaveReq = {
 /** 영상 재생/일시정지 */
 export type VideoPlayReq = {
   playlist_no: number;
-  url: string;
   playing: boolean;
 };
 
