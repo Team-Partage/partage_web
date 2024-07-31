@@ -2,19 +2,21 @@
 
 import { useEffect } from 'react';
 
+import { GetChannelDetailResponse } from '@/services/channel/type';
 import { stomp } from '@/services/websocket';
 import { MessageBody, MessageType } from '@/services/websocket/type';
+import { usePermissionStore } from '@/stores/usePermissionStore';
 import { useUserStore } from '@/stores/User';
 import { useSocketStore } from '@/stores/useSocketStore';
 import { useShallow } from 'zustand/react/shallow';
 
 import type { IMessage } from '@stomp/stompjs';
 
-interface Props {
-  channelId: string;
-}
+interface Props extends GetChannelDetailResponse {}
 
-const SocketConnector = ({ channelId }: Props) => {
+const SocketConnector = ({ channel, user, channel_permissions }: Props) => {
+  const { channel_id } = channel;
+
   const { reset, setStore } = useSocketStore(
     useShallow((state) => ({
       reset: state.resetStore,
@@ -22,23 +24,33 @@ const SocketConnector = ({ channelId }: Props) => {
     })),
   );
 
-  const { nickname } = useUserStore((state) => ({
-    nickname: state.nickname,
+  const { setRoleId, setChannelPermission, resetPermission } = usePermissionStore((state) => ({
+    setRoleId: state.setRoleId,
+    setChannelPermission: state.setChannelPermission,
+    resetPermission: state.reset,
   }));
 
-  const sendUserLeaveMessage = () => {
-    const leaveReqForm = {
-      channel_id: channelId,
-      sender: nickname,
-      content: `${nickname} left the channel`,
-      type: 'USER_LEAVE',
-    };
-
-    stomp.send('/stomp/user.leave', leaveReqForm);
-  };
+  /** 채널 권한정보 초기화 */
+  useEffect(() => {
+    setRoleId(user.role_id);
+    setChannelPermission(channel_permissions);
+  }, []);
 
   /** 웹소캣 연결 */
   useEffect(() => {
+    const nickname = useUserStore.getState().nickname;
+
+    const sendUserLeaveMessage = () => {
+      const leaveReqForm = {
+        channel_id,
+        sender: nickname,
+        content: `${nickname} left the channel`,
+        type: 'USER_LEAVE',
+      };
+
+      stomp.send('/stomp/user.leave', leaveReqForm);
+    };
+
     const onMessage = (message: IMessage) => {
       const body: MessageBody = JSON.parse(message.body);
 
@@ -76,19 +88,30 @@ const SocketConnector = ({ channelId }: Props) => {
         case 'VIDEO_PLAY':
           setStore({ type: 'SET_VIDEO', payload: body.data });
           break;
+
+        case 'CHANNEL_PERMISSION_CHANGE':
+          setChannelPermission(body.data);
+          break;
+
+        case 'CHANNEL_USER_ROLE_CHANGE': {
+          const { user_id, role_id } = body.data as MessageType['CHANNEL_USER_ROLE_CHANGE'];
+          if (user_id === user.user_id) setRoleId(role_id);
+          break;
+        }
         default:
           break;
       }
     };
 
-    stomp.connect(channelId, onMessage);
+    stomp.connect(channel_id, onMessage);
 
     return () => {
       if (nickname) sendUserLeaveMessage();
       stomp.disconnect();
       reset();
+      resetPermission();
     };
-  }, [channelId, nickname, reset, setStore]);
+  }, [channel_id, reset, resetPermission, setChannelPermission, setRoleId, setStore, user.user_id]);
 
   return <></>;
 };
