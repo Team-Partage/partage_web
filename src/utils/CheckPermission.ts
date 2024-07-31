@@ -12,7 +12,7 @@ const checkPermission = (type: PermissionType): boolean => {
   const userLevel = PERMISSION[roleId]; // 유저 권한
   const targetLevel = PERMISSION[channelPermission[type]]; // 기능 권한
 
-  return userLevel < targetLevel;
+  return userLevel <= targetLevel;
 };
 
 export default checkPermission;
