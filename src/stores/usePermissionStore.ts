@@ -8,7 +8,7 @@ type Permission = {
 interface PermissionStore {
   roleId: RoleIdType | null;
 
-  /** 사용자 권한 */
+  /** 기능에 대한 사용가능 여부 */
   permission: Permission;
 
   /** 채널 권한 */
