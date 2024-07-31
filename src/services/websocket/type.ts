@@ -1,4 +1,4 @@
-import { ChannelPermission } from '../channel/type';
+import { ChannelPermission, RoleIdType } from '../channel/type';
 import { Playlist } from '../playlist/type';
 
 /** 채팅 입력 */
@@ -121,7 +121,7 @@ export type MessageType = {
   /** 채널 유저역할 변경 */
   CHANNEL_USER_ROLE_CHANGE: {
     user_id: string;
-    role_id: string;
+    role_id: RoleIdType;
   };
 };
 
