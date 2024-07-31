@@ -54,7 +54,6 @@ const Playlist = ({ channel, owner }: Props) => {
     if (!isOwner) return;
     send('VIDEO_PLAY', {
       playlist_no: playlist[index].playlist_no,
-      url: playlist[index].url,
       playing: true,
     });
   };
