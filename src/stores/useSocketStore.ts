@@ -12,6 +12,7 @@ interface SocketStore {
   video: VideoType;
   viewer: MessageType['CHANNEL_VIEWER'];
   isConnected: boolean;
+
   setIsConnected: (flag: boolean) => void;
 
   /** 스토어 초기화 */
@@ -20,10 +21,8 @@ interface SocketStore {
   setSocketStore: (action: Action) => void;
 }
 
-const initialData: Pick<
-  SocketStore,
-  'chatting' | 'userJoin' | 'userLeave' | 'playlist' | 'video' | 'viewer' | 'isConnected'
-> = {
+/** 초기값 */
+const initialData: Omit<SocketStore, 'setIsConnected' | 'resetStore' | 'setSocketStore'> = {
   chatting: [],
   userJoin: { user_id: '', nickname: '' },
   userLeave: { user_id: '', nickname: '' },
@@ -57,7 +56,6 @@ export const useSocketStore = create<SocketStore>((set) => ({
   viewer: initialData.viewer,
   isConnected: initialData.isConnected,
   setIsConnected: (flag) => set({ isConnected: flag }),
-
   resetStore: () => set(initialData),
   setSocketStore: (action: Action) => {
     switch (action.type) {
