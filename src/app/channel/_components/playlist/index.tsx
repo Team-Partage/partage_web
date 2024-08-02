@@ -10,6 +10,7 @@ import { GetChannelDetailResponse } from '@/services/channel/type';
 import { getPlaylist } from '@/services/playlist';
 import { nextVideo, send } from '@/services/websocket';
 import { usePermissionStore } from '@/stores/usePermissionStore';
+import { useUserStore } from '@/stores/User';
 import { useSocketStore } from '@/stores/useSocketStore';
 import { ListVideo, Plus, Trash2 } from 'lucide-react';
 import Image from 'next/image';

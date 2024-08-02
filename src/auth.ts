@@ -15,6 +15,9 @@ export const {
     signIn: '/auth/login',
     newUser: '/auth/register',
   },
+  session: {
+    maxAge: 24 * 60 * 60,
+  },
   callbacks: {
     jwt({ token, user }) {
       return { ...token, ...user };
@@ -23,6 +26,7 @@ export const {
       return { ...session, user: { ...token } };
     },
   },
+
   providers: [
     CredentialsProvider({
       async authorize(credentials) {
