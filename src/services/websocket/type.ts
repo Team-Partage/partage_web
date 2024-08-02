@@ -134,7 +134,7 @@ export type MessageType = {
   CHANNEL_INFO: {
     playlist_no: number;
     playtime: number;
-    playing: boolean;
+    is_playing: boolean;
   };
 };
 

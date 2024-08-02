@@ -109,7 +109,7 @@ const SocketConnector = ({ channel, user, channel_permissions }: Props) => {
         }
 
         case 'CHANNEL_INFO':
-          console.log(body);
+          setStore({ type: 'CHANNEL_INFO', payload: body.data });
           break;
         default:
           break;
