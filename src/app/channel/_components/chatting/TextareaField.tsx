@@ -22,6 +22,8 @@ export default function TextareaField({ disabled = false, onClick }: TextareaFie
   }));
 
   const sendChatMessage = () => {
+    if (!message) return;
+
     const chatReqForm: UserChatReq = {
       nickname: nickname,
       profile_image: profile_image,
