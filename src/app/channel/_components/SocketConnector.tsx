@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 
 import { GetChannelDetailResponse } from '@/services/channel/type';
-import { stomp } from '@/services/websocket';
+import { send, stomp } from '@/services/websocket';
 import { MessageBody, MessageType } from '@/services/websocket/type';
 import { usePermissionStore } from '@/stores/usePermissionStore';
 import { useUserStore } from '@/stores/User';
@@ -17,8 +17,9 @@ interface Props extends GetChannelDetailResponse {}
 const SocketConnector = ({ channel, user, channel_permissions }: Props) => {
   const { channel_id } = channel;
 
-  const { reset, setStore } = useSocketStore(
+  const { isConnected, reset, setStore } = useSocketStore(
     useShallow((state) => ({
+      isConnected: state.isConnected,
       reset: state.resetStore,
       setStore: state.setSocketStore,
     })),
@@ -35,6 +36,14 @@ const SocketConnector = ({ channel, user, channel_permissions }: Props) => {
     setRoleId(user.role_id);
     setChannelPermission(channel_permissions);
   }, []);
+
+  useEffect(() => {
+    if (isConnected) {
+      send('CHANNEL_INFO', {
+        channel_id,
+      });
+    }
+  }, [channel_id, isConnected]);
 
   /** 웹소캣 연결 */
   useEffect(() => {
@@ -98,6 +107,10 @@ const SocketConnector = ({ channel, user, channel_permissions }: Props) => {
           if (user_id === user.user_id) setRoleId(role_id);
           break;
         }
+
+        case 'CHANNEL_INFO':
+          console.log(body);
+          break;
         default:
           break;
       }

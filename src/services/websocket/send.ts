@@ -6,6 +6,7 @@ import {
   PlaylistAddReq,
   PlaylistMoveReq,
   PlaylistRemoveReq,
+  ChannelInfoReq,
 } from './type';
 
 const ENDPOINT = {
@@ -17,6 +18,7 @@ const ENDPOINT = {
   PLAYLIST_ADD: '/stomp/playlist.add',
   PLAYLIST_MOVE: '/stomp/playlist.move',
   PLAYLIST_REMOVE: '/stomp/playlist.remove',
+  CHANNEL_INFO: '/stomp/channel.info',
 } as const;
 
 type SendMessageType = {
@@ -28,6 +30,7 @@ type SendMessageType = {
   PLAYLIST_ADD: PlaylistAddReq;
   PLAYLIST_MOVE: PlaylistMoveReq;
   PLAYLIST_REMOVE: PlaylistRemoveReq;
+  CHANNEL_INFO: ChannelInfoReq;
 };
 
 const send = <T extends keyof typeof ENDPOINT>(type: T, message: SendMessageType[T]) => {

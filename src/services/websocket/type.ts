@@ -53,6 +53,11 @@ export type PlaylistRemoveReq = {
   playlist_no: number;
 };
 
+/** 채널정보 요청 */
+export type ChannelInfoReq = {
+  channel_id: string;
+};
+
 /** 메시지 타입 */
 export type MessageType = {
   /** 채널 시청자 수 */
@@ -121,6 +126,13 @@ export type MessageType = {
   CHANNEL_USER_ROLE_CHANGE: {
     user_id: string;
     role_id: RoleIdType;
+  };
+
+  /** 채널 정보 */
+  CHANNEL_INFO: {
+    playlist_no: number;
+    playtime: number;
+    playing: boolean;
   };
 };
 
