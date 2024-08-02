@@ -42,6 +42,7 @@ const Player = () => {
   };
 
   const onEnded = () => {
+    if (!permission.video_play) return;
     nextVideo();
   };
 
