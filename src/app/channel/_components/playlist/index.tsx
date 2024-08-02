@@ -9,7 +9,6 @@ import { Input } from '@/components/ui/input';
 import { GetChannelDetailResponse } from '@/services/channel/type';
 import { getPlaylist } from '@/services/playlist';
 import { nextVideo, send } from '@/services/websocket';
-import { useUserStore } from '@/stores/User';
 import { usePermissionStore } from '@/stores/usePermissionStore';
 import { useSocketStore } from '@/stores/useSocketStore';
 import { ListVideo, Plus, Trash2 } from 'lucide-react';
@@ -48,7 +47,6 @@ const Playlist = ({ channel }: Props) => {
 
   /** 비디오 재생 */
   const handlePlay = (index: number) => {
-    
     if (!permission.video_play) return;
     nextVideo(index);
   };
