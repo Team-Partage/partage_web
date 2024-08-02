@@ -1,4 +1,4 @@
-import { stomp } from '.';
+import { stomp } from './stompClient';
 import {
   UserChatReq,
   VideoPlayReq,

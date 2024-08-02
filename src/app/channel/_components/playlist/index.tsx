@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { GetChannelDetailResponse } from '@/services/channel/type';
 import { getPlaylist } from '@/services/playlist';
-import send from '@/services/websocket/send';
+import { nextVideo, send } from '@/services/websocket';
+import { useUserStore } from '@/stores/User';
 import { usePermissionStore } from '@/stores/usePermissionStore';
 import { useSocketStore } from '@/stores/useSocketStore';
 import { ListVideo, Plus, Trash2 } from 'lucide-react';
@@ -47,11 +48,9 @@ const Playlist = ({ channel }: Props) => {
 
   /** 비디오 재생 */
   const handlePlay = (index: number) => {
+    
     if (!permission.video_play) return;
-    send('VIDEO_PLAY', {
-      playlist_no: playlist[index].playlist_no,
-      playing: true,
-    });
+    nextVideo(index);
   };
 
   /** 플레이리스트 삭제 */
