@@ -31,6 +31,15 @@ const PasswordCheck = () => {
 
   const onSubmit = async (data: z.infer<typeof PasswordSchema>) => {
     modalRef.current?.closeModal();
+
+    if (data.password === data.newPassword) {
+      form.setError('newPassword', {
+        type: 'manual',
+        message: '현재 비밀번호와 새 비밀번호가 같아요.',
+      });
+      return;
+    }
+
     try {
       const dto = { current_password: data.password, new_password: data.newPassword };
       await ChangePassword(dto);
