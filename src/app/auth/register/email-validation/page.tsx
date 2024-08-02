@@ -2,10 +2,11 @@
 
 import { useRef, useState } from 'react';
 
-import AlertModalRenderer from '@/components/AlertModalRenderer';
+import AlertModalRenderer, { AlertModalImperativeHandle } from '@/components/AlertModalRenderer';
 import { Button } from '@/components/ui/button';
 import { CardDescription, CardTitle } from '@/components/ui/card';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
+import { CustomError } from '@/lib/customError';
 import { CheckEmailNumber, SendEmail, SignUp } from '@/services/user';
 import { useUserStore } from '@/stores/User';
 import { AlertContents } from '@/utils/alertContents';
@@ -14,9 +15,13 @@ const EmailValidationPage = () => {
   const { username, nickname, email, password, clearUser } = useUserStore();
   const [validationNumber, setValidationNumber] = useState('');
   const [isError, setIsError] = useState(false);
-  const modalRef = useRef({ openModal: () => {} });
+  const modalRef = useRef<AlertModalImperativeHandle>({
+    openModal: () => {},
+    closeModal: () => {},
+  });
 
   const onchange = (value: string) => {
+    setIsError(false);
     setValidationNumber(value);
   };
 
@@ -26,7 +31,7 @@ const EmailValidationPage = () => {
     try {
       await SendEmail({ email });
     } catch (err) {
-      alert('다시 인증메일 재발송 해주세요.');
+      modalRef.current.openModal('다시 인증메일 재발송 해주세요.');
     }
   };
 
@@ -37,15 +42,22 @@ const EmailValidationPage = () => {
   const onSubmit = async () => {
     if (validationNumber) {
       try {
-        const response = await CheckEmailNumber({ email, auth_number: validationNumber });
-        if (response) {
-          await SignUp({ email, username, nickname, password });
-          modalRef.current?.openModal();
-          clearUser();
+        try {
+          await CheckEmailNumber({ email, auth_number: validationNumber });
+        } catch (err) {
+          const error = err as CustomError;
+          if (error.response?.code === 400) {
+            setIsError(true);
+          }
         }
+        await SignUp({ email, username, nickname, password });
+        clearUser();
+        modalRef.current.openModal();
       } catch (err) {
-        setIsError(true);
-        setValidationNumber('');
+        const error = err as CustomError;
+        if (error.response?.code === 400) {
+          modalRef.current.openModal(AlertContents.ERROR);
+        }
       }
     }
   };
@@ -81,18 +93,17 @@ const EmailValidationPage = () => {
         </div>
       </div>
       <div>
-        <AlertModalRenderer type="AlertModal" content={AlertContents.REGISTER}>
-          <Button
-            className="w-full"
-            size="lg"
-            variant="active"
-            type="submit"
-            disabled={isError || validationNumber.length < 6}
-            onClick={onSubmit}
-          >
-            인증 확인
-          </Button>
-        </AlertModalRenderer>
+        <AlertModalRenderer type="AlertModal" content={AlertContents.REGISTER} />
+        <Button
+          className="w-full"
+          size="lg"
+          variant="active"
+          type="submit"
+          disabled={isError || validationNumber.length < 6}
+          onClick={onSubmit}
+        >
+          인증 확인
+        </Button>
         <Button className="mt-4 w-full hover:bg-neutral-500" size="lg" onClick={handleGoBack}>
           회원 가입 페이지로 돌아가기
         </Button>

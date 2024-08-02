@@ -11,10 +11,10 @@ import { AlertContents } from '@/utils/alertContents';
 import { hexToColorName } from '@/utils/hexToColorName';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { X } from 'lucide-react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
-import AlertModalRenderer from '../AlertModalRenderer';
+import AlertModalRenderer, { AlertModalImperativeHandle } from '../AlertModalRenderer';
 import ColorChips from '../ColorChips';
 import TagInput from '../TagInput';
 import { Button } from '../ui/button';
@@ -26,9 +26,11 @@ import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Switch } from '../ui/switch';
 
 const EditChannelModal = () => {
-  const router = useRouter();
   const params = useParams() as { channel_id: string };
-  const modalRef = useRef({ openModal: () => {} });
+  const modalRef = useRef<AlertModalImperativeHandle>({
+    openModal: () => {},
+    closeModal: () => {},
+  });
   const [channel, setChannel] = useState<Channel>();
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const form = useForm<z.infer<typeof ChannelSchema>>({
@@ -75,8 +77,6 @@ const EditChannelModal = () => {
       name: data.channelName,
     }; // type 제외 다 빈값 가능
     await editChannel(params.channel_id, dto);
-    // TODO 모달만 닫히도록
-    router.back();
   };
 
   const handleDeleteChannel = async () => {

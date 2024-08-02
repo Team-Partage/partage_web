@@ -1,7 +1,6 @@
-'use server';
-
 import { DOMAIN } from '@/constants/domains';
 import { fetcher } from '@/lib/fetcher';
+import { getSession } from 'next-auth/react';
 
 import { auth } from '@/auth';
 
@@ -15,7 +14,11 @@ import {
 
 /** 회원 정보 조회 */
 export const UserInfo = async () => {
-  const session = await auth();
+  let session = null;
+  if (typeof window === 'undefined') {
+    session = await auth();
+  } else session = await getSession();
+
   const accesstoken = session?.user.accessToken;
   const data = await fetcher.get<GetUserResponse>(
     `${DOMAIN.USER}/me`,
@@ -40,7 +43,11 @@ export const SignUp = async (params: SignUpRequest) => {
 
 //** 회원 탈퇴 */
 export const Withdrawal = async () => {
-  const session = await auth();
+  let session = null;
+  if (typeof window === 'undefined') {
+    session = await auth();
+  } else session = await getSession();
+
   const accesstoken = session?.user.accessToken;
   const data = await fetcher.delete(`${DOMAIN.USER}/me`, {
     headers: {
@@ -53,7 +60,11 @@ export const Withdrawal = async () => {
 
 //** 비밀번호 수정 */
 export const ChangePassword = async (params: ChangePasswordRequest) => {
-  const session = await auth();
+  let session = null;
+  if (typeof window === 'undefined') {
+    session = await auth();
+  } else session = await getSession();
+  
   const accesstoken = session?.user.accessToken;
   const data = await fetcher.patch(`${DOMAIN.USER}/me/password`, params, {
     headers: {

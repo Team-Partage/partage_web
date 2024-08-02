@@ -12,4 +12,5 @@ export const AlertContents = {
   다른 채널을 이용해 주세요!`,
   DELETECHANNEL: '정말 채널을 삭제할까요?',
   ERROR: '에러가 발생했습니다. 다시 시도해주세요.',
+  CHANNELSETTING: '채널설정이 완료되었어요.',
 };
