@@ -45,6 +45,7 @@ type Action =
   | { type: 'SET_VIDEO'; payload: Partial<VideoType> }
   | { type: 'SET_VIDEO_TIME'; payload: number }
   | { type: 'SET_CONNECTED'; payload: boolean }
+  | { type: 'CHANNEL_INFO'; payload: MessageType['CHANNEL_INFO'] }
   | { type: 'RESET_STORE' };
 
 export const useSocketStore = create<SocketStore>((set) => ({
@@ -153,6 +154,20 @@ export const useSocketStore = create<SocketStore>((set) => ({
       case 'SET_VIEWER':
         set({ viewer: action.payload });
         break;
+
+      case 'CHANNEL_INFO': {
+        const { playlist_no, is_playing, playtime } = action.payload as MessageType['CHANNEL_INFO'];
+
+        set((state) => {
+          const target = state.playlist.find((video) => video.playlist_no === playlist_no);
+
+          if (!target) return { video: state.video };
+          return {
+            video: { playlist_no, playing: is_playing, playtime: playtime, url: target.url },
+          };
+        });
+        break;
+      }
 
       case 'SET_CONNECTED':
         set({ isConnected: action.payload });
