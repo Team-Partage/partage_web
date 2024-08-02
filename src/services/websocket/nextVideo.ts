@@ -18,8 +18,7 @@ const nextVideo = (index?: number) => {
 
   const { playlist_no } = playlist[nextIndex];
 
-  send('VIDEO_PLAY', { playlist_no, playing: true });
-  send('VIDEO_MOVE', { playlist_no, playtime: 0 });
+  send('VIDEO_PLAY', { playlist_no, playing: true, playtime: 0 });
 };
 
 export default nextVideo;

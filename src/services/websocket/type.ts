@@ -28,6 +28,7 @@ export type UserLeaveReq = {
 /** 영상 재생/일시정지 */
 export type VideoPlayReq = {
   playlist_no: number;
+  playtime: number;
   playing: boolean;
 };
 
@@ -108,6 +109,7 @@ export type MessageType = {
     playlist_no: number;
     url: string;
     playing: boolean;
+    playtime: number;
   };
 
   /** 비디오 이동(시간) */
