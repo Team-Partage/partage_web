@@ -20,6 +20,8 @@ import { Button } from './ui/button';
 function Header() {
   const router = useRouter();
   const { data: session } = useSession();
+
+  const profileImage = useUserStore((state) => state.profile_image);
   const clearUser = useUserStore((state) => state.clearUser);
 
   const handleLogout = () => {
@@ -55,7 +57,7 @@ function Header() {
               <Avatar className="group size-[40px] cursor-pointer tablet:size-[48px] desktop:size-[54px]">
                 <AvatarImage
                   className="object-cover"
-                  src={session.user.profile_image || '/default-profile-image.png'}
+                  src={profileImage || '/default-profile-image.png'}
                 />
                 <AvatarFallback>profile_image</AvatarFallback>
               </Avatar>
