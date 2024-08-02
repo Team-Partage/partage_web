@@ -5,7 +5,7 @@ import { User } from '../user/type';
 export type ChannelType = 'PUBLIC' | 'PRIVATE';
 
 /** 권한 타입 */
-export type RoleIdType = 'C0000' | 'C0100' | 'C0200' | 'C0300';
+export type RoleIdType = 'C0000' | 'C0100' | 'C0200';
 
 /** 채널 유저 타입 */
 export type ChannelUserType = {
@@ -19,7 +19,7 @@ export type ChannelUserType = {
 
 /** 채널 유저 역할 */
 export type ChannelUser = {
-  role_id: string;
+  role_id: RoleIdType;
 } & Omit<User, 'username'>;
 
 /** 채널 */
@@ -44,9 +44,9 @@ export type SearchedChannel = {
 };
 
 export type Owner = {
+  role_id: RoleIdType;
   user_id: string;
   email: string;
-  username: string;
   nickname: string;
   profile_color: string | null;
   profile_image: string | null;
@@ -54,15 +54,15 @@ export type Owner = {
 
 /** 채널 권한 */
 export type ChannelPermission = {
-  playlist_add: string;
-  playlist_remove: string;
-  playlist_move: string;
-  video_play: string;
-  video_seek: string;
-  video_skip: string;
-  chat_send: string;
-  chat_delete: string;
-  ban: string;
+  playlist_add: RoleIdType;
+  playlist_remove: RoleIdType;
+  playlist_move: RoleIdType;
+  video_play: RoleIdType;
+  video_seek: RoleIdType;
+  video_skip: RoleIdType;
+  chat_send: RoleIdType;
+  chat_delete: RoleIdType;
+  ban: RoleIdType;
 };
 
 /** 채널 생성 Req */
@@ -100,6 +100,7 @@ export type GetChannelSearchResponse = {
 export type GetChannelDetailResponse = {
   channel: Channel;
   owner: Owner;
+  user: ChannelUserType;
   playlists: Playlist[];
   channel_permissions: ChannelPermission;
 };
