@@ -1,13 +1,16 @@
 import ModalRenderer from '@/components/ModalRenderer';
 import { Button } from '@/components/ui/button';
 import { getChannelDetail } from '@/services/channel';
-import { Settings, Share2 } from 'lucide-react';
+import { Share2 } from 'lucide-react';
 import Image from 'next/image';
 
 import Chatting from '../_components/chatting';
 import Player from '../_components/player';
+import ChannelSetting from '../_components/player/ChannelSetting';
+import ChannelShare from '../_components/player/ChannelShare';
 import Playlist from '../_components/playlist';
 import SocketConnector from '../_components/SocketConnector';
+
 
 interface Props {
   params: { channel_id: string };
@@ -55,16 +58,8 @@ const page = async ({ params }: Props) => {
 
             {/** 설정 및 링크 공유 */}
             <div className="mt-2 flex gap-2 tablet:mt-0">
-              <ModalRenderer type="ShareChannelModal">
-                <Button className="rounded-full bg-neutral-500" size="icon">
-                  <Share2 />
-                </Button>
-              </ModalRenderer>
-              <ModalRenderer type="EditChannelModal">
-                <Button className="rounded-full bg-neutral-500" size="icon">
-                  <Settings />
-                </Button>
-              </ModalRenderer>
+              <ChannelShare />
+              <ChannelSetting />
             </div>
           </div>
         </section>
