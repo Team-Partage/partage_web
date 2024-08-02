@@ -11,8 +11,8 @@ interface Props {
 }
 
 export interface ModalImperativeHandle {
-  openModal?: () => void;
-  closeModal?: () => void;
+  openModal: () => void;
+  closeModal: () => void;
 }
 
 // 만든 모달을 추가해주세요.

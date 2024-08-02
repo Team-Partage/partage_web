@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { z } from 'zod';
 
-import AlertModalRenderer from '@/components/AlertModalRenderer';
+import AlertModalRenderer, { AlertModalImperativeHandle } from '@/components/AlertModalRenderer';
 import ColorChips from '@/components/ColorChips';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,7 @@ import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { CustomError } from '@/lib/customError';
 import { MypageSchema } from '@/schemas/userSchema';
 import {
   CheckNickname,
@@ -47,7 +48,10 @@ const EditMyInfo = () => {
   const fileRef = useRef<HTMLInputElement>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
   const [fileData, setFileData] = useState<File>();
-  const modalRef = useRef({ openModal: () => {}, closeModal: () => {} });
+  const modalRef = useRef<AlertModalImperativeHandle>({
+    openModal: () => {},
+    closeModal: () => {},
+  });
 
   const form = useForm<z.infer<typeof MypageSchema>>({
     resolver: zodResolver(MypageSchema),
@@ -151,7 +155,8 @@ const EditMyInfo = () => {
   };
 
   const onSubmit = async (data: z.infer<typeof MypageSchema>) => {
-    modalRef.current?.closeModal();
+    const { openModal } = modalRef.current;
+
     const requests = [];
     if (watchedNickname !== nickname) {
       try {
@@ -180,7 +185,7 @@ const EditMyInfo = () => {
 
     try {
       await Promise.all(requests);
-      modalRef.current?.openModal();
+      openModal();
 
       const data = await UserInfo();
       const { user } = data;
@@ -190,7 +195,10 @@ const EditMyInfo = () => {
         setProfileImage(user.profile_image);
       }
     } catch (err) {
-      console.log(err);
+      const error = err as CustomError;
+      if (error.response?.code === 404) {
+        openModal(AlertContents.ERROR);
+      }
     }
   };
 
@@ -279,20 +287,23 @@ const EditMyInfo = () => {
                   />
                 </div>
               </div>
-              <AlertModalRenderer ref={modalRef} type="AlertModal" content={AlertContents.PROFILE}>
-                <Button
-                  type="submit"
-                  disabled={
-                    !form.formState.isValid ||
-                    (watchedNickname === nickname && selectedColor === profile_color && !fileData)
-                  }
-                  variant="active"
-                  size="lg"
-                  className="mt-[56px] w-full"
-                >
-                  저장
-                </Button>
-              </AlertModalRenderer>
+              <AlertModalRenderer
+                ref={modalRef}
+                type="AlertModal"
+                content={AlertContents.PROFILE}
+              />
+              <Button
+                type="submit"
+                disabled={
+                  !form.formState.isValid ||
+                  (watchedNickname === nickname && selectedColor === profile_color && !fileData)
+                }
+                variant="active"
+                size="lg"
+                className="mt-[56px] w-full"
+              >
+                저장
+              </Button>
             </form>
           </Form>
         </CardContent>

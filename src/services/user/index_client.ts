@@ -1,4 +1,5 @@
 import { DOMAIN } from '@/constants/domains';
+import { CustomError } from '@/lib/customError';
 import { fetcher } from '@/lib/fetcher';
 import { getSession } from 'next-auth/react';
 
@@ -29,14 +30,25 @@ export const EditProfileImage = async (params: FormData) => {
   const session = await getSession();
   const accesstoken = session?.user.accessToken;
 
-  const data = await fetch(`${DOMAIN.USER}/me/profile-image`, {
-    method: 'POST',
-    body: params,
-    headers: { Authorization: `Bearer ${accesstoken}` },
-  });
+  try {
+    const data = await fetch(`${DOMAIN.USER}/me/profile-image`, {
+      method: 'POST',
+      body: params,
+      headers: { Authorization: `Bearer ${accesstoken}` },
+    });
 
-  await revalidate('channel');
-  return data;
+    if (!data.ok) {
+      const error = new CustomError(`${data.status} ${data.statusText}`);
+      error.stack = `${error.stack}`;
+      error.response = { code: data.status, status: data.statusText, message: data.statusText };
+      throw error;
+    }
+
+    await revalidate('channel');
+    return data;
+  } catch (error) {
+    return Promise.reject(error as CustomError);
+  }
 };
 
 //** 유저정보 */

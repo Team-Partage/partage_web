@@ -42,7 +42,7 @@ export default function ChatHeader({ isFold, setIsFold, channelId }: ChatHeaderP
             채팅
           </h2>
           <div
-            className={`-mt-0.5 flex items-center gap-1 rounded-md px-2 py-0.5 text-neutral-200 ${isFold && 'desktop:hidden'}`}
+            className={`-mt-0.5 flex cursor-pointer items-center gap-1 rounded-md px-2 py-0.5 text-neutral-200 ${isFold && 'desktop:hidden'}`}
             onClick={() => setShowChannelUsersModal(true)}
           >
             <Image

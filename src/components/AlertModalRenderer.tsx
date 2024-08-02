@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef, useImperativeHandle, useState } from 'react';
+import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 
 import AlertModal from '@/components/modal/AlertModal';
 import { AlertDialog, AlertDialogTrigger } from '@/components/ui/alert-dialog';
@@ -11,9 +11,9 @@ interface Props {
   content: string;
 }
 
-export interface ModalImperativeHandle {
-  openModal?: () => void;
-  closeModal?: () => void;
+export interface AlertModalImperativeHandle {
+  openModal: (content?: string) => void;
+  closeModal: () => void;
 }
 
 // 만든 모달을 추가해주세요.
@@ -41,14 +41,20 @@ type ModalType = keyof typeof ModalComponents;
 const AlertModalRenderer = forwardRef(
   (
     { children, type, content }: Props,
-    modalRef: React.ForwardedRef<ModalImperativeHandle | undefined>,
+    modalRef: React.ForwardedRef<AlertModalImperativeHandle | undefined>,
   ) => {
     const [isOpen, setIsOpen] = useState<boolean | undefined>();
+
+    const message = useRef<string>(content);
 
     const Modal = ModalComponents[type];
 
     useImperativeHandle(modalRef, () => ({
-      openModal: () => {
+      openModal: (content?: string) => {
+        if (content) {
+          message.current = content;
+        }
+
         setIsOpen(true);
       },
       closeModal: () => {
@@ -59,7 +65,7 @@ const AlertModalRenderer = forwardRef(
     return (
       <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
         <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
-        {<Modal content={content} />}
+        {<Modal content={message.current} />}
       </AlertDialog>
     );
   },

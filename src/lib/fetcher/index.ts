@@ -111,7 +111,7 @@ class Fetcher {
       const error = new CustomError(`${res.code}, ${res.status} ${res.message}`);
       error.stack = `${error.stack}`;
       error.response = res;
-      throw error;
+      return Promise.reject(error);
     }
     return response.json() as Promise<T>;
   }
