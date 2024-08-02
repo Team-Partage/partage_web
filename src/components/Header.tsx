@@ -23,7 +23,7 @@ function Header() {
   const clearUser = useUserStore((state) => state.clearUser);
 
   const handleLogout = () => {
-    signOut({ redirect: false }).then(() => router.replace('/'));
+    signOut();
     clearUser();
   };
 

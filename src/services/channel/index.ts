@@ -2,6 +2,8 @@ import { DOMAIN } from '@/constants/domains';
 import { fetcher } from '@/lib/fetcher';
 import { getSession } from 'next-auth/react';
 
+import { auth } from '@/auth';
+
 import {
   CreateChannelReq,
   CreateChannelResponse,
@@ -48,10 +50,20 @@ export const getSearchChannelList = async (params: {
 
 /** 채널 상세 정보 조회 */
 export const getChannelDetail = async (channelId: string) => {
+  let session = null;
+  if (typeof window === 'undefined') {
+    session = await auth();
+  } else session = await getSession();
+
   const data = await fetcher.get<GetChannelDetailResponse>(
     `${DOMAIN.CHANNEL}/${channelId}`,
     {},
-    { cache: 'no-store' },
+    {
+      cache: 'no-store',
+      headers: {
+        Authorization: `Bearer ${session?.user.accessToken}`,
+      },
+    },
   );
   return data;
 };

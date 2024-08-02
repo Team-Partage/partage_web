@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { GetChannelDetailResponse } from '@/services/channel/type';
 import { getPlaylist } from '@/services/playlist';
 import send from '@/services/websocket/send';
-import { useUserStore } from '@/stores/User';
+import { usePermissionStore } from '@/stores/usePermissionStore';
 import { useSocketStore } from '@/stores/useSocketStore';
 import { ListVideo, Plus, Trash2 } from 'lucide-react';
 import Image from 'next/image';
@@ -20,13 +20,12 @@ import PlaylistCard from './PlaylistCard';
 
 interface Props extends GetChannelDetailResponse {}
 
-const Playlist = ({ channel, owner }: Props) => {
+const Playlist = ({ channel }: Props) => {
   /** PROPS */
   const { channel_id } = channel;
-  const { user_id: owner_id } = owner;
 
   /** STORE */
-  const user_id = useUserStore((state) => state.user_id);
+  const permission = usePermissionStore((state) => state.permission);
   const playlist_no = useSocketStore((state) => state.video.playlist_no);
   const { playlist, setStore } = useSocketStore(
     useShallow((state) => ({ playlist: state.playlist, setStore: state.setSocketStore })),
@@ -36,9 +35,6 @@ const Playlist = ({ channel, owner }: Props) => {
   const [isFold, setIsFold] = useState(false);
   const [hoveredItem, setHoveredItem] = useState<number | null>(null);
   const [url, setUrl] = useState('');
-
-  //! 임시 권한 처리
-  const isOwner = owner_id === user_id;
 
   useEffect(() => {
     const fetch = async () => {
@@ -51,29 +47,29 @@ const Playlist = ({ channel, owner }: Props) => {
 
   /** 비디오 재생 */
   const handlePlay = (index: number) => {
-    if (!isOwner) return;
+    if (!permission.video_play) return;
     send('VIDEO_PLAY', {
       playlist_no: playlist[index].playlist_no,
       playing: true,
     });
   };
 
-  /** 비디오 삭제 */
+  /** 플레이리스트 삭제 */
   const handleDelete = (id: number) => {
-    if (!isOwner) return;
+    if (!permission.playlist_remove) return;
     send('PLAYLIST_REMOVE', { playlist_no: id });
   };
 
-  /** 비디오 추가 */
+  /** 플레이리스트 추가 */
   const handleAddPlaylist = () => {
-    if (url.trim() === '') return;
+    if (!permission.playlist_add && url.trim() === '') return;
     send('PLAYLIST_ADD', { url });
     setUrl('');
   };
 
   /** 드래그앤드랍 */
   const onDragEnd = ({ source, destination }: DropResult) => {
-    if (!isOwner || !destination) return;
+    if (!permission.playlist_move || !destination) return;
 
     setStore({
       type: 'PLAYLIST_MOVE',
@@ -134,7 +130,7 @@ const Playlist = ({ channel, owner }: Props) => {
                   key={item.playlist_no}
                   draggableId={item.playlist_no.toString()}
                   index={index}
-                  isDragDisabled={!isOwner}
+                  isDragDisabled={!permission.playlist_move}
                 >
                   {(provided) => (
                     <li
@@ -147,10 +143,10 @@ const Playlist = ({ channel, owner }: Props) => {
                       }}
                       onMouseEnter={() => setHoveredItem(item.playlist_no)}
                       onMouseLeave={() => setHoveredItem(null)}
-                      className={`relative h-[66px] rounded-lg border p-3 transition-colors desktop:w-[320px] ${isOwner && 'hover:border-main-skyblue hover:bg-main-skyblue/20'} ${playlist_no === item.playlist_no ? 'border-main-skyblue bg-main-skyblue/20' : 'border-transparent'}`}
+                      className={`relative h-[66px] rounded-lg border p-3 transition-colors desktop:w-[320px] ${permission.playlist_move && 'hover:border-main-skyblue hover:bg-main-skyblue/20'} ${playlist_no === item.playlist_no ? 'border-main-skyblue bg-main-skyblue/20' : 'border-transparent'}`}
                     >
                       <PlaylistCard {...item} />
-                      {isOwner && hoveredItem === item.playlist_no && (
+                      {permission.playlist_move && hoveredItem === item.playlist_no && (
                         <div className="absolute right-2 top-1/2 flex -translate-y-1/2 gap-4">
                           <Button
                             size="icon"
@@ -175,7 +171,7 @@ const Playlist = ({ channel, owner }: Props) => {
       </DragDropContext>
 
       {/** URL INPUT */}
-      {isOwner && (
+      {permission.playlist_add && (
         <div
           className={`pb-3 desktop:fixed desktop:bottom-0 desktop:w-[320px] ${isFold ? 'hidden' : ''}`}
         >
