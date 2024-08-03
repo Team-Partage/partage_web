@@ -31,11 +31,14 @@ export const EditProfileImage = async (params: FormData) => {
   const accesstoken = session?.user.accessToken;
 
   try {
-    const data = await fetch(`${DOMAIN.USER}/me/profile-image`, {
-      method: 'POST',
-      body: params,
-      headers: { Authorization: `Bearer ${accesstoken}` },
-    });
+    const data = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}${DOMAIN.USER}/me/profile-image`,
+      {
+        method: 'POST',
+        body: params,
+        headers: { Authorization: `Bearer ${accesstoken}` },
+      },
+    );
 
     if (!data.ok) {
       const error = new CustomError(`${data.status} ${data.statusText}`);
