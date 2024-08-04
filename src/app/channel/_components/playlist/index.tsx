@@ -10,7 +10,6 @@ import { GetChannelDetailResponse } from '@/services/channel/type';
 import { getPlaylist } from '@/services/playlist';
 import { nextVideo, send } from '@/services/websocket';
 import { usePermissionStore } from '@/stores/usePermissionStore';
-import { useUserStore } from '@/stores/User';
 import { useSocketStore } from '@/stores/useSocketStore';
 import { ListVideo, Plus, Trash2 } from 'lucide-react';
 import Image from 'next/image';
@@ -44,7 +43,7 @@ const Playlist = ({ channel }: Props) => {
     };
 
     fetch();
-  }, [channel_id]);
+  }, [channel_id, setStore]);
 
   /** 비디오 재생 */
   const handlePlay = (index: number) => {

@@ -11,7 +11,6 @@ import ChannelShare from '../_components/player/ChannelShare';
 import Playlist from '../_components/playlist';
 import SocketConnector from '../_components/SocketConnector';
 
-
 interface Props {
   params: { channel_id: string };
 }
@@ -26,7 +25,7 @@ const page = async ({ params }: Props) => {
       <SocketConnector {...res} />
       <div className="flex size-full flex-col justify-between desktop:flex-row ">
         {/** 플레이어 */}
-        <section className="mt-10 w-full desktop:order-2 largeDesktop:w-[1430px] largeDesktop:min-w-[1096px]">
+        <section className="mt-10 w-full desktop:order-2">
           <Player />
 
           {/** 채널 정보 */}

@@ -98,6 +98,10 @@ const SocketConnector = ({ channel, user, channel_permissions }: Props) => {
           setStore({ type: 'SET_VIDEO', payload: body.data });
           break;
 
+        case 'VIDEO_MOVE':
+          setStore({ type: 'SET_VIDEO', payload: body.data });
+          break;
+
         case 'CHANNEL_PERMISSION_CHANGE':
           setChannelPermission(body.data);
           break;

@@ -7,7 +7,7 @@ const nextVideo = (index?: number) => {
 
   let nextIndex;
 
-  if (index) {
+  if (index !== undefined) {
     nextIndex = index;
   } else {
     nextIndex = playlist.findIndex((item) => item.playlist_no === video.playlist_no) + 1;

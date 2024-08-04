@@ -28,7 +28,7 @@ const initialData: Omit<SocketStore, 'setIsConnected' | 'resetStore' | 'setSocke
   userLeave: { user_id: '', nickname: '' },
   playlist: [],
   viewer: { anonymous_users: 0, login_users: 0, total_users: 0 },
-  video: { playlist_no: -1, playing: false, playtime: 0, url: '' },
+  video: { playlist_no: -1, playing: true, playtime: 0, url: '' },
   isConnected: false,
 };
 
