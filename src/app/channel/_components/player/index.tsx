@@ -50,10 +50,10 @@ const Player = () => {
   }, []);
 
   useEffect(() => {
-    if (videoPlayerRef.current) {
+    if (videoPlayerRef.current && ready) {
       videoPlayerRef.current.seekTo(video.playtime);
     }
-  }, [video.playtime]);
+  }, [ready, video.playtime]);
 
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
