@@ -45,7 +45,7 @@ const Player = () => {
     if (videoPlayerRef.current && ready) {
       videoPlayerRef.current.seekTo(video.playtime);
     }
-  }, [ready]);
+  }, [ready, video.playtime]);
 
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
