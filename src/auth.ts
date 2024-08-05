@@ -1,5 +1,4 @@
 import { fetcher } from '@/lib/fetcher';
-import { cookies } from 'next/headers';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
@@ -16,6 +15,9 @@ export const {
     signIn: '/auth/login',
     newUser: '/auth/register',
   },
+  session: {
+    maxAge: 24 * 60 * 60,
+  },
   callbacks: {
     jwt({ token, user }) {
       return { ...token, ...user };
@@ -24,6 +26,7 @@ export const {
       return { ...session, user: { ...token } };
     },
   },
+
   providers: [
     CredentialsProvider({
       async authorize(credentials) {
@@ -34,19 +37,12 @@ export const {
           password: credentials.password,
         });
 
-        const accessToken = authResponse['access_token'];
-
-        // if (accessToken) {
-        //   // 브라우저에 쿠키를 심어주기
-        //   cookies().set('access_token', accessToken, {
-        //     httpOnly: true,
-        //   });
-        // }
-
-        if (!authResponse) {
+        if (!authResponse.user_id) {
+          throw new Error('Wrong Email or Password');
           return null;
         }
 
+        const accessToken = authResponse['access_token'];
         const myInfo = await fetcher.get<GetUserResponse>(
           `${DOMAIN.USER}/me`,
           {},
@@ -58,7 +54,6 @@ export const {
           },
         );
         const userData = myInfo['user'];
-
         const user = { ...userData, accessToken };
         return user;
       },

@@ -1,11 +1,12 @@
 'use client';
 
+import { useUserStore } from '@/stores/User';
 import { getNoChannelText } from '@/utils/getNoChannelText';
 import { PAGE_ROUTE } from '@/utils/route';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
 
+import ModalRenderer from './ModalRenderer';
 import { Button } from './ui/button';
 
 interface ChannelCreatorBoxProps {
@@ -13,8 +14,7 @@ interface ChannelCreatorBoxProps {
 }
 
 const ChannelCreatorBox = ({ query }: ChannelCreatorBoxProps) => {
-  const { data: session } = useSession();
-  const username = session?.user?.name ?? undefined;
+  const username = useUserStore((state) => state.nickname);
 
   const content = getNoChannelText(query, username);
 
@@ -25,14 +25,16 @@ const ChannelCreatorBox = ({ query }: ChannelCreatorBoxProps) => {
         <br />
         {content && content.text2}
         <div className="flex w-full flex-col items-center gap-4">
-          <Button
-            variant="active"
-            font="medium"
-            className="h-[48px] w-[159px] px-4 base-bold tablet:h-[54px] tablet:w-[220px] desktop:h-[58px] desktop:w-[240px] desktop:medium-bold"
-          >
-            <Plus width={20} height={20} strokeWidth={2} />
-            채널 생성
-          </Button>
+          <ModalRenderer type="CreateChannelModal">
+            <Button
+              variant="active"
+              font="medium"
+              className="h-[48px] w-[159px] px-4 base-bold tablet:h-[54px] tablet:w-[220px] desktop:h-[58px] desktop:w-[240px] desktop:medium-bold"
+            >
+              <Plus width={20} height={20} strokeWidth={2} />
+              채널 생성
+            </Button>
+          </ModalRenderer>
           {query && (
             <Link
               href={PAGE_ROUTE.HOME}

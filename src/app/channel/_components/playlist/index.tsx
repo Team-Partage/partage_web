@@ -1,77 +1,97 @@
 'use client';
+/* eslint-disable import/named */
+// DropResult 인식 못 함
 
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import useSocket from '@/hooks/useSocket';
+import { GetChannelDetailResponse } from '@/services/channel/type';
 import { getPlaylist } from '@/services/playlist';
+import { nextVideo, send } from '@/services/websocket';
+import { usePermissionStore } from '@/stores/usePermissionStore';
 import { useSocketStore } from '@/stores/useSocketStore';
-import { ListVideo, Menu, Plus, Trash2 } from 'lucide-react';
+import { ListVideo, Plus, Trash2 } from 'lucide-react';
 import Image from 'next/image';
+import { DragDropContext, Draggable, DropResult, Droppable } from 'react-beautiful-dnd';
 import { useShallow } from 'zustand/react/shallow';
 
 import PlaylistCard from './PlaylistCard';
 
-interface Props {
-  channelId: string;
-}
+interface Props extends GetChannelDetailResponse {}
 
-const Playlist = ({ channelId }: Props) => {
-  const [isFold, setIsFold] = useState(false);
+const Playlist = ({ channel }: Props) => {
+  /** PROPS */
+  const { channel_id } = channel;
 
-  const { send } = useSocket(channelId);
+  /** STORE */
+  const permission = usePermissionStore((state) => state.permission);
+  const playlist_no = useSocketStore((state) => state.video.playlist_no);
   const { playlist, setStore } = useSocketStore(
     useShallow((state) => ({ playlist: state.playlist, setStore: state.setSocketStore })),
   );
 
+  /** STATE */
+  const [isFold, setIsFold] = useState(false);
   const [hoveredItem, setHoveredItem] = useState<number | null>(null);
-
   const [url, setUrl] = useState('');
 
   useEffect(() => {
     const fetch = async () => {
-      const res = await getPlaylist({ channelId });
-      setStore({ type: 'SET_PLAYLIST', payload: res.playlists });
-
-      res.playlists[0] &&
-        setStore({
-          type: 'SET_VIDEO',
-          payload: {
-            playlist_no: res.playlists[0].playlist_no,
-            playing: false,
-            playtime: 0,
-            url: res.playlists[0].url,
-          },
-        });
+      const res = await getPlaylist({ channelId: channel_id, pageSize: 50 });
+      setStore({ type: 'ADD_PLAYLIST', payload: res.playlists });
     };
-    fetch();
-  }, [channelId]);
 
-  const handleClick = (id: number) => {
-    send('VIDEO_PLAY', { playlist_no: id, playing: true });
+    fetch();
+  }, [channel_id, setStore]);
+
+  /** 비디오 재생 */
+  const handlePlay = (index: number) => {
+    if (!permission.video_play) return;
+    nextVideo(index);
   };
 
+  /** 플레이리스트 삭제 */
+  const handleDelete = (id: number) => {
+    if (!permission.playlist_remove) return;
+    send('PLAYLIST_REMOVE', { playlist_no: id });
+  };
+
+  /** 플레이리스트 추가 */
   const handleAddPlaylist = () => {
-    if (url.trim() === '') return;
+    if (!permission.playlist_add && url.trim() === '') return;
     send('PLAYLIST_ADD', { url });
     setUrl('');
   };
 
-  const handlePlaylistMove = () => {};
+  /** 드래그앤드랍 */
+  const onDragEnd = ({ source, destination }: DropResult) => {
+    if (!permission.playlist_move || !destination) return;
 
-  const handlePlaylistRemove = () => {};
+    setStore({
+      type: 'PLAYLIST_MOVE',
+      payload: {
+        playlist_no: playlist[source.index].playlist_no,
+        sequence: destination.index,
+      },
+    });
+
+    send('PLAYLIST_MOVE', {
+      playlist_no: playlist[source.index].playlist_no,
+      sequence: destination.index,
+    });
+  };
 
   return (
     <section
-      className={`h-full py-5 desktop:order-1 desktop:px-8 ${isFold && 'desktop:px-[22px]'}`}
+      className={`flex flex-col desktop:order-1 desktop:max-h-screen desktop:max-w-[384px] desktop:px-8 ${isFold ? 'desktop:px-[22px]' : 'w-full'}`}
     >
       {/** 헤더 */}
-      <header className={`flex h-[4.1875rem] items-center justify-between shadow-xl `}>
+      <header className={`flex h-[67px] items-center justify-between shadow-xl desktop:h-[90px]`}>
         <div className="flex items-center">
           {/** 플레이리스트 펼치기 버튼 */}
           <button
-            className={`${isFold && 'rounded desktop:p-[10px] desktop:hover:bg-transparent-white-10'}`}
+            className={`${isFold ? 'rounded desktop:p-[10px] desktop:hover:bg-transparent-white-10' : ''}`}
             onClick={() => setIsFold(!isFold)}
             disabled={!isFold}
           >
@@ -94,44 +114,64 @@ const Playlist = ({ channelId }: Props) => {
       </header>
 
       {/** 플레이리스트 */}
-      <div>
-        <ol className={`flex flex-col gap-2 ${isFold && 'hidden'}`}>
-          {playlist?.map((item) => (
-            <li
-              key={item.playlist_no}
-              onClick={() => handleClick(item.playlist_no)}
-              onMouseEnter={() => setHoveredItem(item.playlist_no)}
-              onMouseLeave={() => setHoveredItem(null)}
-              className="relative h-[66px] rounded-lg border border-transparent p-3 transition-colors hover:border-main-skyblue hover:bg-main-skyblue/20 desktop:w-[320px]"
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="playlist">
+          {(provided) => (
+            <ol
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              className={`h-[320px] overflow-y-auto no-scrollbar desktop:h-screen-playList ${isFold ? 'hidden' : ''}`}
             >
-              <PlaylistCard {...item} />
-              {hoveredItem === item.playlist_no && (
-                <div className="absolute right-2 top-1/2 flex -translate-y-1/2 gap-4">
-                  {/** 플레이리스트 이동 */}
-                  <Button
-                    size="icon"
-                    className="size-5 p-0 tablet:size-6"
-                    onClick={() => handlePlaylistMove}
-                  >
-                    <Menu className="text-main-skyblue" />
+              {playlist?.map((item, index) => (
+                <Draggable
+                  key={item.playlist_no}
+                  draggableId={item.playlist_no.toString()}
+                  index={index}
+                  isDragDisabled={!permission.playlist_move}
+                >
+                  {(provided) => (
+                    <li
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handlePlay(index);
+                      }}
+                      onMouseEnter={() => setHoveredItem(item.playlist_no)}
+                      onMouseLeave={() => setHoveredItem(null)}
+                      className={`relative h-[66px] rounded-lg border p-3 transition-colors desktop:w-[320px] ${permission.playlist_move && 'hover:border-main-skyblue hover:bg-main-skyblue/20'} ${playlist_no === item.playlist_no ? 'border-main-skyblue bg-main-skyblue/20' : 'border-transparent'}`}
+                    >
+                      <PlaylistCard {...item} />
+                      {permission.playlist_move && hoveredItem === item.playlist_no && (
+                        <div className="absolute right-2 top-1/2 flex -translate-y-1/2 gap-4">
+                          <Button
+                            size="icon"
+                            className="size-5 p-0 tablet:size-6"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleDelete(item.playlist_no);
+                            }}
+                          >
+                            <Trash2 className="text-main-skyblue" />
+                          </Button>
+                        </div>
+                      )}
+                    </li>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </ol>
+          )}
+        </Droppable>
+      </DragDropContext>
 
-                    {/** 플레이리스트 삭제 */}
-                  </Button>
-                  <Button
-                    size="icon"
-                    className="size-5 p-0 tablet:size-6"
-                    onClick={() => handlePlaylistRemove}
-                  >
-                    <Trash2 className="text-main-skyblue" />
-                  </Button>
-                </div>
-              )}
-            </li>
-          ))}
-        </ol>
-
-        {/** URL INPUT */}
-        <div className={`${isFold && 'hidden'}`}>
+      {/** URL INPUT */}
+      {permission.playlist_add && (
+        <div
+          className={`pb-3 desktop:fixed desktop:bottom-0 desktop:w-[320px] ${isFold ? 'hidden' : ''}`}
+        >
           <Input
             value={url}
             onChange={(e) => {
@@ -144,7 +184,7 @@ const Playlist = ({ channelId }: Props) => {
             }
           />
         </div>
-      </div>
+      )}
     </section>
   );
 };

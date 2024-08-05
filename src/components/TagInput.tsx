@@ -12,18 +12,18 @@ interface Props {
 
 const TagInput = ({ onChange, color, value = '', ...rest }: Props) => {
   const [inputValue, setInputValue] = useState<string>('');
-  const [tags, setTags] = useState<string[]>(value === '' ? [] : value.trim().split(/\s+/));
+  const [tags, setTags] = useState<string[]>(value === '' ? [] : value.trim().split(','));
 
   /** 태그 입력 */
   const handleEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
       /** 태그 길이 및 중복 태그 검사 */
       if (inputValue.length === 0 || tags.includes(inputValue)) {
         setInputValue('');
         return;
       }
       const newTags = [...tags, inputValue];
-      onChange && onChange(newTags.join(' '));
+      onChange && onChange(newTags.join());
       setTags(newTags);
       setInputValue('');
     }
@@ -33,7 +33,7 @@ const TagInput = ({ onChange, color, value = '', ...rest }: Props) => {
   const handleClick = (index: number) => {
     const newTags = tags.filter((_, i) => i !== index);
     setTags(newTags);
-    onChange && onChange(newTags.join(' '));
+    onChange && onChange(newTags.join());
   };
 
   return (

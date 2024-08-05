@@ -1,3 +1,4 @@
+import { ChannelPermission, RoleIdType } from '../channel/type';
 import { Playlist } from '../playlist/type';
 
 /** 채팅 입력 */
@@ -8,9 +9,26 @@ export type UserChatReq = {
   message: string;
 };
 
+/** 채널 입장 */
+export type UserJoinReq = {
+  channel_id: string;
+  sender: string;
+  content: string;
+  type: 'USER_JOIN';
+};
+
+/** 채널 퇴장 */
+export type UserLeaveReq = {
+  channel_id: string;
+  sender: string;
+  content: string;
+  type: 'USER_LEAVE';
+};
+
 /** 영상 재생/일시정지 */
 export type VideoPlayReq = {
   playlist_no: number;
+  playtime: number;
   playing: boolean;
 };
 
@@ -36,6 +54,11 @@ export type PlaylistRemoveReq = {
   playlist_no: number;
 };
 
+/** 채널정보 요청 */
+export type ChannelInfoReq = {
+  channel_id: string;
+};
+
 /** 메시지 타입 */
 export type MessageType = {
   /** 채널 시청자 수 */
@@ -57,12 +80,14 @@ export type MessageType = {
 
   /** 사용자 입장 알림 */
   USER_JOIN: {
-    user_id: string;
+    user_id: string | 'NONE';
+    nickname: string;
   };
 
   /** 사용자 퇴장 알림 */
   USER_LEAVE: {
     user_id: string;
+    nickname: string;
   };
 
   /** 플레이리스트 추가 */
@@ -82,7 +107,9 @@ export type MessageType = {
   /** 비디오 재생 및 일시정지 */
   VIDEO_PLAY: {
     playlist_no: number;
+    url: string;
     playing: boolean;
+    playtime: number;
   };
 
   /** 비디오 이동(시간) */
@@ -93,6 +120,22 @@ export type MessageType = {
 
   /** 재생시간 */
   VIDEO_TIME: number;
+
+  /** 채널 권한 변경 */
+  CHANNEL_PERMISSION_CHANGE: { channel_permissions: ChannelPermission };
+
+  /** 채널 유저역할 변경 */
+  CHANNEL_USER_ROLE_CHANGE: {
+    user_id: string;
+    role_id: RoleIdType;
+  };
+
+  /** 채널 정보 */
+  CHANNEL_INFO: {
+    playlist_no: number;
+    playtime: number;
+    is_playing: boolean;
+  };
 };
 
 export interface MessageBody<T extends keyof MessageType = never> {

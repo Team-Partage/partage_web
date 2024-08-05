@@ -1,14 +1,16 @@
-import { ReactNode, memo } from 'react';
+import { memo } from 'react';
 
 interface ServerMessageProps {
-  children: ReactNode;
+  nickname: string;
+  message: string;
 }
 
-const ServerMessage = ({ children }: ServerMessageProps) => {
+const ServerMessage = ({ nickname, message }: ServerMessageProps) => {
   return (
     <div className="flex w-full justify-center py-3">
       <span className="rounded-full bg-neutral-400 px-4 py-1 text-neutral-100 micro-regular">
-        {children}
+        {nickname}
+        {message}
       </span>
     </div>
   );

@@ -11,10 +11,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { deleteChannel } from '@/services/channel';
 import { Withdrawal } from '@/services/user';
+import { useUserStore } from '@/stores/User';
 import { AlertContents } from '@/utils/alertContents';
 import { PAGE_ROUTE } from '@/utils/route';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import { signOut } from 'next-auth/react';
 
 import { Button } from '../ui/button';
 
@@ -26,6 +29,8 @@ const AlertModal = ({ content }: Props) => {
   const router = useRouter();
   const [cancelWord, setCancelWord] = useState('');
   const [actionWord, setActionWord] = useState('확인');
+  const clearUser = useUserStore((state) => state.clearUser);
+  const params = useParams() as { channel_id: string };
 
   useEffect(() => {
     switch (content) {
@@ -37,6 +42,7 @@ const AlertModal = ({ content }: Props) => {
         setCancelWord('비번 찾기');
         break;
       case AlertContents.DELETECHANNEL:
+        setCancelWord('취소');
         setActionWord('삭제');
         break;
       case AlertContents.NOCHANNEL:
@@ -59,7 +65,15 @@ const AlertModal = ({ content }: Props) => {
   const handleClick = async () => {
     if (content === AlertContents.WITHDRAW) {
       await Withdrawal();
-      router.push('/');
+      signOut({ redirect: false }).then(() => router.replace('/'));
+      clearUser();
+    } else if (content === AlertContents.DELETECHANNEL) {
+      try {
+        await deleteChannel(params.channel_id);
+        router.replace('/');
+      } catch (err) {
+        router.back();
+      }
     }
   };
 

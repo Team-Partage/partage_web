@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 import { z } from 'zod';
 
@@ -9,16 +9,15 @@ import PasswordInput from '@/components/PasswordInput';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Form, FormField } from '@/components/ui/form';
-import { CustomError } from '@/lib/customError';
 import { PasswordSchema } from '@/schemas/userSchema';
-import { EditProfile } from '@/services/user';
-import { EditPasswordRequest } from '@/services/user/type';
+import { ChangePassword } from '@/services/user';
 import { AlertContents } from '@/utils/alertContents';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
 const PasswordCheck = () => {
-  const modalRef = useRef({ openModal: () => {} });
+  const modalRef = useRef({ openModal: () => {}, closeModal: () => {} });
+  const [modalContent, setModalContent] = useState('');
 
   const form = useForm<z.infer<typeof PasswordSchema>>({
     resolver: zodResolver(PasswordSchema),
@@ -31,23 +30,24 @@ const PasswordCheck = () => {
   });
 
   const onSubmit = async (data: z.infer<typeof PasswordSchema>) => {
+    modalRef.current?.closeModal();
+
+    if (data.password === data.newPassword) {
+      form.setError('newPassword', {
+        type: 'manual',
+        message: '현재 비밀번호와 새 비밀번호가 같아요.',
+      });
+      return;
+    }
+
     try {
       const dto = { current_password: data.password, new_password: data.newPassword };
-      await EditProfile<EditPasswordRequest>('password', dto);
-      modalRef.current?.openModal();
-    } catch (err) {
-      // TODO 쿠키 적용하고 에러처리 다시 1. 현재 비번 체크 2. 비밀번호 변경 완료 체크
-      if (err instanceof CustomError) {
-        if (err.response && err.response.code === 400) {
-          form.setError('password', {
-            type: 'manual',
-            message: '현재 비밀번호가 일치하지 않아요.',
-          });
-        } else {
-          throw new Error(`${err}`);
-        }
-      }
+      await ChangePassword(dto);
+      setModalContent(AlertContents.PASSWORDCHANGED);
+    } catch (error) {
+      setModalContent(AlertContents.PASSWORDWRONG);
     }
+    modalRef.current?.openModal();
     form.reset();
   };
 
@@ -97,15 +97,7 @@ const PasswordCheck = () => {
                     )}
                   />
                 </div>
-                <AlertModalRenderer
-                  ref={modalRef}
-                  type="AlertModal"
-                  content={
-                    !form.formState.isValid
-                      ? AlertContents.PASSWORDWRONG
-                      : AlertContents.PASSWORDCHANGED
-                  }
-                >
+                <AlertModalRenderer ref={modalRef} type="AlertModal" content={modalContent}>
                   <Button
                     type="submit"
                     disabled={!form.formState.isValid}

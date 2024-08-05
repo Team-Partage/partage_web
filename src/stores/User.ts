@@ -15,7 +15,7 @@ interface UserStoreType {
   setEmail: (newEmail: string) => void;
   setUsername: (newUsername: string) => void;
   setNickname: (newNickname: string) => void;
-  setProfileColor: (newProfileColor: string | null) => void;
+  setProfileColor: (newProfileColor: string) => void;
   setProfileImage: (newProfileImage: string | null) => void;
   setPassword: (newPassword: string) => void;
   registerUser: (user: SignUpRequest) => void;

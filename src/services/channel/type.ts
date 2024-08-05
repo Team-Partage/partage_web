@@ -4,9 +4,22 @@ import { User } from '../user/type';
 /** 채널 공개 타입 */
 export type ChannelType = 'PUBLIC' | 'PRIVATE';
 
+/** 권한 타입 */
+export type RoleIdType = 'C0000' | 'C0100' | 'C0200';
+
+/** 채널 유저 타입 */
+export type ChannelUserType = {
+  role_id: RoleIdType;
+  user_id: string;
+  email: string;
+  nickname: string;
+  profile_color: null | string;
+  profile_image: string | null;
+};
+
 /** 채널 유저 역할 */
 export type ChannelUser = {
-  role_id: string;
+  role_id: RoleIdType;
 } & Omit<User, 'username'>;
 
 /** 채널 */
@@ -31,9 +44,9 @@ export type SearchedChannel = {
 };
 
 export type Owner = {
+  role_id: RoleIdType;
   user_id: string;
   email: string;
-  username: string;
   nickname: string;
   profile_color: string | null;
   profile_image: string | null;
@@ -41,15 +54,15 @@ export type Owner = {
 
 /** 채널 권한 */
 export type ChannelPermission = {
-  playlist_add: string;
-  playlist_remove: string;
-  playlist_move: string;
-  video_play: string;
-  video_seek: string;
-  video_skip: string;
-  chat_send: string;
-  chat_delete: string;
-  ban: string;
+  playlist_add: RoleIdType;
+  playlist_remove: RoleIdType;
+  playlist_move: RoleIdType;
+  video_play: RoleIdType;
+  video_seek: RoleIdType;
+  video_skip: RoleIdType;
+  chat_send: RoleIdType;
+  chat_delete: RoleIdType;
+  ban: RoleIdType;
 };
 
 /** 채널 생성 Req */
@@ -87,8 +100,15 @@ export type GetChannelSearchResponse = {
 export type GetChannelDetailResponse = {
   channel: Channel;
   owner: Owner;
+  user: ChannelUserType;
   playlists: Playlist[];
   channel_permissions: ChannelPermission;
+};
+
+/** 채널 접속 유저 검색 Res */
+export type GetSearchChannelUserResponse = {
+  page: { cursor: number; per_page: number; total_page: number; total_count: number };
+  users: ChannelUserType[];
 };
 
 /** 채널 생성 Req */
@@ -97,4 +117,10 @@ export type CreateChannelReq = {
   channel_color: string;
   hashtag: string;
   name: string;
+};
+
+/** 채널 접속 유저 목록 조회 Res */
+export type GetChannelUsersResponse = {
+  page: { cursor: number; per_page: number; total_page: number; total_count: number };
+  users: ChannelUserType[];
 };

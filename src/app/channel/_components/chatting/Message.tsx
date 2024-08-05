@@ -3,18 +3,23 @@
 import { memo } from 'react';
 
 import Image from 'next/image';
-import { useSession } from 'next-auth/react';
 
 interface MessageProps {
+  myNickname: string;
   nickname: string;
   profile_color: string;
   profile_image?: string | null;
   message: string;
 }
 
-const Message = ({ nickname, profile_color, profile_image = null, message }: MessageProps) => {
-  const { data: session } = useSession();
-  const isMe = session && session.user?.name === nickname;
+const Message = ({
+  myNickname,
+  nickname,
+  profile_color,
+  profile_image = null,
+  message,
+}: MessageProps) => {
+  const isMe = myNickname === nickname;
   const image = profile_image ?? '/default-profile-image.png';
   const nicknameColor = profile_color ?? '#00FFFF';
 

@@ -61,6 +61,7 @@ const config = {
       borderWidth: { '1': '1px' },
       height: {
         'screen-chatList': 'calc(100vh-238px)',
+        'screen-playList': 'calc(100vh - 256px)',
       },
       backgroundColor: {
         'transparent-white-10': 'rgba(255, 255, 255, 0.1)',
