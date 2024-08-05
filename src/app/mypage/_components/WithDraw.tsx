@@ -2,13 +2,16 @@
 
 import { useRef } from 'react';
 
-import AlertModalRenderer from '@/components/AlertModalRenderer';
+import AlertModalRenderer, { AlertModalImperativeHandle } from '@/components/AlertModalRenderer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { AlertContents } from '@/utils/alertContents';
 
 const WithDraw = () => {
-  const modalRef = useRef({ openModal: () => {} });
+  const modalRef = useRef<AlertModalImperativeHandle>({
+    openModal: () => {},
+    closeModal: () => {},
+  });
 
   const handleClick = async () => {
     modalRef.current?.openModal();

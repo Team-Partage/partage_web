@@ -11,15 +11,12 @@ WORKDIR /usr/src/app
 COPY package.json yarn.lock ./ 
 
 # Dependancy 설치 (새로운 lock 파일 수정 또는 생성 방지)
-RUN yarn --frozen-lockfile 
+RUN yarn --immutable
 
 ###########################################################
 
 # 2단계: next.js 빌드 단계
 FROM node:18-alpine AS builder
-
-# Docker를 build할때 개발 모드 구분용 환경 변수를 명시함
-ARG ENV_MODE 
 
 # 명령어를 실행할 디렉터리 지정
 WORKDIR /usr/src/app
@@ -28,7 +25,6 @@ WORKDIR /usr/src/app
 COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY . .
 
-# 구축 환경에 따라 env 변수를 다르게 가져가야 하는 경우 환경 변수를 이용해서 env를 구분해준다.
 RUN yarn build
 
 ###########################################################
@@ -45,7 +41,7 @@ RUN adduser --system --uid 1001 nextjs
 
 # next.config.js에서 output을 standalone으로 설정하면 
 # 빌드에 필요한 최소한의 파일만 ./next/standalone로 출력이 된다.
-# standalone 결과물에는 public 폴더와 static 폴더 내용은 포함되지 않으므로, 따로 복사를 해준다.
+# standalone 결과물에는 public 폴더 내용은 포함되지 않으므로, 따로 복사를 해준다.
 COPY --from=builder /usr/src/app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /usr/src/app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /usr/src/app/.next/static ./.next/static
@@ -55,6 +51,3 @@ EXPOSE 3000
 
 # node로 애플리케이션 실행
 CMD ["node", "server.js"] 
-
-# standalone으로 나온 결과값은 node 자체적으로만 실행 가능
-# CMD ["npm", "start"]

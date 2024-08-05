@@ -45,6 +45,7 @@
     "react-intersection-observer": "^9.10.3",
     "react-lottie-player": "^2.0.0",
     "react-player": "^2.16.0",
+    "sharp": "^0.33.4",
     "sockjs-client": "^1.6.1",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",

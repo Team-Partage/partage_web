@@ -1,14 +1,6 @@
 'use client';
 
-import {
-  ChangeEvent,
-  KeyboardEventHandler,
-  MouseEventHandler,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import { ChangeEvent, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { nextVideo, send } from '@/services/websocket';
@@ -53,7 +45,7 @@ const Player = () => {
     if (videoPlayerRef.current && ready) {
       videoPlayerRef.current.seekTo(video.playtime);
     }
-  }, [ready, video.playtime]);
+  }, [ready]);
 
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
