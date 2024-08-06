@@ -11,6 +11,7 @@ export const {
   auth,
   signIn,
 } = NextAuth({
+  trustHost: true,
   pages: {
     signIn: '/auth/login',
     newUser: '/auth/register',
