@@ -149,7 +149,7 @@ const Playlist = ({ channel }: Props) => {
                             size="icon"
                             className="size-5 p-0 tablet:size-6"
                             onClick={(e) => {
-                              e.preventDefault();
+                              e.stopPropagation();
                               handleDelete(item.playlist_no);
                             }}
                           >
