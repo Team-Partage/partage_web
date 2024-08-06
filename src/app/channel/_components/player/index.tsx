@@ -45,7 +45,13 @@ const Player = () => {
     if (videoPlayerRef.current && ready) {
       videoPlayerRef.current.seekTo(video.playtime);
     }
-  }, [ready, video.playtime]);
+  }, []);
+
+  useEffect(() => {
+    if (videoPlayerRef.current && ready && Math.abs(played * duration - video.playtime) > 5) {
+      videoPlayerRef.current.seekTo(video.playtime);
+    }
+  }, [duration, played, ready, video.playtime]);
 
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
