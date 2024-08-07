@@ -3,7 +3,7 @@ import { useSocketStore } from '@/stores/useSocketStore';
 import send from './send';
 
 const nextVideo = (index?: number) => {
-  const { playlist, video, setSocketStore } = useSocketStore.getState();
+  const { playlist, video } = useSocketStore.getState();
 
   let nextIndex;
 
@@ -18,10 +18,6 @@ const nextVideo = (index?: number) => {
 
   const { playlist_no } = playlist[nextIndex];
 
-  setSocketStore({
-    type: 'SET_VIDEO',
-    payload: { playlist_no, playing: false, playtime: 0, url: playlist[nextIndex].url },
-  });
   send('VIDEO_PLAY', { playlist_no, playing: true, playtime: 0 });
 };
 
