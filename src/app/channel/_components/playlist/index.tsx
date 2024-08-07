@@ -55,6 +55,7 @@ const Playlist = ({ channel }: Props) => {
   const handleDelete = (id: number) => {
     if (!permission.playlist_remove) return;
     send('PLAYLIST_REMOVE', { playlist_no: id });
+    nextVideo();
   };
 
   /** 플레이리스트 추가 */
