@@ -62,7 +62,7 @@ const Player = () => {
   };
 
   const handlePlayPause = (playing: boolean) => {
-    if (roleId && video.playing !== playing) {
+    if (permission.video_play && video.playing !== playing) {
       const formatedSeconds = Math.floor(played * duration);
       setStore({ type: 'SET_VIDEO', payload: { ...video, playing } });
       send('VIDEO_PLAY', { playlist_no: video.playlist_no, playing, playtime: formatedSeconds });
@@ -70,7 +70,10 @@ const Player = () => {
   };
 
   const handleEnded = () => {
-    nextVideo();
+    setStore({ type: 'SET_VIDEO_TIME', payload: 0 });
+    if (permission.video_play) {
+      nextVideo();
+    }
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -136,7 +139,7 @@ const Player = () => {
             className="h-[3px] w-full rounded"
             type="range"
             min="0"
-            max="1"
+            max="0.9999"
             step="any"
             disabled={!permission.video_play}
             value={played}
