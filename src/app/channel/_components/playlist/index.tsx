@@ -178,6 +178,12 @@ const Playlist = ({ channel }: Props) => {
             onChange={(e) => {
               setUrl(e.target.value);
             }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                setUrl(url);
+                handleAddPlaylist();
+              }
+            }}
             endAdornment={
               <Button size="icon" onClick={handleAddPlaylist}>
                 <Plus />
