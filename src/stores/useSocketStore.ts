@@ -106,7 +106,7 @@ export const useSocketStore = create<SocketStore>((set) => ({
         }
         break;
 
-      case 'PLAYLIST_REMOVE':
+      case 'PLAYLIST_REMOVE': {
         set((state) => {
           const newPlaylistData = state.playlist.filter(
             (video) => video.playlist_no !== action.payload,
@@ -114,7 +114,13 @@ export const useSocketStore = create<SocketStore>((set) => ({
 
           return { playlist: newPlaylistData };
         });
+
+        const playlist = useSocketStore.getState().playlist;
+        if (playlist.length === 0) {
+          set({ video: initialData.video });
+        }
         break;
+      }
 
       case 'PLAYLIST_MOVE':
         set((state) => {
