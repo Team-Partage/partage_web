@@ -62,11 +62,12 @@ export default function UserSettingModal({
           관리자 지정하기
         </button>
       )}
-      {permission.ban && !isMe && (
+      {/* 내보내기 api 없음
+       {permission.ban && !isMe && (
         <button className="flex items-center justify-center py-[13px] text-neutral-100 base-regular hover:bg-neutral-500">
           내보내기
         </button>
-      )}
+      )} */}
       {isMe && (
         <Link
           href="/mypage"

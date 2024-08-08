@@ -134,7 +134,8 @@ export default function ChannelUsersModal({ channelId, onClose }: ChannelUsersMo
             className="flex h-[322px] w-full flex-col gap-5 overflow-auto tablet:h-[348px]"
           >
             {userList.map((user) => {
-              const isModalOpen = roleId === 'C0000' || permission.ban || user_id === user.user_id;
+              // const isModalOpen = roleId === 'C0000' || permission.ban || user_id === user.user_id; 내보내기 api 없음
+              const isModalOpen = roleId === 'C0000' || user_id === user.user_id;
 
               return (
                 <div
