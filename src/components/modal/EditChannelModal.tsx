@@ -5,15 +5,18 @@ import { useEffect, useRef, useState } from 'react';
 import { z } from 'zod';
 
 import { Checkbox } from '@/components/ui/checkbox';
+import { PERMISSIONLIST } from '@/constants/permission';
 import { ChannelSchema } from '@/schemas/channelSchema';
-import { editChannel, getChannelDetail } from '@/services/channel';
-import { Channel } from '@/services/channel/type';
+import { editChannel, editChannelPermission, getChannelDetail } from '@/services/channel';
+import { Channel, ChannelPermission } from '@/services/channel/type';
+import { usePermissionStore } from '@/stores/usePermissionStore';
 import { AlertContents } from '@/utils/alertContents';
 import { hexToColorName } from '@/utils/hexToColorName';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { X } from 'lucide-react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
+import { useShallow } from 'zustand/react/shallow';
 
 import AlertModalRenderer from '../AlertModalRenderer';
 import ColorChips from '../ColorChips';
@@ -25,37 +28,12 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Switch } from '../ui/switch';
 
-const permissions = [
-  {
-    id: 'video_play',
-    label: '재생 / 정지',
-  },
-  {
-    id: 'playlist_move',
-    label: '재생시간 이동',
-  },
-  {
-    id: 'chat_delete',
-    label: '채팅 삭제',
-  },
-  {
-    id: 'playlist_add',
-    label: '플레이리스트 추가',
-  },
-  {
-    id: 'playlist_move',
-    label: '플레이리스트 순서 이동',
-  },
-  {
-    id: 'playlist_delete',
-    label: '플레이리스트 제거',
-  },
-] as const;
-
 const EditChannelModal = () => {
-  const router = useRouter();
   const params = useParams() as { channel_id: string };
   const modalRef = useRef({ openModal: () => {} });
+  const { channelPermission } = usePermissionStore(
+    useShallow((state) => ({ channelPermission: state.channelPermission })),
+  );
   const [channel, setChannel] = useState<Channel>();
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const form = useForm<z.infer<typeof ChannelSchema>>({
@@ -64,7 +42,7 @@ const EditChannelModal = () => {
       privateType: false,
       channelName: '',
       channelTag: '',
-      permission: ['video_play', 'playlist_move'],
+      permission: [],
     },
   });
 
@@ -76,14 +54,19 @@ const EditChannelModal = () => {
       if (data.channel.type === 'PRIVATE') {
         privateType = true;
       }
+      // 'C0100' 값을 가진 권한(관리자)을 찾아 permission 배열에 추가
+      const permissionsArray = (
+        Object.keys(channelPermission) as Array<keyof ChannelPermission>
+      ).filter((key) => channelPermission[key] === 'C0100');
       form.reset({
         channelName: data.channel.name,
         channelTag: data.channel.hashtag,
         privateType,
+        permission: permissionsArray,
       });
     };
     getData();
-  }, [params.channel_id]);
+  }, [params.channel_id, channelPermission]);
 
   const checkKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
     if (e.key === 'Enter') e.preventDefault();
@@ -103,8 +86,26 @@ const EditChannelModal = () => {
       name: data.channelName,
     }; // type 제외 다 빈값 가능
     await editChannel(params.channel_id, dto);
-    // TODO 모달만 닫히도록
-    router.back();
+
+    /** C0100: 관리자 / C0200: 일반 사용자 */
+    const permissionDto: ChannelPermission = {
+      playlist_add: 'C0200',
+      playlist_remove: 'C0200',
+      playlist_move: 'C0200',
+      video_play: 'C0200',
+      video_seek: 'C0200',
+      chat_delete: 'C0200',
+      ban: 'C0200',
+      chat_send: 'C0200',
+      video_skip: 'C0100',
+    };
+    // data.permission 배열에 있는 키 값을 'C0100'으로 변경
+    data.permission.forEach((permission) => {
+      if (permission in permissionDto) {
+        permissionDto[permission as keyof typeof permissionDto] = 'C0100';
+      }
+    });
+    await editChannelPermission(params.channel_id, permissionDto);
   };
 
   const handleDeleteChannel = async () => {
@@ -119,7 +120,9 @@ const EditChannelModal = () => {
       <DialogHeader>
         <DialogTitle>채널 설정</DialogTitle>
       </DialogHeader>
-      {channel && (
+      {!channel ? (
+        <p>채널 정보를 불러오는데 실패했습니다. 다시 시도해주세요!</p>
+      ) : (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
             <div className="h-[400px] space-y-8 overflow-auto tablet:h-[468px] desktop:h-[532px]">
@@ -193,43 +196,29 @@ const EditChannelModal = () => {
               <FormField
                 control={form.control}
                 name="permission"
-                render={() => (
+                render={({ field }) => (
                   <FormItem>
                     <div className="mb-[10px] tablet:mb-4">
                       <FormLabel>관리자 권한</FormLabel>
                       <FormDescription>관리자에게 부여할 권한을 선택할 수 있어요</FormDescription>
                     </div>
                     <div className="flex flex-wrap">
-                      {permissions.map((item) => (
-                        <FormField
-                          key={item.id}
-                          control={form.control}
-                          name="permission"
-                          render={({ field }) => {
-                            return (
-                              <FormItem
-                                key={item.id}
-                                className="w-full space-x-3 space-y-4 tablet:w-1/2"
-                              >
-                                <FormControl>
-                                  <Checkbox
-                                    checked={field.value?.includes(item.id)}
-                                    onCheckedChange={(checked) => {
-                                      return checked
-                                        ? field.onChange([...field.value, item.id])
-                                        : field.onChange(
-                                            field.value?.filter((value) => value !== item.id),
-                                          );
-                                    }}
-                                  />
-                                </FormControl>
-                                <FormLabel className="small-regular desktop:base-regular">
-                                  {item.label}
-                                </FormLabel>
-                              </FormItem>
-                            );
-                          }}
-                        />
+                      {PERMISSIONLIST.map((item) => (
+                        <div key={item.id} className="w-full space-x-3 space-y-4 tablet:w-1/2">
+                          <Checkbox
+                            checked={(field.value || []).includes(item.id)}
+                            onCheckedChange={(checked) => {
+                              const updatedValues = checked
+                                ? [...(field.value || []), item.id] // `field.value`가 없을 경우 빈 배열로 처리
+                                : (field.value || []).filter((value) => value !== item.id);
+
+                              field.onChange(updatedValues);
+                            }}
+                          />
+                          <FormLabel className="small-regular desktop:base-regular">
+                            {item.label}
+                          </FormLabel>
+                        </div>
                       ))}
                     </div>
                   </FormItem>
