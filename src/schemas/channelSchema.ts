@@ -5,4 +5,5 @@ export const ChannelSchema = z.object({
   privateType: z.boolean(),
   channelName: z.string().min(1, '채널 이름을 입력해주세요.'),
   channelTag: z.string(),
+  permission: z.array(z.string()),
 });

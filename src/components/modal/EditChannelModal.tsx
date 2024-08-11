@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { z } from 'zod';
 
+import { Checkbox } from '@/components/ui/checkbox';
 import { ChannelSchema } from '@/schemas/channelSchema';
 import { editChannel, getChannelDetail } from '@/services/channel';
 import { Channel } from '@/services/channel/type';
@@ -22,8 +23,34 @@ import { DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } f
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from '../ui/form';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Switch } from '../ui/switch';
+
+const permissions = [
+  {
+    id: 'video_play',
+    label: '재생 / 정지',
+  },
+  {
+    id: 'playlist_move',
+    label: '재생시간 이동',
+  },
+  {
+    id: 'chat_delete',
+    label: '채팅 삭제',
+  },
+  {
+    id: 'playlist_add',
+    label: '플레이리스트 추가',
+  },
+  {
+    id: 'playlist_move',
+    label: '플레이리스트 순서 이동',
+  },
+  {
+    id: 'playlist_delete',
+    label: '플레이리스트 제거',
+  },
+] as const;
 
 const EditChannelModal = () => {
   const router = useRouter();
@@ -37,6 +64,7 @@ const EditChannelModal = () => {
       privateType: false,
       channelName: '',
       channelTag: '',
+      permission: ['video_play', 'playlist_move'],
     },
   });
 
@@ -84,7 +112,7 @@ const EditChannelModal = () => {
   };
 
   return (
-    <DialogContent className="min-w-[335px] gap-7 tablet:gap-8">
+    <DialogContent className="h-[578px] min-w-[335px] gap-7 overflow-hidden tablet:h-[688px] tablet:gap-8 desktop:h-[752px]">
       <DialogClose>
         <X className="absolute right-[16px] top-[16px] size-[25px] text-right tablet:right-[20px] tablet:top-[20px] tablet:size-[32px]" />
       </DialogClose>
@@ -94,8 +122,8 @@ const EditChannelModal = () => {
       {channel && (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
-            {/* type */}
-            <div className="space-y-8">
+            <div className="h-[400px] space-y-8 overflow-auto tablet:h-[468px] desktop:h-[532px]">
+              {/* type */}
               <FormField
                 control={form.control}
                 name="privateType"
@@ -161,61 +189,52 @@ const EditChannelModal = () => {
                   />
                 </div>
               </div>
-              {/* TODO 라디오 value값 수정필요 */}
-              {/* <FormField
+              {/* 채널 권한 */}
+              <FormField
                 control={form.control}
-                name="channelTag"
-                render={({ field, fieldState: { error } }) => (
+                name="permission"
+                render={() => (
                   <FormItem>
-                    <FormLabel>관리자 권한</FormLabel>
-                    <FormDescription>관리자에게 부여할 권한을 선택할 수 있어요</FormDescription>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="mt-[10px] tablet:mb-[24px] tablet:mt-[16px]"
-                      >
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="video_play" />
-                          </FormControl>
-                          <FormLabel className="font-normal">재생 / 정지</FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="playlist_move" />
-                          </FormControl>
-                          <FormLabel className="font-normal">재생시간 이동</FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="chat_delete" />
-                          </FormControl>
-                          <FormLabel className="font-normal">채팅 삭제</FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="playlist_add" />
-                          </FormControl>
-                          <FormLabel className="font-normal">플레이리스트 추가</FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="playlist_move" />
-                          </FormControl>
-                          <FormLabel className="font-normal">플레이리스트 순서 이동</FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="none" />
-                          </FormControl>
-                          <FormLabel className="font-normal">플레이리스트 제거</FormLabel>
-                        </FormItem>
-                      </RadioGroup>
-                    </FormControl>
+                    <div className="mb-[10px] tablet:mb-4">
+                      <FormLabel>관리자 권한</FormLabel>
+                      <FormDescription>관리자에게 부여할 권한을 선택할 수 있어요</FormDescription>
+                    </div>
+                    <div className="flex flex-wrap">
+                      {permissions.map((item) => (
+                        <FormField
+                          key={item.id}
+                          control={form.control}
+                          name="permission"
+                          render={({ field }) => {
+                            return (
+                              <FormItem
+                                key={item.id}
+                                className="w-full space-x-3 space-y-4 tablet:w-1/2"
+                              >
+                                <FormControl>
+                                  <Checkbox
+                                    checked={field.value?.includes(item.id)}
+                                    onCheckedChange={(checked) => {
+                                      return checked
+                                        ? field.onChange([...field.value, item.id])
+                                        : field.onChange(
+                                            field.value?.filter((value) => value !== item.id),
+                                          );
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormLabel className="small-regular desktop:base-regular">
+                                  {item.label}
+                                </FormLabel>
+                              </FormItem>
+                            );
+                          }}
+                        />
+                      ))}
+                    </div>
                   </FormItem>
                 )}
-              /> */}
+              />
               <FormItem>
                 <FormLabel>삭제</FormLabel>
                 <FormDescription>‘채널 삭제’ 버튼을 누르면 즉시 채널이 삭제돼요.</FormDescription>
@@ -225,12 +244,12 @@ const EditChannelModal = () => {
                   </Button>
                 </AlertModalRenderer>
               </FormItem>
-              <DialogFooter className="items-center">
-                <Button type="submit" className="w-full tablet:w-fit" variant="active">
-                  저장
-                </Button>
-              </DialogFooter>
             </div>
+            <DialogFooter className="h-[62px] items-center justify-center tablet:h-[104px]">
+              <Button type="submit" className="w-full tablet:w-fit" variant="active">
+                저장
+              </Button>
+            </DialogFooter>
           </form>
         </Form>
       )}
