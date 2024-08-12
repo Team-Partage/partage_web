@@ -31,9 +31,11 @@ import { Switch } from '../ui/switch';
 const EditChannelModal = () => {
   const params = useParams() as { channel_id: string };
   const modalRef = useRef({ openModal: () => {} });
+  const dialogCloseRef = useRef<HTMLButtonElement>(null);
   const { channelPermission } = usePermissionStore(
     useShallow((state) => ({ channelPermission: state.channelPermission })),
   );
+
   const [channel, setChannel] = useState<Channel>();
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const form = useForm<z.infer<typeof ChannelSchema>>({
@@ -54,10 +56,16 @@ const EditChannelModal = () => {
       if (data.channel.type === 'PRIVATE') {
         privateType = true;
       }
+      console.log('channelPermission: ', channelPermission);
+      const keys = Object.keys(channelPermission) as Array<keyof ChannelPermission>;
+      console.log('keys: ', keys);
+
       // 'C0100' 값을 가진 권한(관리자)을 찾아 permission 배열에 추가
       const permissionsArray = (
         Object.keys(channelPermission) as Array<keyof ChannelPermission>
       ).filter((key) => channelPermission[key] === 'C0100');
+      console.log('perA:', permissionsArray);
+
       form.reset({
         channelName: data.channel.name,
         channelTag: data.channel.hashtag,
@@ -89,15 +97,15 @@ const EditChannelModal = () => {
 
     /** C0100: 관리자 / C0200: 일반 사용자 */
     const permissionDto: ChannelPermission = {
-      playlist_add: 'C0200',
-      playlist_remove: 'C0200',
-      playlist_move: 'C0200',
-      video_play: 'C0200',
-      video_seek: 'C0200',
-      chat_delete: 'C0200',
-      ban: 'C0200',
+      playlist_add: 'C0000',
+      playlist_remove: 'C0000',
+      playlist_move: 'C0000',
+      video_play: 'C0000',
+      video_seek: 'C0000',
+      chat_delete: 'C0000',
+      ban: 'C0000',
       chat_send: 'C0200',
-      video_skip: 'C0100',
+      video_skip: 'C0000',
     };
     // data.permission 배열에 있는 키 값을 'C0100'으로 변경
     data.permission.forEach((permission) => {
@@ -106,6 +114,10 @@ const EditChannelModal = () => {
       }
     });
     await editChannelPermission(params.channel_id, permissionDto);
+
+    if (dialogCloseRef.current) {
+      dialogCloseRef.current.click();
+    }
   };
 
   const handleDeleteChannel = async () => {
@@ -114,7 +126,7 @@ const EditChannelModal = () => {
 
   return (
     <DialogContent className="h-[578px] min-w-[335px] gap-7 overflow-hidden tablet:h-[688px] tablet:gap-8 desktop:h-[752px]">
-      <DialogClose>
+      <DialogClose ref={dialogCloseRef}>
         <X className="absolute right-[16px] top-[16px] size-[25px] text-right tablet:right-[20px] tablet:top-[20px] tablet:size-[32px]" />
       </DialogClose>
       <DialogHeader>
@@ -208,6 +220,9 @@ const EditChannelModal = () => {
                           <Checkbox
                             checked={(field.value || []).includes(item.id)}
                             onCheckedChange={(checked) => {
+                              console.log('checked', checked);
+
+                              console.log('field.value: ', field.value); // 여기가 왜 undefined로 떠?
                               const updatedValues = checked
                                 ? [...(field.value || []), item.id] // `field.value`가 없을 경우 빈 배열로 처리
                                 : (field.value || []).filter((value) => value !== item.id);
