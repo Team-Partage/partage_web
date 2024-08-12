@@ -11,7 +11,7 @@ interface ChannelItemProps {
 }
 
 const ChannelItem = ({ channelData }: ChannelItemProps) => {
-  const { channel, playlist = null, owner, user_count } = channelData;
+  const { channel, playlist = null, owner } = channelData;
   const thumbnail = playlist ? playlist.thumbnail : '/default-thumbnail.png';
   const ownerProfile = owner?.profile_image ? owner.profile_image : '/default-profile-image.png'; // TODO 채널장 프로필 이미지 서버 해결되면 다시 실행
 
@@ -46,15 +46,15 @@ const ChannelItem = ({ channelData }: ChannelItemProps) => {
             style={{ objectFit: 'cover' }}
           />
         </div>
-        <div className="flex w-full flex-col gap-[4px] tablet:w-[240px] desktop:w-[180px]">
+        <div className="flex w-full flex-col tablet:w-[240px] desktop:w-[180px]">
           <Link
             href={PAGE_ROUTE.CHANNEL(channel.channel_id)}
-            className="cursor-pointer text-neutral-100 base-medium"
+            className="line-clamp-2 cursor-pointer text-neutral-100 base-medium"
           >
             {channel.name}
           </Link>
+          <div className="text-neutral-200 small-regular">{owner.nickname}</div>
           {!noHashtags && <Hashtags hashtage={channel.hashtag} color={channelColor} />}
-          <span className="text-neutral-200 small-regular">{user_count}명 시청중</span>
         </div>
       </div>
     </div>

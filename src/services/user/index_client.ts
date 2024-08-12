@@ -22,6 +22,7 @@ export const EditProfile = async <T extends EditProfileParams>(params: T) => {
       Authorization: `Bearer ${accesstoken}`,
     },
   });
+  await revalidate('channel');
   return data;
 };
 

@@ -1,7 +1,8 @@
 import { useState } from 'react';
 
-import ChannelUsersModal from '@/components/modal/ChannelUsersModal';
+import ChannelUsersModal from '@/app/channel/_components/chatting/ChannelUsersModal';
 import Tooltip from '@/components/Tooltip';
+import { useUserStore } from '@/stores/User';
 import { useSocketStore } from '@/stores/useSocketStore';
 import Image from 'next/image';
 
@@ -16,6 +17,10 @@ export default function ChatHeader({ isFold, setIsFold, channelId }: ChatHeaderP
   const [showChannelUsersModal, setShowChannelUsersModal] = useState(false);
 
   const viewer = useSocketStore((state) => state.viewer);
+
+  const { nickname } = useUserStore((state) => ({
+    nickname: state.nickname,
+  }));
 
   return (
     <>
@@ -41,8 +46,9 @@ export default function ChatHeader({ isFold, setIsFold, channelId }: ChatHeaderP
           >
             채팅
           </h2>
-          <div
-            className={`-mt-0.5 flex cursor-pointer items-center gap-1 rounded-md px-2 py-0.5 text-neutral-200 ${isFold && 'desktop:hidden'}`}
+          <button
+            className={`-mt-0.5 flex items-center gap-1 rounded-md px-2 py-0.5 text-neutral-200 ${isFold && 'desktop:hidden'} ${nickname ? 'cursor-pointer' : ''}`}
+            disabled={!nickname}
             onClick={() => setShowChannelUsersModal(true)}
           >
             <Image
@@ -53,7 +59,7 @@ export default function ChatHeader({ isFold, setIsFold, channelId }: ChatHeaderP
               height={16}
             />
             <p className="small-regular">{viewer.login_users}</p>
-          </div>
+          </button>
         </div>
         {!isFold && (
           <button

@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 interface SearchBarProps {
-  type: 'modal' | 'page';
+  type?: 'modal' | 'page';
   initialQuery?: string;
   handleSearch?: (searchQuery: string) => void;
   resetSearch?: () => void;

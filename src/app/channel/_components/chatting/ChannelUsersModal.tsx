@@ -2,12 +2,16 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 
 import { getChannelUsers, getSearchChannelUser } from '@/services/channel';
 import { ChannelUserType } from '@/services/channel/type';
+import { usePermissionStore } from '@/stores/usePermissionStore';
+import { useUserStore } from '@/stores/User';
 import { PLACEHOLDER } from '@/utils/constants';
 import Image from 'next/image';
 import { createPortal } from 'react-dom';
 import { useInView } from 'react-intersection-observer';
+import { useShallow } from 'zustand/react/shallow';
 
-import SearchBar from '../SearchBar';
+import UserSettingModal from './UserSettingModal';
+import SearchBar from '../../../../components/SearchBar';
 
 interface ChannelUsersModalProps {
   channelId: string;
@@ -21,10 +25,19 @@ export default function ChannelUsersModal({ channelId, onClose }: ChannelUsersMo
   const [userList, setUserList] = useState<ChannelUserType[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [cursor, setCursor] = useState<number>(1);
+  const [openUserId, setOpenUserId] = useState<string | null>(null);
 
   const [ref, inView] = useInView();
   const usersRef = useRef<HTMLDivElement>(null);
   const noNextUser = userList.length >= totalCount;
+
+  const { roleId, permission } = usePermissionStore(
+    useShallow((state) => ({ roleId: state.roleId, permission: state.permission })),
+  );
+
+  const { user_id } = useUserStore((state) => ({
+    user_id: state.user_id,
+  }));
 
   const handleClose = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
@@ -87,7 +100,12 @@ export default function ChannelUsersModal({ channelId, onClose }: ChannelUsersMo
         onClick={handleClose}
         className="fixed inset-0 z-40 flex size-full items-center justify-center bg-overlay"
       >
-        <section className="relative flex h-[554px] w-[335px] flex-col items-center justify-center gap-7 rounded-lg border-1 border-neutral-400 bg-gradient-to-bottom px-5 pb-5 pt-[40px] shadow-2xl backdrop-blur-[32] tablet:h-[640px] tablet:w-[500px] tablet:px-[40px]">
+        <section
+          className="relative flex h-[554px] w-[335px] flex-col items-center justify-center gap-7 rounded-lg border-1 border-neutral-400 bg-gradient-to-bottom px-5 pb-5 pt-[40px] shadow-2xl backdrop-blur-[32] tablet:h-[640px] tablet:w-[500px] tablet:px-[40px]"
+          onClick={() => {
+            if (openUserId) setOpenUserId(null);
+          }}
+        >
           <h2 className="text-center large-bold tablet:max-bold">채널 유저</h2>
           <div className="flex items-center gap-1 small-regular tablet:base-regular">
             <div className="relative size-[22px] tablet:size-[24px]">
@@ -115,31 +133,52 @@ export default function ChannelUsersModal({ channelId, onClose }: ChannelUsersMo
             ref={usersRef}
             className="flex h-[322px] w-full flex-col gap-5 overflow-auto tablet:h-[348px]"
           >
-            {userList.map((user) => (
-              <div
-                key={user.user_id}
-                className="flex h-9 items-center justify-between gap-2.5 tablet:h-[40px]"
-              >
-                <div className="relative size-9 overflow-hidden rounded-full tablet:size-[40px]">
-                  <Image
-                    fill
-                    src={user.profile_image || '/default-profile-image.png'}
-                    alt="유저 프로필 이미지"
-                  />
-                </div>
-                <span
-                  className="grow small-bold tablet:base-bold"
-                  style={{ color: user.profile_color || '#00FFFF' }}
+            {userList.map((user) => {
+              // const isModalOpen = roleId === 'C0000' || permission.ban || user_id === user.user_id; 내보내기 api 없음
+              const isModalOpen = roleId === 'C0000' || user_id === user.user_id;
+
+              return (
+                <div
+                  key={user.user_id}
+                  className="flex h-9 items-center justify-between gap-2.5 tablet:h-[40px]"
                 >
-                  {user.nickname}
-                </span>
-                <div className="flex size-8 items-center justify-center rounded-md hover:bg-neutral-500 tablet:size-9">
-                  <div className="relative size-5 tablet:size-6">
-                    <Image fill src="/kebab-menu.svg" alt={`${user.nickname}의 메뉴 버튼`} />
+                  <div className="relative size-9 overflow-hidden rounded-full tablet:size-[40px]">
+                    <Image
+                      fill
+                      src={user.profile_image || '/default-profile-image.png'}
+                      alt="유저 프로필 이미지"
+                    />
                   </div>
+                  <span
+                    className="grow small-bold tablet:base-bold"
+                    style={{ color: user.profile_color || '#00FFFF' }}
+                  >
+                    {user.nickname}
+                  </span>
+                  {isModalOpen && (
+                    <div className="flex size-8 cursor-pointer items-center justify-center rounded-md hover:bg-neutral-500 tablet:size-9">
+                      <div className="relative size-5 tablet:size-6">
+                        <Image
+                          fill
+                          src="/kebab-menu.svg"
+                          alt={`${user.nickname}의 메뉴 버튼`}
+                          sizes="30vw"
+                          onClick={() => setOpenUserId(user.user_id)}
+                        />
+                        {openUserId === user.user_id && (
+                          <UserSettingModal
+                            userId={user.user_id}
+                            userRole={user.role_id}
+                            channelId={channelId}
+                            onClose={onClose}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
             {!noNextUser && <div ref={ref} onClick={() => handleFetchUsers()} />}
           </section>
           <div

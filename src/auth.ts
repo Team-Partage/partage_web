@@ -11,6 +11,7 @@ export const {
   auth,
   signIn,
 } = NextAuth({
+  trustHost: true,
   pages: {
     signIn: '/auth/login',
     newUser: '/auth/register',
@@ -39,7 +40,6 @@ export const {
 
         if (!authResponse.user_id) {
           throw new Error('Wrong Email or Password');
-          return null;
         }
 
         const accessToken = authResponse['access_token'];
@@ -59,4 +59,5 @@ export const {
       },
     }),
   ],
+  secret: process.env.NEXTAUTH_SECRET,
 });

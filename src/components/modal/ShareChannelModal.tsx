@@ -40,12 +40,12 @@ const ShareChannelModal = () => {
   };
 
   const handleKakaoShare = () => {
-    const { Kakao, location } = window;
+    const { kakao, location } = window;
     const nowPlaying = playlist.find((item) => item.url === video.url);
     const imgUrl = nowPlaying?.thumbnail;
     const title = channelTitle;
     const description = nowPlaying?.title;
-    Kakao.Share.sendScrap({
+    kakao.Share.sendScrap({
       requestUrl: location.href,
       templateId: 110342,
       templateArgs: {

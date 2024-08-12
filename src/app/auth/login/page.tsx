@@ -41,10 +41,18 @@ const LoginPage = () => {
 
   const onSubmit = async (data: z.infer<typeof LoginSchema>) => {
     try {
-      await signIn('credentials', {
+      const res = await signIn('credentials', {
         username: data.email,
         password: data.password,
+        redirect: false,
       });
+
+      if (res?.error) {
+        alert('아이디 혹은 비밀번호가 일치하지 않습니다.');
+        router.refresh();
+      } else {
+        router.push('/');
+      }
     } catch (err) {
       throw new Error(`${err}`);
     }

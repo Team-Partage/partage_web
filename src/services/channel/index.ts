@@ -5,12 +5,14 @@ import { getSession } from 'next-auth/react';
 import { auth } from '@/auth';
 
 import {
+  ChannelPermission,
   CreateChannelReq,
   CreateChannelResponse,
   GetChannelDetailResponse,
   GetChannelSearchResponse,
   GetChannelUsersResponse,
   GetSearchChannelUserResponse,
+  RoleIdType,
 } from './type';
 import revalidate from '../revalidate';
 
@@ -97,6 +99,7 @@ export const getChannelUsers = async (channelId: string, cursor: number = 1) => 
       headers: {
         Authorization: `Bearer ${session?.user.accessToken}`,
       },
+      next: { tags: ['channelUsers'] },
     },
   );
 
@@ -123,6 +126,37 @@ export const deleteChannel = async (channelId: string) => {
       Authorization: `Bearer ${session?.user.accessToken}`,
     },
   });
+  await revalidate('channel');
+  return data;
+};
+
+/** 채널 사용자 권한 수정 */
+export const patchChannelRole = async (
+  channelId: string,
+  params: { role_id: RoleIdType; user_id: string },
+) => {
+  const session = await getSession();
+  const data = await fetcher.patch(`${DOMAIN.CHANNEL}/${channelId}/role`, params, {
+    headers: {
+      Authorization: `Bearer ${session?.user.accessToken}`,
+    },
+  });
+  await revalidate('channelUsers');
+  return data;
+};
+
+/** 채널 Permission 권한 수정 */
+export const editChannelPermission = async (channelId: string, params: ChannelPermission) => {
+  const session = await getSession();
+  const data = await fetcher.put(
+    `${DOMAIN.CHANNEL}/${channelId}/permission`,
+    { channel_permissions: params },
+    {
+      headers: {
+        Authorization: `Bearer ${session?.user.accessToken}`,
+      },
+    },
+  );
   await revalidate('channel');
   return data;
 };

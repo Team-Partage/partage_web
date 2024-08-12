@@ -55,6 +55,7 @@ const Playlist = ({ channel }: Props) => {
   const handleDelete = (id: number) => {
     if (!permission.playlist_remove) return;
     send('PLAYLIST_REMOVE', { playlist_no: id });
+    if (playlist.length !== 1 && id === playlist_no) nextVideo();
   };
 
   /** 플레이리스트 추가 */
@@ -149,7 +150,7 @@ const Playlist = ({ channel }: Props) => {
                             size="icon"
                             className="size-5 p-0 tablet:size-6"
                             onClick={(e) => {
-                              e.preventDefault();
+                              e.stopPropagation();
                               handleDelete(item.playlist_no);
                             }}
                           >
@@ -176,6 +177,12 @@ const Playlist = ({ channel }: Props) => {
             value={url}
             onChange={(e) => {
               setUrl(e.target.value);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                setUrl(url);
+                handleAddPlaylist();
+              }
             }}
             endAdornment={
               <Button size="icon" onClick={handleAddPlaylist}>
