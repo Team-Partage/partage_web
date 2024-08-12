@@ -1,10 +1,12 @@
 import { ChannelPermission, RoleIdType } from '@/services/channel/type';
+import { MessageType } from '@/services/websocket/type';
 import checkPermission from '@/utils/CheckPermission';
 import { create } from 'zustand';
 
 type Permission = {
   [key in keyof ChannelPermission]: boolean;
 };
+
 interface PermissionStore {
   roleId: RoleIdType | null;
 
@@ -15,7 +17,7 @@ interface PermissionStore {
   channelPermission: ChannelPermission;
 
   setRoleId: (roleId: RoleIdType) => void;
-  setChannelPermission: (channelPermission: ChannelPermission) => void;
+  setChannelPermission: (data: MessageType['CHANNEL_PERMISSION_CHANGE']) => void;
   reset: () => void;
 }
 
@@ -50,11 +52,23 @@ export const usePermissionStore = create<PermissionStore>((set) => ({
   permission: INITIAL_DATA.permission,
   channelPermission: INITIAL_DATA.channelPermission,
 
-  setRoleId: (roleId) => set({ roleId }),
-  setChannelPermission: (channelPermission) => {
-    set({ channelPermission });
+  setRoleId: (roleId) => {
+    set({ roleId });
     set((state) => {
-      const newPermission: Permission = state.permission;
+      const newPermission: Permission = { ...state.permission };
+
+      for (const key in state.channelPermission) {
+        newPermission[key as keyof ChannelPermission] = checkPermission(
+          key as keyof ChannelPermission,
+        );
+      }
+      return { permission: newPermission };
+    });
+  },
+  setChannelPermission: (data) => {
+    set({ channelPermission: data.channel_permissions });
+    set((state) => {
+      const newPermission: Permission = { ...state.permission };
 
       for (const key in state.channelPermission) {
         newPermission[key as keyof ChannelPermission] = checkPermission(

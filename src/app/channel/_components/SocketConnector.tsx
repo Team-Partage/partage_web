@@ -34,8 +34,8 @@ const SocketConnector = ({ channel, user, channel_permissions }: Props) => {
   /** 채널 권한정보 초기화 */
   useEffect(() => {
     setRoleId(user.role_id);
-    setChannelPermission(channel_permissions);
-  }, []);
+    setChannelPermission({ channel_permissions });
+  }, [channel_permissions, setChannelPermission, setRoleId, user.role_id]);
 
   useEffect(() => {
     if (isConnected) {
