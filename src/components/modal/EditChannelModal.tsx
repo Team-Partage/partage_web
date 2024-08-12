@@ -4,15 +4,19 @@ import { useEffect, useRef, useState } from 'react';
 
 import { z } from 'zod';
 
+import { Checkbox } from '@/components/ui/checkbox';
+import { PERMISSIONLIST } from '@/constants/permission';
 import { ChannelSchema } from '@/schemas/channelSchema';
-import { editChannel, getChannelDetail } from '@/services/channel';
-import { Channel } from '@/services/channel/type';
+import { editChannel, editChannelPermission, getChannelDetail } from '@/services/channel';
+import { Channel, ChannelPermission } from '@/services/channel/type';
+import { usePermissionStore } from '@/stores/usePermissionStore';
 import { AlertContents } from '@/utils/alertContents';
 import { hexToColorName } from '@/utils/hexToColorName';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { X } from 'lucide-react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
+import { useShallow } from 'zustand/react/shallow';
 
 import AlertModalRenderer from '../AlertModalRenderer';
 import ColorChips from '../ColorChips';
@@ -22,13 +26,14 @@ import { DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } f
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from '../ui/form';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Switch } from '../ui/switch';
 
 const EditChannelModal = () => {
-  const router = useRouter();
   const params = useParams() as { channel_id: string };
   const modalRef = useRef({ openModal: () => {} });
+  const { channelPermission } = usePermissionStore(
+    useShallow((state) => ({ channelPermission: state.channelPermission })),
+  );
   const [channel, setChannel] = useState<Channel>();
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const form = useForm<z.infer<typeof ChannelSchema>>({
@@ -37,6 +42,7 @@ const EditChannelModal = () => {
       privateType: false,
       channelName: '',
       channelTag: '',
+      permission: [],
     },
   });
 
@@ -48,14 +54,19 @@ const EditChannelModal = () => {
       if (data.channel.type === 'PRIVATE') {
         privateType = true;
       }
+      // 'C0100' 값을 가진 권한(관리자)을 찾아 permission 배열에 추가
+      const permissionsArray = (
+        Object.keys(channelPermission) as Array<keyof ChannelPermission>
+      ).filter((key) => channelPermission[key] === 'C0100');
       form.reset({
         channelName: data.channel.name,
         channelTag: data.channel.hashtag,
         privateType,
+        permission: permissionsArray,
       });
     };
     getData();
-  }, [params.channel_id]);
+  }, [params.channel_id, channelPermission]);
 
   const checkKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
     if (e.key === 'Enter') e.preventDefault();
@@ -75,8 +86,26 @@ const EditChannelModal = () => {
       name: data.channelName,
     }; // type 제외 다 빈값 가능
     await editChannel(params.channel_id, dto);
-    // TODO 모달만 닫히도록
-    router.back();
+
+    /** C0100: 관리자 / C0200: 일반 사용자 */
+    const permissionDto: ChannelPermission = {
+      playlist_add: 'C0200',
+      playlist_remove: 'C0200',
+      playlist_move: 'C0200',
+      video_play: 'C0200',
+      video_seek: 'C0200',
+      chat_delete: 'C0200',
+      ban: 'C0200',
+      chat_send: 'C0200',
+      video_skip: 'C0100',
+    };
+    // data.permission 배열에 있는 키 값을 'C0100'으로 변경
+    data.permission.forEach((permission) => {
+      if (permission in permissionDto) {
+        permissionDto[permission as keyof typeof permissionDto] = 'C0100';
+      }
+    });
+    await editChannelPermission(params.channel_id, permissionDto);
   };
 
   const handleDeleteChannel = async () => {
@@ -84,18 +113,20 @@ const EditChannelModal = () => {
   };
 
   return (
-    <DialogContent className="min-w-[335px] gap-7 tablet:gap-8">
+    <DialogContent className="h-[578px] min-w-[335px] gap-7 overflow-hidden tablet:h-[688px] tablet:gap-8 desktop:h-[752px]">
       <DialogClose>
         <X className="absolute right-[16px] top-[16px] size-[25px] text-right tablet:right-[20px] tablet:top-[20px] tablet:size-[32px]" />
       </DialogClose>
       <DialogHeader>
         <DialogTitle>채널 설정</DialogTitle>
       </DialogHeader>
-      {channel && (
+      {!channel ? (
+        <p>채널 정보를 불러오는데 실패했습니다. 다시 시도해주세요!</p>
+      ) : (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
-            {/* type */}
-            <div className="space-y-8">
+            <div className="h-[400px] space-y-8 overflow-auto tablet:h-[468px] desktop:h-[532px]">
+              {/* type */}
               <FormField
                 control={form.control}
                 name="privateType"
@@ -161,61 +192,38 @@ const EditChannelModal = () => {
                   />
                 </div>
               </div>
-              {/* TODO 라디오 value값 수정필요 */}
-              {/* <FormField
+              {/* 채널 권한 */}
+              <FormField
                 control={form.control}
-                name="channelTag"
-                render={({ field, fieldState: { error } }) => (
+                name="permission"
+                render={({ field }) => (
                   <FormItem>
-                    <FormLabel>관리자 권한</FormLabel>
-                    <FormDescription>관리자에게 부여할 권한을 선택할 수 있어요</FormDescription>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="mt-[10px] tablet:mb-[24px] tablet:mt-[16px]"
-                      >
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="video_play" />
-                          </FormControl>
-                          <FormLabel className="font-normal">재생 / 정지</FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="playlist_move" />
-                          </FormControl>
-                          <FormLabel className="font-normal">재생시간 이동</FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="chat_delete" />
-                          </FormControl>
-                          <FormLabel className="font-normal">채팅 삭제</FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="playlist_add" />
-                          </FormControl>
-                          <FormLabel className="font-normal">플레이리스트 추가</FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="playlist_move" />
-                          </FormControl>
-                          <FormLabel className="font-normal">플레이리스트 순서 이동</FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="none" />
-                          </FormControl>
-                          <FormLabel className="font-normal">플레이리스트 제거</FormLabel>
-                        </FormItem>
-                      </RadioGroup>
-                    </FormControl>
+                    <div className="mb-[10px] tablet:mb-4">
+                      <FormLabel>관리자 권한</FormLabel>
+                      <FormDescription>관리자에게 부여할 권한을 선택할 수 있어요</FormDescription>
+                    </div>
+                    <div className="flex flex-wrap">
+                      {PERMISSIONLIST.map((item) => (
+                        <div key={item.id} className="w-full space-x-3 space-y-4 tablet:w-1/2">
+                          <Checkbox
+                            checked={(field.value || []).includes(item.id)}
+                            onCheckedChange={(checked) => {
+                              const updatedValues = checked
+                                ? [...(field.value || []), item.id] // `field.value`가 없을 경우 빈 배열로 처리
+                                : (field.value || []).filter((value) => value !== item.id);
+
+                              field.onChange(updatedValues);
+                            }}
+                          />
+                          <FormLabel className="small-regular desktop:base-regular">
+                            {item.label}
+                          </FormLabel>
+                        </div>
+                      ))}
+                    </div>
                   </FormItem>
                 )}
-              /> */}
+              />
               <FormItem>
                 <FormLabel>삭제</FormLabel>
                 <FormDescription>‘채널 삭제’ 버튼을 누르면 즉시 채널이 삭제돼요.</FormDescription>
@@ -225,12 +233,12 @@ const EditChannelModal = () => {
                   </Button>
                 </AlertModalRenderer>
               </FormItem>
-              <DialogFooter className="items-center">
-                <Button type="submit" className="w-full tablet:w-fit" variant="active">
-                  저장
-                </Button>
-              </DialogFooter>
             </div>
+            <DialogFooter className="h-[62px] items-center justify-center tablet:h-[104px]">
+              <Button type="submit" className="w-full tablet:w-fit" variant="active">
+                저장
+              </Button>
+            </DialogFooter>
           </form>
         </Form>
       )}
